@@ -1,50 +1,65 @@
-# Welcome to your Expo app 👋
+<p align="center">
+  <img src="@carnetlify.png" alt="Carnetlify Logo" width="200"/>
+</p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<h1 align="center">Carnetlify</h1>
 
-## Get started
+<p align="center">
+  Una aplicación móvil moderna para gestionar carnets digitales, desarrollada con React Native y Expo.
+</p>
 
-1. Install dependencies
+## 🚀 Acerca del Proyecto
 
+Carnetlify es una innovadora aplicación que permite a los usuarios crear, almacenar y compartir carnets digitales de manera segura y eficiente. Utilizando la potencia de React Native y Expo, ofrecemos una experiencia fluida en dispositivos iOS y Android.
+
+## 🛠️ Tecnologías Utilizadas
+
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [React Navigation](https://reactnavigation.org/)
+- [AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
+
+## 🏁 Comenzando
+
+Para iniciar el desarrollo de Carnetlify, sigue estos pasos:
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/tu-usuario/carnetlify.git
+   cd carnetlify
+   ```
+
+2. Instala las dependencias:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Inicia la aplicación:
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## 📱 Características Principales
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Creación de carnets digitales personalizados
+- Almacenamiento seguro de información
+- Compartir carnets fácilmente
+- Interfaz de usuario intuitiva y moderna
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🤝 Contribuir
 
-## Get a fresh project
+¡Las contribuciones son bienvenidas! Si tienes ideas para mejorar Carnetlify, no dudes en abrir un issue o enviar un pull request.
 
-When you're ready, run:
+## 📄 Licencia
 
-```bash
-npm run reset-project
-```
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📞 Contacto
 
-## Learn more
+¿Tienes preguntas? Contáctanos en [support@carnetlify.com](mailto:support@carnetlify.com)
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+<p align="center">
+  Desarrollado con ❤️ por el equipo de Carnetlify
+</p>

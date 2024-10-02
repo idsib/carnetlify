@@ -60,68 +60,70 @@ const Register = () => {
           contentContainerStyle={styles.scrollViewContent}
           keyboardShouldPersistTaps="handled"
         >
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
-          </TouchableOpacity>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require('../../assets/images/carnetlify-white.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Crea tu cuenta</Text>
-          </View>
-          <View style={styles.content}>
-            <TextInput
-              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-              placeholderTextColor={isDarkMode ? '#777' : '#999'}
-              placeholder="Nombre"
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                validateName(text);
-              }}
-            />
-            <TextInput
-              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-              placeholderTextColor={isDarkMode ? '#777' : '#999'}
-              placeholder="DNI"
-              value={dni}
-              onChangeText={(text) => {
-                const formattedDNI = formatDNI(text);
-                setDni(formattedDNI);
-                validateDNI(formattedDNI);
-              }}
-              maxLength={9}
-              keyboardType="numeric"
-            />
-            <TextInput
-              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-              placeholderTextColor={isDarkMode ? '#777' : '#999'}
-              placeholder="Correo electrónico"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                validateEmail(text);
-              }}
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-              placeholderTextColor={isDarkMode ? '#777' : '#999'}
-              placeholder="Fecha de nacimiento (DD/MM/AAAA)"
-              value={birthDate}
-              onChangeText={(text) => {
-                const formattedDate = formatBirthDate(text);
-                setBirthDate(formattedDate);
-                validateBirthDate(formattedDate);
-              }}
-              maxLength={10}
-              keyboardType="numeric"
-            />
-            <TouchableOpacity style={styles.registerButton}>
-              <Text style={styles.registerButtonText}>Registrarse</Text>
+          <View style={styles.centerContent}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
             </TouchableOpacity>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../assets/images/carnetlify-white.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Crea tu cuenta</Text>
+            </View>
+            <View style={styles.content}>
+              <TextInput
+                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                placeholderTextColor={isDarkMode ? '#777' : '#999'}
+                placeholder="Nombre"
+                value={name}
+                onChangeText={(text) => {
+                  setName(text);
+                  validateName(text);
+                }}
+              />
+              <TextInput
+                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                placeholderTextColor={isDarkMode ? '#777' : '#999'}
+                placeholder="DNI"
+                value={dni}
+                onChangeText={(text) => {
+                  const formattedDNI = formatDNI(text);
+                  setDni(formattedDNI);
+                  validateDNI(formattedDNI);
+                }}
+                maxLength={9}
+                keyboardType="numeric"
+              />
+              <TextInput
+                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                placeholderTextColor={isDarkMode ? '#777' : '#999'}
+                placeholder="Correo electrónico"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  validateEmail(text);
+                }}
+                keyboardType="email-address"
+              />
+              <TextInput
+                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                placeholderTextColor={isDarkMode ? '#777' : '#999'}
+                placeholder="Fecha de nacimiento (DD/MM/AAAA)"
+                value={birthDate}
+                onChangeText={(text) => {
+                  const formattedDate = formatBirthDate(text);
+                  setBirthDate(formattedDate);
+                  validateBirthDate(formattedDate);
+                }}
+                maxLength={10}
+                keyboardType="numeric"
+              />
+              <TouchableOpacity style={styles.registerButton}>
+                <Text style={styles.registerButtonText}>Registrarse</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -144,6 +146,9 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
+  },
+  centerContent: {
+    flex: 1,
     justifyContent: 'center',
     padding: 20,
     paddingBottom: Platform.OS === 'ios' ? 40 : 20,
@@ -160,10 +165,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logo: {
-    width: width * 0.5,
-    height: width * 0.5,
-    maxWidth: 200,
-    maxHeight: 200,
+    width: width * 0.4,
+    height: width * 0.4,
+    maxWidth: 150,
+    maxHeight: 150,
   },
   title: {
     fontSize: 24,
@@ -172,7 +177,7 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 350,
     alignSelf: 'center',
   },
   input: {

@@ -30,45 +30,47 @@ const Login = () => {
           contentContainerStyle={styles.scrollViewContent}
           keyboardShouldPersistTaps="handled"
         >
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
-          </TouchableOpacity>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require('../../assets/images/carnetlify-white.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Iniciar sesión</Text>
-          </View>
-          <View style={styles.content}>
-            <TextInput
-              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-              placeholderTextColor={isDarkMode ? '#777' : '#999'}
-              placeholder="Correo electrónico"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                validateEmail(text);
-              }}
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-              placeholderTextColor={isDarkMode ? '#777' : '#999'}
-              placeholder="Contraseña"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-            <TouchableOpacity style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+          <View style={styles.centerContent}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => alert('Restablecer contraseña')}>
-              <Text style={[styles.forgotPasswordText, isDarkMode ? styles.darkText : styles.lightText]}>
-                ¿Olvidaste tu contraseña?
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../assets/images/carnetlify-white.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Iniciar sesión</Text>
+            </View>
+            <View style={styles.content}>
+              <TextInput
+                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                placeholderTextColor={isDarkMode ? '#777' : '#999'}
+                placeholder="Correo electrónico"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  validateEmail(text);
+                }}
+                keyboardType="email-address"
+              />
+              <TextInput
+                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                placeholderTextColor={isDarkMode ? '#777' : '#999'}
+                placeholder="Contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+              <TouchableOpacity style={styles.loginButton}>
+                <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => alert('Restablecer contraseña')}>
+                <Text style={[styles.forgotPasswordText, isDarkMode ? styles.darkText : styles.lightText]}>
+                  ¿Olvidaste tu contraseña?
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -91,6 +93,9 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
+  },
+  centerContent: {
+    flex: 1,
     justifyContent: 'center',
     padding: 20,
     paddingBottom: Platform.OS === 'ios' ? 40 : 20,
@@ -107,10 +112,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logo: {
-    width: width * 0.5,
-    height: width * 0.5,
-    maxWidth: 200,
-    maxHeight: 200,
+    width: width * 0.4,
+    height: width * 0.4,
+    maxWidth: 150,
+    maxHeight: 150,
   },
   title: {
     fontSize: 24,
@@ -119,7 +124,7 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 350,
     alignSelf: 'center',
   },
   input: {

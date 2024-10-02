@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+const { width, height } = Dimensions.get('window');
 
 const Register = () => {
   const colorScheme = useColorScheme();
@@ -51,80 +54,73 @@ const Register = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>
-              <Text style={[styles.cancelText, isDarkMode ? styles.darkText : styles.lightText]}>Cancelar</Text>
-            </TouchableOpacity>
+        <ScrollView 
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
+          </TouchableOpacity>
+          <View style={styles.logoContainer}>
             <Image
               source={require('../../assets/images/carnetlify-white.png')}
               style={styles.logo}
               resizeMode="contain"
             />
+            <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Crea tu cuenta</Text>
           </View>
           <View style={styles.content}>
-            <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Crea tu cuenta</Text>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.inputLabel, isDarkMode ? styles.darkText : styles.lightText]}>Nombre</Text>
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                value={name}
-                onChangeText={(text) => {
-                  setName(text);
-                  validateName(text);
-                }}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.inputLabel, isDarkMode ? styles.darkText : styles.lightText]}>DNI</Text>
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                value={dni}
-                onChangeText={(text) => {
-                  const formattedDNI = formatDNI(text);
-                  setDni(formattedDNI);
-                  validateDNI(formattedDNI);
-                }}
-                maxLength={9}
-                keyboardType="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.inputLabel, isDarkMode ? styles.darkText : styles.lightText]}>Correo electrónico</Text>
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  validateEmail(text);
-                }}
-                keyboardType="email-address"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.inputLabel, isDarkMode ? styles.darkText : styles.lightText]}>Fecha de nacimiento</Text>
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                value={birthDate}
-                onChangeText={(text) => {
-                  const formattedDate = formatBirthDate(text);
-                  setBirthDate(formattedDate);
-                  validateBirthDate(formattedDate);
-                }}
-                maxLength={10}
-                keyboardType="numeric"
-                placeholder="DD/MM/AAAA"
-              />
-            </View>
-          </View>
-          <View style={styles.footer}>
-            <TouchableOpacity style={styles.nextButton}>
-              <Text style={styles.nextButtonText}>Siguiente</Text>
+            <TextInput
+              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+              placeholderTextColor={isDarkMode ? '#777' : '#999'}
+              placeholder="Nombre"
+              value={name}
+              onChangeText={(text) => {
+                setName(text);
+                validateName(text);
+              }}
+            />
+            <TextInput
+              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+              placeholderTextColor={isDarkMode ? '#777' : '#999'}
+              placeholder="DNI"
+              value={dni}
+              onChangeText={(text) => {
+                const formattedDNI = formatDNI(text);
+                setDni(formattedDNI);
+                validateDNI(formattedDNI);
+              }}
+              maxLength={9}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+              placeholderTextColor={isDarkMode ? '#777' : '#999'}
+              placeholder="Correo electrónico"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                validateEmail(text);
+              }}
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+              placeholderTextColor={isDarkMode ? '#777' : '#999'}
+              placeholder="Fecha de nacimiento (DD/MM/AAAA)"
+              value={birthDate}
+              onChangeText={(text) => {
+                const formattedDate = formatBirthDate(text);
+                setBirthDate(formattedDate);
+                validateBirthDate(formattedDate);
+              }}
+              maxLength={10}
+              keyboardType="numeric"
+            />
+            <TouchableOpacity style={styles.registerButton}>
+              <Text style={styles.registerButtonText}>Registrarse</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -148,58 +144,65 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: 20,
+    justifyContent: 'center',
+    padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 20,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 1,
+  },
+  logoContainer: {
     alignItems: 'center',
-    padding: 10,
+    justifyContent: 'center',
+    marginBottom: 40,
   },
-  cancelButton: {
-    padding: 5,
-  },
-  cancelText: {
-    fontSize: 16,
-  },
-  content: {
-    flex: 1,
-    padding: 15,
+  logo: {
+    width: width * 0.5,
+    height: width * 0.5,
+    maxWidth: 200,
+    maxHeight: 200,
   },
   title: {
-    fontSize: 24, 
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20, 
+    marginTop: 20,
+  },
+  content: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
   },
   input: {
     borderWidth: 1,
     borderColor: '#E1E8ED',
     borderRadius: 8,
     fontSize: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
   },
   darkInput: {
     color: '#FFFFFF',
-    borderColor: '#333',
-    backgroundColor: '#1A1A1A',
+    borderColor: '#444',
+    backgroundColor: '#222',
   },
   lightInput: {
     color: '#000000',
-    backgroundColor: '#F7F7F7',
+    backgroundColor: '#F5F8FA',
   },
-  footer: {
-    padding: 20,
-  },
-  nextButton: {
+  registerButton: {
     backgroundColor: '#1DA1F2',
-    borderRadius: 50,
-    paddingVertical: 12,
+    borderRadius: 8,
+    paddingVertical: 16,
     alignItems: 'center',
+    marginTop: 16,
   },
-  nextButtonText: {
+  registerButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   darkText: {
@@ -207,18 +210,6 @@ const styles = StyleSheet.create({
   },
   lightText: {
     color: '#000000',
-  },
-  logo: {
-    width: 50,
-    height: 50,
-  },
-  inputContainer: {
-    marginBottom: 15, 
-  },
-  inputLabel: {
-    fontSize: 14,
-    marginBottom: 3, 
-    fontWeight: '600',
   },
 });
 

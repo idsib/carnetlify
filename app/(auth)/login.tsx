@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+const { width, height } = Dimensions.get('window');
 
 const Login = () => {
   const colorScheme = useColorScheme();
@@ -21,52 +24,50 @@ const Login = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>
-              <Text style={[styles.cancelText, isDarkMode ? styles.darkText : styles.lightText]}>Cancelar</Text>
-            </TouchableOpacity>
+        <ScrollView 
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
+          </TouchableOpacity>
+          <View style={styles.logoContainer}>
             <Image
               source={require('../../assets/images/carnetlify-white.png')}
               style={styles.logo}
               resizeMode="contain"
             />
+            <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Iniciar sesión</Text>
           </View>
           <View style={styles.content}>
-            <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Iniciar sesión</Text>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.inputLabel, isDarkMode ? styles.darkText : styles.lightText]}>Correo electrónico</Text>
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  validateEmail(text);
-                }}
-                keyboardType="email-address"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.inputLabel, isDarkMode ? styles.darkText : styles.lightText]}>Contraseña</Text>
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-            </View>
+            <TextInput
+              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+              placeholderTextColor={isDarkMode ? '#777' : '#999'}
+              placeholder="Correo electrónico"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                validateEmail(text);
+              }}
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+              placeholderTextColor={isDarkMode ? '#777' : '#999'}
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            <TouchableOpacity style={styles.loginButton}>
+              <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => alert('Restablecer contraseña')}>
               <Text style={[styles.forgotPasswordText, isDarkMode ? styles.darkText : styles.lightText]}>
                 ¿Olvidaste tu contraseña?
               </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.footer}>
-            <TouchableOpacity style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>Iniciar sesión</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -90,58 +91,65 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: 30, 
+    justifyContent: 'center',
+    padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 20,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 1,
+  },
+  logoContainer: {
     alignItems: 'center',
-    padding: 20, 
+    justifyContent: 'center',
+    marginBottom: 40,
   },
-  cancelButton: {
-    padding: 5,
-  },
-  cancelText: {
-    fontSize: 16,
-  },
-  content: {
-    flex: 1,
-    padding: 25, 
+  logo: {
+    width: width * 0.5,
+    height: width * 0.5,
+    maxWidth: 200,
+    maxHeight: 200,
   },
   title: {
-    fontSize: 24, 
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 30, 
+    marginTop: 20,
+  },
+  content: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
   },
   input: {
     borderWidth: 1,
     borderColor: '#E1E8ED',
     borderRadius: 8,
     fontSize: 16,
-    paddingVertical: 12, 
-    paddingHorizontal: 15, 
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
   },
   darkInput: {
     color: '#FFFFFF',
-    borderColor: '#333',
-    backgroundColor: '#1A1A1A',
+    borderColor: '#444',
+    backgroundColor: '#222',
   },
   lightInput: {
     color: '#000000',
-    backgroundColor: '#F7F7F7',
-  },
-  footer: {
-    padding: 30, 
+    backgroundColor: '#F5F8FA',
   },
   loginButton: {
     backgroundColor: '#1DA1F2',
-    borderRadius: 50,
-    paddingVertical: 15, 
+    borderRadius: 8,
+    paddingVertical: 16,
     alignItems: 'center',
+    marginTop: 16,
   },
   loginButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   darkText: {
@@ -150,22 +158,10 @@ const styles = StyleSheet.create({
   lightText: {
     color: '#000000',
   },
-  logo: {
-    width: 50,
-    height: 50,
-  },
-  inputContainer: {
-    marginBottom: 25,
-  },
-  inputLabel: {
-    fontSize: 14,
-    marginBottom: 5,
-    fontWeight: '600',
-  },
   forgotPasswordText: {
     fontSize: 14,
-    textAlign: 'right',
-    marginTop: 15, 
+    textAlign: 'center',
+    marginTop: 16,
     color: '#1DA1F2',
   },
 });

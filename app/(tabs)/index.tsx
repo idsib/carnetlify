@@ -1,9 +1,28 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Image, useColorScheme } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, useColorScheme, Image, Dimensions } from 'react-native';
+import Splash from '../../components/Splash';
+import { AntDesign } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+
+const { width } = Dimensions.get('window');
 
 const MainMenu = () => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <Splash onFinish={() => setIsLoading(false)} />;
+  }
 
   return (
     <SafeAreaView style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
@@ -11,18 +30,39 @@ const MainMenu = () => {
         <Image
           source={require('../../assets/images/carnetlify.png')}
           style={styles.logo}
+          resizeMode="contain"
         />
-        <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Carnetlify</Text>
-        <Text style={[styles.subtitle, isDarkMode ? styles.darkText : styles.lightText]}>Tu camino hacia el carnet de conducir</Text>
+        <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
+          Prepárate para tu examen de conducir con Carnetlify
+        </Text>
         
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.button, isDarkMode ? styles.darkButton : styles.lightButton]} onPress={() => alert('Iniciar sesión')}>
-            <Text style={[styles.buttonText, isDarkMode ? styles.darkButtonText : styles.lightButtonText]}>Iniciar sesión</Text>
+          <TouchableOpacity style={styles.button} onPress={() => alert('Continuar con Google')}>
+            <AntDesign name="google" size={20} color="#000000" style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>Continuar con Google</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.signUpButton, isDarkMode ? styles.darkSignUpButton : styles.lightSignUpButton]} onPress={() => alert('Registrarse')}>
-            <Text style={[styles.buttonText, styles.signUpText, isDarkMode ? styles.darkSignUpText : styles.lightSignUpText]}>Registrarse</Text>
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={[styles.dividerText, isDarkMode ? styles.darkText : styles.lightText]}>o</Text>
+            <View style={styles.dividerLine} />
+          </View>
+          <TouchableOpacity 
+            style={styles.createAccountButton} 
+            onPress={() => router.push('/(auth)/register')}
+          >
+            <Text style={styles.createAccountButtonText}>Crear cuenta</Text>
           </TouchableOpacity>
         </View>
+        
+        <Text style={[styles.termsText, isDarkMode ? styles.darkText : styles.lightText]}>
+          Al registrarte, aceptas los <Text style={styles.linkText}>Términos de servicio</Text> y la <Text style={styles.linkText}>Política de privacidad</Text>, incluida la política de <Text style={styles.linkText}>Uso de Cookies</Text>.
+        </Text>
+        
+        <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+          <Text style={[styles.loginText, isDarkMode ? styles.darkText : styles.lightText]}>
+            ¿Ya tienes una cuenta? <Text style={styles.linkText}>Inicia sesión</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -40,72 +80,88 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
+    paddingTop: 50,
+    paddingBottom: 20,
   },
   logo: {
-    width: 250,
-    height: 250,
+    width: 200,
+    height: 200,
     marginBottom: 10,
   },
   title: {
-    fontSize: 40,
+    fontSize: 23,
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
     textAlign: 'center',
-    marginBottom: 40,
-  },
-  lightText: {
-    color: '#000000',
-  },
-  darkText: {
-    color: '#FFFFFF',
+    marginBottom: 20, 
   },
   buttonContainer: {
     width: '100%',
   },
   button: {
-    paddingVertical: 15,
-    borderRadius: 5,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
-  },
-  lightButton: {
-    backgroundColor: '#405DE6',
-  },
-  darkButton: {
+    justifyContent: 'center',
     backgroundColor: '#FFFFFF',
+    borderRadius: 50,
+    paddingVertical: 10,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
+  },
+  buttonIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
   },
   buttonText: {
-    fontSize: 18,
+    color: '#000000',
+    fontSize: 16,
     fontWeight: '600',
   },
-  lightButtonText: {
-    color: '#FFFFFF',
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
   },
-  darkButtonText: {
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E1E8ED',
+  },
+  dividerText: {
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
+  createAccountButton: {
+    backgroundColor: '#1DA1F2',
+    borderRadius: 50,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  createAccountButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  termsText: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  linkText: {
+    color: '#1DA1F2',
+  },
+  loginText: {
+    fontSize: 14,
+    marginTop: 20,
+  },
+  lightText: {
     color: '#000000',
   },
-  signUpButton: {
-    borderWidth: 1,
-  },
-  lightSignUpButton: {
-    borderColor: '#405DE6',
-    backgroundColor: 'transparent',
-  },
-  darkSignUpButton: {
-    borderColor: '#FFFFFF',
-    backgroundColor: 'transparent',
-  },
-  signUpText: {},
-  lightSignUpText: {
-    color: '#405DE6',
-  },
-  darkSignUpText: {
+  darkText: {
     color: '#FFFFFF',
   },
 });

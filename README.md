@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="@carnetlify.png" alt="Carnetlify Logo" width="200"/>
+  <img src="assets/images/carnetlify.png" alt="Carnetlify Logo" width="200"/>
 </p>
 
 <h1 align="center">Carnetlify</h1>

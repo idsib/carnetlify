@@ -25,11 +25,11 @@ Para iniciar el desarrollo de Carnetlify, sigue estos pasos:
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/tu-usuario/carnetlify.git
+   git clone https://github.com/idsib/carnetlify.git
    cd carnetlify
    ```
 
-2. Instala las dependencias:
+2. Instala las dependencias:b
    ```bash
    npm install
    ```

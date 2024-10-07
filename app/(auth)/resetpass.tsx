@@ -6,13 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
-const Login = () => {
+const ResetPassword = () => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const router = useRouter();
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const validateEmail = (text: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
@@ -40,7 +39,7 @@ const Login = () => {
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Iniciar sesión</Text>
+              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Restablecer contraseña</Text>
             </View>
             <View style={styles.content}>
               <TextInput
@@ -54,20 +53,12 @@ const Login = () => {
                 }}
                 keyboardType="email-address"
               />
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-              <TouchableOpacity style={styles.loginButton}>
-                <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+              <TouchableOpacity style={styles.resetButton}>
+                <Text style={styles.resetButtonText}>Enviar enlace de restablecimiento</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => router.push('/resetpass')}>
-                <Text style={[styles.forgotPasswordText, isDarkMode ? styles.darkText : styles.lightText]}>
-                  ¿Olvidaste tu contraseña?
+              <TouchableOpacity onPress={() => router.push('/login')}>
+                <Text style={[styles.backToLoginText, isDarkMode ? styles.darkText : styles.lightText]}>
+                  Volver al inicio de sesión
                 </Text>
               </TouchableOpacity>
             </View>
@@ -145,14 +136,14 @@ const styles = StyleSheet.create({
     color: '#000000',
     backgroundColor: '#F5F8FA',
   },
-  loginButton: {
+  resetButton: {
     backgroundColor: '#1DA1F2',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 16,
   },
-  loginButtonText: {
+  resetButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
@@ -163,7 +154,7 @@ const styles = StyleSheet.create({
   lightText: {
     color: '#000000',
   },
-  forgotPasswordText: {
+  backToLoginText: {
     fontSize: 14,
     textAlign: 'center',
     marginTop: 16,
@@ -171,4 +162,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default ResetPassword;

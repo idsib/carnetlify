@@ -99,6 +99,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
+    maxWidth: 450,
+    alignSelf: 'center',
   },
   button: {
     flexDirection: 'row',
@@ -106,10 +108,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 50,
-    paddingVertical: 10,
+    paddingVertical: 12,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#E1E8ED',
+    maxWidth: 350,
+    alignSelf: 'center',
+    width: '100%',
   },
   buttonIcon: {
     width: 20,
@@ -118,7 +123,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#000000',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   divider: {
@@ -138,12 +143,15 @@ const styles = StyleSheet.create({
   createAccountButton: {
     backgroundColor: '#1DA1F2',
     borderRadius: 50,
-    paddingVertical: 10,
+    paddingVertical: 12,
     alignItems: 'center',
+    maxWidth: 350,
+    alignSelf: 'center',
+    width: '100%',
   },
   createAccountButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   termsText: {

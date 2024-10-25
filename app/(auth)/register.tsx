@@ -1,8 +1,23 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  SafeAreaView, 
+  useColorScheme, 
+  Image, 
+  KeyboardAvoidingView, 
+  Platform, 
+  ScrollView, 
+  Dimensions 
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../src/firebase/config'; // Ajusta el path según tu estructura
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,30 +30,17 @@ const Register = () => {
   const [dni, setDni] = useState('');
   const [email, setEmail] = useState('');
   const [birthDate, setBirthDate] = useState('');
+  const [password, setPassword] = useState('');
 
-  const validateName = (text: string) => {
-    return text.length >= 2 && text.length <= 50;
-  };
-
-  const validateDNI = (text: string) => {
-    return /^\d{8}[a-zA-Z]$/.test(text);
-  };
-
-  const validateEmail = (text: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
-  };
-
-  const validateBirthDate = (text: string) => {
-    return /^\d{2}\/\d{2}\/\d{4}$/.test(text);
-  };
+  const validateName = (text: string) => text.length >= 2 && text.length <= 50;
+  const validateDNI = (text: string) => /^\d{8}[a-zA-Z]$/.test(text);
+  const validateEmail = (text: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+  const validateBirthDate = (text: string) => /^\d{2}\/\d{2}\/\d{4}$/.test(text);
 
   const formatDNI = (text: string) => {
     const numbers = text.replace(/\D/g, '');
     const letter = text.slice(-1).toUpperCase();
-    if (numbers.length === 8 && /[A-Z]/.test(letter)) {
-      return `${numbers}${letter}`;
-    }
-    return numbers;
+    return numbers.length === 8 && /[A-Z]/.test(letter) ? `${numbers}${letter}` : numbers;
   };
 
   const formatBirthDate = (text: string) => {
@@ -46,6 +48,16 @@ const Register = () => {
     if (numbers.length <= 2) return numbers;
     if (numbers.length <= 4) return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
     return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
+  };
+
+  const handleRegister = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('Usuario registrado:', userCredential.user);
+      // Lógica después del registro
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+    }
   };
 
   return (
@@ -110,6 +122,14 @@ const Register = () => {
               <TextInput
                 style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
                 placeholderTextColor={isDarkMode ? '#777' : '#999'}
+                placeholder="Contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+              <TextInput
+                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                placeholderTextColor={isDarkMode ? '#777' : '#999'}
                 placeholder="Fecha de nacimiento (DD/MM/AAAA)"
                 value={birthDate}
                 onChangeText={(text) => {
@@ -120,7 +140,7 @@ const Register = () => {
                 maxLength={10}
                 keyboardType="numeric"
               />
-              <TouchableOpacity style={styles.registerButton}>
+              <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
                 <Text style={styles.registerButtonText}>Registrarse</Text>
               </TouchableOpacity>
             </View>

@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  SafeAreaView, 
+  useColorScheme, 
+  KeyboardAvoidingView, 
+  Platform, 
+  ScrollView, 
+  Dimensions 
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../src/firebase/config'; // Ajusta el path según tu estructura
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const Login = () => {
   const colorScheme = useColorScheme();
@@ -13,9 +27,28 @@ const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const validateEmail = (text: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+  const validateEmail = (text: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+
+  const handleLogin = async () => {
+    if (!validateEmail(email)) {
+      setError('Por favor, introduce un correo electrónico válido.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Usuario iniciado sesión:', userCredential.user);
+      router.push('../tabs/index'); // Redirigir al home después del inicio de sesión
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      setError('Correo electrónico o contraseña incorrectos.');
+    }
   };
 
   return (
@@ -35,12 +68,16 @@ const Login = () => {
               <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
             </TouchableOpacity>
             <View style={styles.logoContainer}>
+<<<<<<< Updated upstream
               <Image
                 source={isDarkMode ? require('../../assets/images/carnetlify-white.png') : require('../../assets/images/carnetlify_black.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />
               <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Iniciar sesión</Text>
+=======
+              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Inicia sesión</Text>
+>>>>>>> Stashed changes
             </View>
             <View style={styles.content}>
               <TextInput
@@ -50,7 +87,7 @@ const Login = () => {
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  validateEmail(text);
+                  setError('');
                 }}
                 keyboardType="email-address"
               />
@@ -59,17 +96,24 @@ const Login = () => {
                 placeholderTextColor={isDarkMode ? '#777' : '#999'}
                 placeholder="Contraseña"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setError('');
+                }}
                 secureTextEntry
               />
-              <TouchableOpacity style={styles.loginButton}>
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.loginButtonText}>Iniciar sesión</Text>
               </TouchableOpacity>
+<<<<<<< Updated upstream
               <TouchableOpacity onPress={() => router.push('/resetpass')}>
                 <Text style={[styles.forgotPasswordText, isDarkMode ? styles.darkText : styles.lightText]}>
                   ¿Olvidaste tu contraseña?
                 </Text>
               </TouchableOpacity>
+=======
+>>>>>>> Stashed changes
             </View>
           </View>
         </ScrollView>
@@ -111,12 +155,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 40,
   },
-  logo: {
-    width: width * 0.4,
-    height: width * 0.4,
-    maxWidth: 150,
-    maxHeight: 150,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -157,17 +195,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
   darkText: {
     color: '#FFFFFF',
   },
   lightText: {
     color: '#000000',
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 16,
-    color: '#1DA1F2',
   },
 });
 

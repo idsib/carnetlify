@@ -21,7 +21,10 @@ import { auth } from '../../src/firebase/config'; // Ajusta el path según tu es
 
 const { width, height } = Dimensions.get('window');
 
+// Función de registro
 const Register = () => {
+
+  // Parametros
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const router = useRouter();
@@ -78,7 +81,7 @@ const Register = () => {
             </TouchableOpacity>
             <View style={styles.logoContainer}>
               <Image
-                source={isDarkMode ? require('../../assets/images/carnetlify-white.png') : require('../../assets/images/carnetlify_black.png')}
+                source={require('../../assets/images/carnetlify-white.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />

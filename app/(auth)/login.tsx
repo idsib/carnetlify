@@ -68,16 +68,7 @@ const Login = () => {
               <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
             </TouchableOpacity>
             <View style={styles.logoContainer}>
-<<<<<<< Updated upstream
-              <Image
-                source={isDarkMode ? require('../../assets/images/carnetlify-white.png') : require('../../assets/images/carnetlify_black.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Iniciar sesión</Text>
-=======
               <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Inicia sesión</Text>
->>>>>>> Stashed changes
             </View>
             <View style={styles.content}>
               <TextInput
@@ -106,14 +97,6 @@ const Login = () => {
               <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.loginButtonText}>Iniciar sesión</Text>
               </TouchableOpacity>
-<<<<<<< Updated upstream
-              <TouchableOpacity onPress={() => router.push('/resetpass')}>
-                <Text style={[styles.forgotPasswordText, isDarkMode ? styles.darkText : styles.lightText]}>
-                  ¿Olvidaste tu contraseña?
-                </Text>
-              </TouchableOpacity>
-=======
->>>>>>> Stashed changes
             </View>
           </View>
         </ScrollView>

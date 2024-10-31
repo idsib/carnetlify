@@ -1,7 +1,7 @@
 const express = require('express');
 const admin = require('firebase-admin');
 const { MongoClient } = require('mongodb');
-require('dotenv').config();
+require('dotenv').config({ path: './url.env' });
 
 // Inicializar Firebase Admin
 admin.initializeApp({
@@ -17,7 +17,7 @@ let usersCollection;
 
 async function connectDB() {
   await client.connect();
-  const db = client.db('your-db-name');
+  const db = client.db('Carnetlify');
   usersCollection = db.collection('users');
   console.log('Conectado a MongoDB');
 }

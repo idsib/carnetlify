@@ -18,3 +18,16 @@ const app = initializeApp(firebaseConfig);
 
 // Inicializa y exporta la autenticación
 export const auth = getAuth(app);
+
+// Función para registrar usuarios en el backend
+export const registerUserInBackend = async (userData) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userData),
+  });
+};

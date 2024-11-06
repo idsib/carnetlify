@@ -48,7 +48,7 @@ const MainMenu = () => {
           </View>
           <TouchableOpacity 
             style={styles.createAccountButton} 
-            onPress={() => router.push('/(auth)/registerMongoo')}
+            onPress={() => router.push('/(auth)/registerMongo')}
           >
             <Text style={styles.createAccountButtonText}>Crear cuenta</Text>
           </TouchableOpacity>

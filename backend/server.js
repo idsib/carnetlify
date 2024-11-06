@@ -1,6 +1,7 @@
 const express = require('express');
 const admin = require('firebase-admin');
 const { MongoClient } = require('mongodb');
+const cors = require('cors'); // Importa cors
 require('dotenv').config({ path: './url.env' });
 
 // Inicializar Firebase Admin
@@ -9,6 +10,10 @@ admin.initializeApp({
 });
 
 const app = express();
+
+// Habilita CORS para todas las rutas
+app.use(cors());
+
 app.use(express.json());
 
 // Conexión a MongoDB

@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-const HEADER_HEIGHT = 120; // Ajusta este valor según el tamaño de tu logo y calendario
+const HEADER_HEIGHT = 120; 
 
 interface DayButtonProps {
   day: string;
@@ -61,22 +61,22 @@ export default function MainScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Animated.View style={[styles.header, { opacity: headerOpacity }]}>
-        <Image 
-          source={require('@/assets/images/carnetlify.png')} 
+        <Image
+          source={require('@/assets/images/carnetlify.png')}
           style={styles.logo}
           resizeMode="contain"
         />
         <View style={styles.daysContainer}>
           {days.map((day, index) => (
-            <DayButton 
-              key={index} 
-              day={day} 
-              active={index === adjustedToday} 
+            <DayButton
+              key={index}
+              day={day}
+              active={index === adjustedToday}
             />
           ))}
         </View>
       </Animated.View>
-      
+
       <Animated.ScrollView
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -85,7 +85,7 @@ export default function MainScreen() {
         scrollEventThrottle={16}
       >
         <View style={{ height: HEADER_HEIGHT }} /> {/* Espacio para el header */}
-        
+
         <Text style={styles.title}>Mis lecciones</Text>
 
         <View style={styles.tabContainer}>
@@ -109,7 +109,7 @@ export default function MainScreen() {
           title="Lección 02 - Luces para ser vistos"
           duration="15m"
         />
-                <LessonCard
+        <LessonCard
           image="https://example.com/cyclist.jpg"
           block="Bloque 2"
           title="Lección 03 - Utilización del arcén"

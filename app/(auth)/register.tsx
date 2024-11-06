@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  useColorScheme, 
-  Image, 
-  KeyboardAvoidingView, 
-  Platform, 
-  ScrollView, 
-  Dimensions 
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  useColorScheme,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../src/firebase/config'; // Ajusta el path según tu estructura
+import { auth } from '../../src/firebase/config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -71,7 +71,7 @@ const Register = () => {
         style={styles.keyboardAvoidingView}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollViewContent}
           keyboardShouldPersistTaps="handled"
         >

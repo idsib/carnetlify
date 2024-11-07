@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated, Dimensions, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -10,12 +10,36 @@ interface DayButtonProps {
   active: boolean;
 }
 
-const DayButton: React.FC<DayButtonProps> = ({ day, active }) => (
-  <TouchableOpacity style={[styles.dayButton, active && styles.activeDayButton]}>
-    <Text style={[styles.dayButtonText, active && styles.activeDayButtonText]}>{day}</Text>
-    {active && <View style={styles.activeDot} />}
-  </TouchableOpacity>
-);
+const DayButton: React.FC<DayButtonProps> = ({ day, active }) => {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+
+  return (
+    <TouchableOpacity 
+      style={[
+        styles.dayButton, 
+        active && isDarkMode && { backgroundColor: '#3478F6' },
+        isDarkMode && styles.darkDayButton
+      ]}
+    >
+      <Text 
+        style={[
+          styles.dayButtonText, 
+          active && isDarkMode && styles.activeDayButtonText, 
+          isDarkMode && styles.darkDayButtonText
+        ]}
+      >
+        {day}
+      </Text>
+      {active && (
+        <View style={[
+          styles.activeDot,
+          { backgroundColor: isDarkMode ? '#3478F6' : '#007AFF' }
+        ]} />
+      )}
+    </TouchableOpacity>
+  );
+};
 
 interface LessonCardProps {
   image: string;
@@ -24,19 +48,24 @@ interface LessonCardProps {
   duration: string;
 }
 
-const LessonCard: React.FC<LessonCardProps> = ({ image, block, title, duration }) => (
-  <View style={styles.lessonCard}>
-    <Image source={{ uri: image }} style={styles.lessonImage} />
-    <View style={styles.lessonInfo}>
-      <Text style={styles.lessonBlock}>{block}</Text>
-      <Text style={styles.lessonTitle}>{title}</Text>
-      <View style={styles.lessonDuration}>
-        <Ionicons name="time-outline" size={16} color="#666" />
-        <Text style={styles.lessonDurationText}>{duration}</Text>
+const LessonCard: React.FC<LessonCardProps> = ({ image, block, title, duration }) => {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+
+  return (
+    <View style={[styles.lessonCard, isDarkMode ? styles.darkLessonCard : styles.lightLessonCard]}>
+      <Image source={{ uri: image }} style={styles.lessonImage} />
+      <View style={styles.lessonInfo}>
+        <Text style={[styles.lessonBlock, isDarkMode ? styles.darkText : styles.lightText]}>{block}</Text>
+        <Text style={[styles.lessonTitle, isDarkMode ? styles.darkText : styles.lightText]}>{title}</Text>
+        <View style={styles.lessonDuration}>
+          <Ionicons name="time-outline" size={16} color={isDarkMode ? "#FFFFFF" : "#666"} />
+          <Text style={[styles.lessonDurationText, isDarkMode ? styles.darkText : styles.lightText]}>{duration}</Text>
+        </View>
       </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default function MainScreen() {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -44,6 +73,8 @@ export default function MainScreen() {
   const today = new Date().getDay();
   const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   const adjustedToday = today === 0 ? 6 : today - 1;
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
 
   const headerOpacity = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
@@ -59,8 +90,8 @@ export default function MainScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.View style={[styles.header, { opacity: headerOpacity }]}>
+    <SafeAreaView style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
+      <Animated.View style={[styles.header, { opacity: headerOpacity }, isDarkMode ? styles.darkHeader : styles.lightHeader]}>
         <Image
           source={require('@/assets/images/carnetlify.png')}
           style={styles.logo}
@@ -84,9 +115,9 @@ export default function MainScreen() {
         )}
         scrollEventThrottle={16}
       >
-        <View style={{ height: HEADER_HEIGHT }} /> {/* Espacio para el header */}
+        <View style={{ height: HEADER_HEIGHT }} /> 
 
-        <Text style={styles.title}>Mis lecciones</Text>
+        <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Mis lecciones</Text>
 
         <View style={styles.tabContainer}>
           <TouchableOpacity style={[styles.tab, styles.activeTab]}>
@@ -123,22 +154,22 @@ export default function MainScreen() {
         />
       </Animated.ScrollView>
 
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, isDarkMode ? styles.darkTabBar : styles.lightTabBar]}>
         <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="home" size={24} color="#007AFF" />
-          <Text style={styles.tabBarText}>Inicio</Text>
+          <Ionicons name="home" size={24} color={isDarkMode ? "#3478F6" : "#007AFF"} />
+          <Text style={[styles.tabBarText, { color: isDarkMode ? "#3478F6" : "#007AFF" }]}>Inicio</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="calendar" size={24} color="#666" />
-          <Text style={styles.tabBarText}>Reservar</Text>
+          <Ionicons name="calendar" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
+          <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Reservar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="chatbubbles" size={24} color="#666" />
-          <Text style={styles.tabBarText}>Mensajes</Text>
+          <Ionicons name="chatbubbles" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
+          <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Mensajes</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="person" size={24} color="#666" />
-          <Text style={styles.tabBarText}>Perfil</Text>
+          <Ionicons name="person" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
+          <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Perfil</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -148,7 +179,12 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  lightContainer: {
     backgroundColor: '#F5F5F5',
+  },
+  darkContainer: {
+    backgroundColor: '#000000',
   },
   header: {
     position: 'absolute',
@@ -156,14 +192,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1,
-    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     paddingVertical: 10,
   },
+  lightHeader: {
+    backgroundColor: '#F5F5F5',
+  },
+  darkHeader: {
+    backgroundColor: '#1C1C1E',
+  },
   logo: {
-    width: 250,
-    height: 150,
-    marginBottom: 10,
+    width: Dimensions.get('window').width * 0.5,
+    height: 100,
+    marginTop: 20,
   },
   daysContainer: {
     flexDirection: 'row',
@@ -179,13 +220,16 @@ const styles = StyleSheet.create({
     marginRight: 8,
     backgroundColor: '#E0E0E0',
   },
-  activeDayButton: {
-    backgroundColor: '#007AFF',
+  darkDayButton: {
+    backgroundColor: '#333333',
   },
   dayButtonText: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#666',
+  },
+  darkDayButtonText: {
+    color: '#FFFFFF',
   },
   activeDayButtonText: {
     color: 'white',
@@ -197,27 +241,6 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: '#007AFF',
-  },
-  profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  flame: {
-    backgroundColor: '#007AFF',
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  flameText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  profileName: {
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   title: {
     fontSize: 24,
@@ -249,11 +272,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   lessonCard: {
-    backgroundColor: 'white',
     borderRadius: 8,
     marginHorizontal: 16,
     marginBottom: 16,
     overflow: 'hidden',
+  },
+  lightLessonCard: {
+    backgroundColor: 'white',
+  },
+  darkLessonCard: {
+    backgroundColor: '#1C1C1E',
   },
   lessonImage: {
     width: '100%',
@@ -264,7 +292,6 @@ const styles = StyleSheet.create({
   },
   lessonBlock: {
     fontSize: 12,
-    color: '#666',
     marginBottom: 4,
   },
   lessonTitle: {
@@ -278,16 +305,18 @@ const styles = StyleSheet.create({
   },
   lessonDurationText: {
     fontSize: 14,
-    color: '#666',
     marginLeft: 4,
   },
   tabBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
     paddingVertical: 8,
+  },
+  lightTabBar: {
     backgroundColor: 'white',
+  },
+  darkTabBar: {
+    backgroundColor: '#1C1C1E',
   },
   tabBarItem: {
     alignItems: 'center',
@@ -296,5 +325,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     color: '#666',
+  },
+  lightText: {
+    color: '#000000',
+  },
+  darkText: {
+    color: '#FFFFFF',
   },
 });

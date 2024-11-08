@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Dimensions
+  Dimensions,
+  Image
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -68,7 +69,17 @@ const Login = () => {
               <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFFFFF' : '#000000'} />
             </TouchableOpacity>
             <View style={styles.logoContainer}>
-              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Inicia sesión</Text>
+              <Image
+                source={isDarkMode 
+                  ? require('@/assets/images/carnetlify-white.png')
+                  : require('@/assets/images/carnetlify-black.png')
+                }
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
+                Inicia sesión
+              </Text>
             </View>
             <View style={styles.content}>
               <TextInput
@@ -137,6 +148,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 40,
+  },
+  logo: {
+    width: width * 0.4,
+    height: width * 0.4,
+    maxWidth: 150,
+    maxHeight: 150,
   },
   title: {
     fontSize: 24,

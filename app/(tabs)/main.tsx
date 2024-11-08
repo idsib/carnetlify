@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated, Dimensions, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const HEADER_HEIGHT = 120; 
 
@@ -68,6 +69,7 @@ const LessonCard: React.FC<LessonCardProps> = ({ image, block, title, duration }
 };
 
 export default function MainScreen() {
+  const router = useRouter();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [headerVisible, setHeaderVisible] = useState(true);
   const today = new Date().getDay();
@@ -167,7 +169,10 @@ export default function MainScreen() {
           <Ionicons name="chatbubbles" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
           <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Mensajes</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabBarItem}>
+        <TouchableOpacity 
+          style={styles.tabBarItem}
+          onPress={() => router.push('/profile')}
+        >
           <Ionicons name="person" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
           <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Perfil</Text>
         </TouchableOpacity>

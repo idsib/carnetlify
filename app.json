@@ -31,6 +31,9 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "fonts": {
+      "Archivo": "./assets/fonts/Archivo-Bold.ttf"
     }
   }
 }

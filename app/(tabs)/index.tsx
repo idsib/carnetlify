@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, useColorScheme,
 import Splash from '../../components/Splash';
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { MotiView, MotiText } from 'moti';
+import { useFonts } from 'expo-font';
 
 const { width } = Dimensions.get('window');
 
@@ -11,6 +13,9 @@ const MainMenu = () => {
   const isDarkMode = colorScheme === 'dark';
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const [fontsLoaded] = useFonts({
+    'Archivo': require('../../assets/fonts/Archivo-Bold.ttf'),
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -26,17 +31,66 @@ const MainMenu = () => {
 
   return (
     <SafeAreaView style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
-      <View style={styles.content}>
-        <Image
-          source={require('../../assets/images/carnetlify.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
-          Prepárate para tu examen de conducir con Carnetlify
-        </Text>
+      <MotiView 
+        style={styles.content}
+        from={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'timing', duration: 1000 }}
+      >
+        <MotiView
+          from={{ translateY: -50, opacity: 0 }}
+          animate={{ translateY: 0, opacity: 1 }}
+          transition={{ type: 'spring', delay: 300 }}
+        >
+          <MotiView style={styles.logoContainer}>
+            <Image
+              source={require('../../assets/images/carnetlify.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            
+            <View style={styles.brandTextContainer}>
+              {'CARNETLIFY'.split('').map((letter, index) => (
+                <MotiText
+                  key={index}
+                  style={[styles.brandText]}
+                  from={{
+                    opacity: 0,
+                    translateY: 20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    translateY: 0,
+                  }}
+                  transition={{
+                    type: 'timing',
+                    duration: 500,
+                    delay: 300 + (index * 100),
+                  }}
+                >
+                  {letter}
+                </MotiText>
+              ))}
+            </View>
+          </MotiView>
+        </MotiView>
+
+        <MotiView
+          from={{ translateX: -100, opacity: 0 }}
+          animate={{ translateX: 0, opacity: 1 }}
+          transition={{ type: 'spring', delay: 500 }}
+        >
+          <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
+            Prepárate para tu examen de conducir con Carnetlify
+          </Text>
+        </MotiView>
         
-        <View style={styles.buttonContainer}>
+        <MotiView 
+          style={styles.buttonContainer}
+          from={{ translateY: 100, opacity: 0 }}
+          animate={{ translateY: 0, opacity: 1 }}
+          transition={{ type: 'spring', delay: 700 }}
+        >
           <TouchableOpacity style={styles.button} onPress={() => alert('Continuar con Google')}>
             <AntDesign name="google" size={20} color="#000000" style={styles.buttonIcon} />
             <Text style={styles.buttonText}>Continuar con Google</Text>
@@ -52,18 +106,30 @@ const MainMenu = () => {
           >
             <Text style={styles.createAccountButtonText}>Crear cuenta</Text>
           </TouchableOpacity>
-        </View>
+        </MotiView>
         
-        <Text style={[styles.termsText, isDarkMode ? styles.darkText : styles.lightText]}>
-          Al registrarte, aceptas los <Text style={styles.linkText}>Términos de servicio</Text> y la <Text style={styles.linkText}>Política de privacidad</Text>, incluida la política de <Text style={styles.linkText}>Uso de Cookies</Text>.
-        </Text>
-        
-        <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-          <Text style={[styles.loginText, isDarkMode ? styles.darkText : styles.lightText]}>
-            ¿Ya tienes una cuenta? <Text style={styles.linkText}>Inicia sesión</Text>
+        <MotiView
+          from={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ type: 'timing', delay: 1000, duration: 500 }}
+        >
+          <Text style={[styles.termsText, isDarkMode ? styles.darkText : styles.lightText]}>
+            Al registrarte, aceptas los <Text style={styles.linkText}>Términos de servicio</Text> y la <Text style={styles.linkText}>Política de privacidad</Text>, incluida la política de <Text style={styles.linkText}>Uso de Cookies</Text>.
           </Text>
-        </TouchableOpacity>
-      </View>
+        </MotiView>
+        
+        <MotiView
+          from={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ type: 'timing', delay: 1200, duration: 500 }}
+        >
+          <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+            <Text style={[styles.loginText, isDarkMode ? styles.darkText : styles.lightText]}>
+              ¿Ya tienes una cuenta? <Text style={styles.linkText}>Inicia sesión</Text>
+            </Text>
+          </TouchableOpacity>
+        </MotiView>
+      </MotiView>
     </SafeAreaView>
   );
 };
@@ -82,17 +148,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 30,
-    paddingTop: 50,
-    paddingBottom: 20,
+    paddingHorizontal: width < 380 ? 20 : 30,
+    paddingTop: width < 380 ? 30 : 50,
+    paddingBottom: width < 380 ? 15 : 20,
+  },
+  logoContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 10,
+    width: width < 380 ? 150 : 200,
+    height: width < 380 ? 150 : 200,
+    marginBottom: width < 380 ? 5 : 10,
   },
   title: {
-    fontSize: 23,
+    fontSize: width < 380 ? 20 : 23,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20, 
@@ -123,7 +194,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#000000',
-    fontSize: 18,
+    fontSize: width < 380 ? 16 : 18,
     fontWeight: '600',
   },
   divider: {
@@ -171,6 +242,23 @@ const styles = StyleSheet.create({
   },
   darkText: {
     color: '#FFFFFF',
+  },
+  brandTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -5,
+    marginBottom: 25,
+  },
+  brandText: {
+    fontFamily: 'Archivo',
+    fontSize: width < 380 ? 32 : 40,
+    color: '#1DA1F2',
+    letterSpacing: width < 380 ? 2 : 3,
+    textShadowColor: 'rgba(29, 161, 242, 0.8)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
+    textTransform: 'uppercase',
   },
 });
 

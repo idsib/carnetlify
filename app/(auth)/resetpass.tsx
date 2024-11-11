@@ -35,7 +35,10 @@ const ResetPassword = () => {
             </TouchableOpacity>
             <View style={styles.logoContainer}>
               <Image
-                source={isDarkMode ? require('../../assets/images/carnetlify-white.png') : require('../../assets/images/carnetlify_black.png')}
+                source={isDarkMode 
+                  ? require('@/assets/images/carnetlify-white.png')
+                  : require('@/assets/images/carnetlify-black.png')
+                }
                 style={styles.logo}
                 resizeMode="contain"
               />

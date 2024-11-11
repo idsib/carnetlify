@@ -93,7 +93,10 @@ const Register = () => {
             </TouchableOpacity>
             <View style={styles.logoContainer}>
               <Image
-                source={require('../../assets/images/carnetlify-white.png')}
+                source={isDarkMode 
+                  ? require('../../assets/images/carnetlify-white.png')
+                  : require('../../assets/images/carnetlify-black.png')
+                }
                 style={styles.logo}
                 resizeMode="contain"
               />

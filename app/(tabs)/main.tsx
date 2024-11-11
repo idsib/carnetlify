@@ -131,26 +131,26 @@ export default function MainScreen() {
         </View>
 
         <LessonCard
-          image="https://example.com/cyclist.jpg"
-          block="Bloque 2"
-          title="Lección 01 - Utilización del arcén"
+          image="https://images.pexels.com/photos/5066593/pexels-photo-5066593.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          block="Bloque 1"
+          title="Lección 01 -  Definiciones relativas al factor humano"
           duration="10m"
         />
         <LessonCard
-          image="https://example.com/car.jpg"
+          image="https://img.freepik.com/free-photo/traffic-light-city-streets_23-2149092106.jpg"
           block="Bloque 2"
-          title="Lección 02 - Luces para ser vistos"
+          title="Lección 02 - 1.2 Definiciones relativas al factor vehículo"
           duration="15m"
         />
         <LessonCard
           image="https://example.com/cyclist.jpg"
-          block="Bloque 2"
-          title="Lección 03 - Utilización del arcén"
+          block="Bloque 3"
+          title="Lección 03 - Definiciones relativas al factor vía"
           duration="10m"
         />
         <LessonCard
           image="https://example.com/car.jpg"
-          block="Bloque 2"
+          block="Bloque "
           title="Lección 04 - Luces para ser vistos"
           duration="15m"
         />

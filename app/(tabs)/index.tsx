@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { MotiView, MotiText } from 'moti';
 import { useFonts } from 'expo-font';
+import { BlurView } from 'expo-blur';
 
 const { width } = Dimensions.get('window');
 
@@ -43,11 +44,13 @@ const MainMenu = () => {
           transition={{ type: 'spring', delay: 300 }}
         >
           <MotiView style={styles.logoContainer}>
-            <Image
-              source={require('../../assets/images/carnetlify.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
+            <BlurView intensity={50} style={styles.blurContainer}>
+              <Image
+                source={require('../../assets/images/carnetlify.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </BlurView>
             
             <View style={styles.brandTextContainer}>
               {'CARNETLIFY'.split('').map((letter, index) => (
@@ -259,6 +262,10 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
     textTransform: 'uppercase',
+  },
+  blurContainer: {
+    borderRadius: 10,
+    overflow: 'hidden',
   },
 });
 

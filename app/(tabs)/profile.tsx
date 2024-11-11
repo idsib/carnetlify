@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, useColorSc
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import TabBar from '../../components/TabBar';
 
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -90,27 +91,7 @@ export default function ProfileScreen() {
         </View>
       </ScrollView>
 
-      <View style={[styles.tabBar, isDark ? styles.tabBarDark : styles.tabBarLight]}>
-        <TouchableOpacity 
-          style={styles.tabBarItem}
-          onPress={() => router.push('/main')}
-        >
-          <Ionicons name="home" size={24} color={isDark ? "#FFFFFF" : "#666"} />
-          <Text style={[styles.tabBarText, isDark ? styles.textDark : styles.textLight]}>Inicio</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="calendar" size={24} color={isDark ? "#FFFFFF" : "#666"} />
-          <Text style={[styles.tabBarText, isDark ? styles.textDark : styles.textLight]}>Reservar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="chatbubbles" size={24} color={isDark ? "#FFFFFF" : "#666"} />
-          <Text style={[styles.tabBarText, isDark ? styles.textDark : styles.textLight]}>Mensajes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="person" size={24} color={isDark ? "#3478F6" : "#007AFF"} />
-          <Text style={[styles.tabBarText, { color: isDark ? "#3478F6" : "#007AFF" }]}>Perfil</Text>
-        </TouchableOpacity>
-      </View>
+      <TabBar />
     </SafeAreaView>
   );
 }
@@ -196,25 +177,6 @@ const styles = StyleSheet.create({
   menuText: {
     flex: 1,
     fontSize: 16,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
-  },
-  tabBarLight: {
-    backgroundColor: '#FFFFFF',
-  },
-  tabBarDark: {
-    backgroundColor: '#1C1C1E',
-  },
-  tabBarItem: {
-    alignItems: 'center',
-  },
-  tabBarText: {
-    fontSize: 12,
-    marginTop: 4,
-    color: '#666',
   },
   textLight: {
     color: '#000000',

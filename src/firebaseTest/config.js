@@ -31,5 +31,3 @@ export const registerUserInBackend = async (userData) => {
     body: JSON.stringify(userData),
   });
 };
-
-

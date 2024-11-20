@@ -57,7 +57,7 @@ const Register = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Usuario registrado:', userCredential.user);
-  
+      console.log(userCredential);
       // Llama a la función para registrar el usuario en el backend
       const userData = {
         fullName: name,

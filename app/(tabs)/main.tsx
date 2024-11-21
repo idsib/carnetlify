@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated, Dimensions, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,15 +19,15 @@ const DayButton: React.FC<DayButtonProps> = ({ day, active }) => {
     <TouchableOpacity 
       style={[
         styles.dayButton, 
-        active && isDarkMode && { backgroundColor: '#3478F6' },
-        isDarkMode && styles.darkDayButton
+        active && { backgroundColor: isDarkMode ? '#3478F6' : '#007AFF' },
+        isDarkMode ? styles.darkDayButton : styles.lightDayButton
       ]}
     >
       <Text 
         style={[
           styles.dayButtonText, 
-          active && isDarkMode && styles.activeDayButtonText, 
-          isDarkMode && styles.darkDayButtonText
+          active && styles.activeDayButtonText,
+          isDarkMode ? styles.darkDayButtonText : styles.lightDayButtonText
         ]}
       >
         {day}
@@ -55,7 +55,16 @@ const LessonCard: React.FC<LessonCardProps> = ({ image, block, title, duration }
 
   return (
     <View style={[styles.lessonCard, isDarkMode ? styles.darkLessonCard : styles.lightLessonCard]}>
-      <Image source={{ uri: image }} style={styles.lessonImage} />
+      <View style={[
+        styles.iconContainer, 
+        isDarkMode ? { backgroundColor: '#2C2C2E' } : { backgroundColor: '#F5F5F5' }
+      ]}>
+        <Ionicons 
+          name={image as any} 
+          size={50} 
+          color={isDarkMode ? "#FFFFFF" : "#666"} 
+        />
+      </View>
       <View style={styles.lessonInfo}>
         <Text style={[styles.lessonBlock, isDarkMode ? styles.darkText : styles.lightText]}>{block}</Text>
         <Text style={[styles.lessonTitle, isDarkMode ? styles.darkText : styles.lightText]}>{title}</Text>
@@ -85,15 +94,36 @@ export default function MainScreen() {
   });
 
   useEffect(() => {
-    const listener = scrollY.addListener(({ value }) => {
-      setHeaderVisible(value < HEADER_HEIGHT);
-    });
-    return () => scrollY.removeListener(listener);
+    const forceUpdate = () => {
+      setHeaderVisible(prev => prev);
+    };
+    forceUpdate();
+  }, [colorScheme]);
+
+  const scrollListener = useCallback(({ value }: { value: number }) => {
+    setHeaderVisible(value < HEADER_HEIGHT);
   }, []);
 
+  useEffect(() => {
+    const listener = scrollY.addListener(scrollListener);
+    return () => scrollY.removeListener(listener);
+  }, [scrollY, scrollListener]);
+
   return (
-    <SafeAreaView style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
-      <Animated.View style={[styles.header, { opacity: headerOpacity }, isDarkMode ? styles.darkHeader : styles.lightHeader]}>
+    <SafeAreaView 
+      style={[
+        styles.container, 
+        isDarkMode ? styles.darkContainer : styles.lightContainer
+      ]}
+    >
+      <Animated.View 
+        style={[
+          styles.header,
+          { opacity: headerOpacity },
+          isDarkMode ? styles.darkHeader : styles.lightHeader
+        ]}
+        key={colorScheme}
+      >
         <Image
           source={require('@/assets/images/carnetlify.png')}
           style={styles.logo}
@@ -131,13 +161,13 @@ export default function MainScreen() {
         </View>
 
         <LessonCard
-          image="https://images.pexels.com/photos/5066593/pexels-photo-5066593.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          image="people-outline"
           block="Bloque 1"
           title="Lección 01 -  Definiciones relativas al factor humano"
           duration="10m"
         />
         <LessonCard
-          image="https://img.freepik.com/free-photo/traffic-light-city-streets_23-2149092106.jpg"
+          image="car-outline"
           block="Bloque 2"
           title="Lección 02 - 1.2 Definiciones relativas al factor vehículo"
           duration="15m"
@@ -201,10 +231,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   lightHeader: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   darkHeader: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#000000',
   },
   logo: {
     width: Dimensions.get('window').width * 0.5,
@@ -223,6 +253,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
+  },
+  lightDayButton: {
     backgroundColor: '#E0E0E0',
   },
   darkDayButton: {
@@ -231,6 +263,8 @@ const styles = StyleSheet.create({
   dayButtonText: {
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  lightDayButtonText: {
     color: '#666',
   },
   darkDayButtonText: {
@@ -336,5 +370,12 @@ const styles = StyleSheet.create({
   },
   darkText: {
     color: '#FFFFFF',
+  },
+  iconContainer: {
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
   },
 });

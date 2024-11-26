@@ -6,7 +6,7 @@ require('dotenv').config({ path: './url.env' });
 
 // Inicializar Firebase Admin
 admin.initializeApp({
-  credential: admin.credential.cert(require('./firebaseServiceAccountKey.json'))
+  credential: admin.credential.cert(require('./firebase/firebaseServiceAccountKey.json'))
 });
 
 const app = express();
@@ -52,6 +52,28 @@ app.post('/register', verifyToken, async (req, res) => {
   }
   res.status(201).send('Usuario registrado');
 });
+
+// Middleware para verificar el token de Firebase
+async function verifyTokenInPage(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).send('Acceso denegado. No se proporcionó token.');
+  }
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = decodedToken; // Adjunta la información del usuario al objeto req
+    next(); // Permite continuar con la ejecución de la ruta
+  } catch (error) {
+    return res.status(403).send('Token no válido.');
+  }
+}
+// Ruta protegida (requiere autenticación)
+app.get('../app/(tabs)', verifyToken, (req, res) => {
+  res.send('Este archivo está protegido y solo es accesible con una sesión válida.');
+});
+
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;

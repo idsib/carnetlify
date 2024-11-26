@@ -17,7 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, registerUserInBackend } from '../../src/firebase/config'; // Asegúrate de que esta ruta sea correcta
+import { auth, registerUserInBackend } from '../../backend/firebase/config'; // Asegúrate de que esta ruta sea correcta
 
 const { width, height } = Dimensions.get('window');
 

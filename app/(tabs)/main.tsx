@@ -3,6 +3,21 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated, 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+//backend
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+const auth = getAuth();
+const router = useRouter();
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    const uid = user.uid;
+    console.log(uid);
+    } else {
+    //router.push('../(auth)/login');
+  }
+});
 
 const HEADER_HEIGHT = 120; 
 

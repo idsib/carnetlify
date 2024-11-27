@@ -5,6 +5,22 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import TabBar from '../../components/TabBar';
 
+//backend
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth();
+const user = auth.currentUser;
+
+function uidUser (){
+  if (user){
+
+    console.log("El user id desde perfil es: " + user.uid);
+  
+  }
+};
+
+
+
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
   title: string;
@@ -125,6 +141,10 @@ export default function ProfileScreen() {
           />
         </View>
       </ScrollView>
+      <div>
+      {/* Botón que ejecuta la función al hacer clic */}
+      <button onClick={uidUser}>Haz clic aquí</button>
+    </div>
 
       <TabBar />
     </SafeAreaView>

@@ -49,6 +49,7 @@ export default function ProfileScreen() {
       <ScrollView style={styles.scrollView}>
         <TouchableOpacity 
           style={[styles.profileCard, isDark ? styles.profileCardDark : styles.profileCardLight]}
+          onPress={() => router.push('/sections/profileSettings')}
         >
           <Image
             source={require('@/assets/images/default-avatar.png')}

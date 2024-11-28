@@ -69,6 +69,7 @@ const SubscriptionPlanPage = () => {
   const { height } = Dimensions.get('window');
   const hasDynamicIsland = Platform.OS === 'ios' && height >= 852;
   const isSmallDevice = height < 700;
+  const isExtraSmallDevice = height < 500;
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollX = useSharedValue(0);
@@ -119,7 +120,7 @@ const SubscriptionPlanPage = () => {
     },
     plansWrapper: {
       flexDirection: isLargeScreen ? 'row' : 'column',
-      flexWrap: isLargeScreen ? 'wrap' : 'nowrap',
+      flexWrap: 'wrap',
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -201,6 +202,8 @@ const SubscriptionPlanPage = () => {
       textAlign: 'center',
       marginBottom: isLargeScreen ? 24 : 16,
       paddingHorizontal: 16,
+      paddingTop: isExtraSmallDevice ? 8 : 0,
+      paddingBottom: 8,
     },
     paginationContainer: {
       flexDirection: 'row',

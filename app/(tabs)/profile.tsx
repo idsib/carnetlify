@@ -6,19 +6,12 @@ import { useRouter } from 'expo-router';
 import TabBar from '../../components/TabBar';
 
 //backend
-import { getAuth } from "firebase/auth";
-
-const auth = getAuth();
-const user = auth.currentUser;
-
-function uidUser (){
-  if (user){
-
-    console.log("El user id desde perfil es: " + user.uid);
-  
-  }
-};
-
+import {logOutFirebase} from '@/backend/firebase/logOut';
+import {uidUser} from '@/backend/firebase/InfoUser';
+function printUID(){
+  console.log(uidUser);
+}
+//final backend
 
 
 interface MenuItemProps {
@@ -29,10 +22,10 @@ interface MenuItemProps {
 
 const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onPress }) => {
   const isDark = useColorScheme() === 'dark';
-  
+
   return (
-    <TouchableOpacity 
-      style={[styles.menuItem, isDark ? styles.menuItemDark : styles.menuItemLight]} 
+    <TouchableOpacity
+      style={[styles.menuItem, isDark ? styles.menuItemDark : styles.menuItemLight]}
       onPress={onPress}
     >
       <View style={styles.menuIconContainer}>
@@ -46,7 +39,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onPress }) => {
 
 const SectionTitle: React.FC<{ title: string }> = ({ title }) => {
   const isDark = useColorScheme() === 'dark';
-  
+
   return (
     <Text style={[styles.sectionTitle, isDark ? styles.textDark : styles.textLight]}>
       {title}
@@ -61,9 +54,9 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
       <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>Perfil</Text>
-      
+
       <ScrollView style={styles.scrollView}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.profileCard, isDark ? styles.profileCardDark : styles.profileCardLight]}
           onPress={() => router.push('/sections/profileSettings')}
         >
@@ -82,59 +75,75 @@ export default function ProfileScreen() {
           </View>
           <Ionicons name="chevron-forward" size={24} color={isDark ? '#666666' : '#999999'} />
         </TouchableOpacity>
-
+        <TouchableOpacity
+          style={[styles.button, isDark ? styles.buttonDark : styles.buttonLight]}
+          onPress={printUID}
+        >
+          <Text style={[styles.buttonText, isDark ? styles.textDark : styles.textLight]}>
+            Cual es mi UID?
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, isDark ? styles.buttonDark : styles.buttonLight]}
+          onPress={logOutFirebase}
+        >
+          <Text style={[styles.buttonText, isDark ? styles.textDark : styles.textLight]}>
+            deslogueo
+          </Text>
+        </TouchableOpacity>
+        
         <View style={styles.section}>
           <SectionTitle title="Ajustes" />
-          <MenuItem 
-            icon="person-circle" 
-            title="Información personal" 
+          <MenuItem
+            icon="person-circle"
+            title="Información personal"
             onPress={() => router.push('/sections/personalInfo')}
           />
-          <MenuItem 
-            icon="card" 
-            title="Método de pago" 
+          <MenuItem
+            icon="card"
+            title="Método de pago"
             onPress={() => router.push('/sections/paymethod')}
           />
-          <MenuItem 
-            icon="notifications" 
-            title="Notificaciones" 
+          <MenuItem
+            icon="notifications"
+            title="Notificaciones"
             onPress={() => router.push('/sections/notifications')}
           />
         </View>
 
         <View style={styles.section}>
           <SectionTitle title="Profesores" />
-          <MenuItem 
-            icon="school" 
-            title="Conviértete en profesor" 
+          <MenuItem
+            icon="school"
+            title="Conviértete en profesor"
             onPress={() => router.push('/sections/teacher')}
           />
         </View>
 
         <View style={styles.section}>
           <SectionTitle title="Subscripción" />
-          <MenuItem 
-            icon="pricetag" 
-            title="Escoge tu plan" 
+          <MenuItem
+            icon="pricetag"
+            title="Escoge tu plan"
             onPress={() => router.push('/sections/subscriptionPlan')}
           />
         </View>
 
         <View style={styles.section}>
           <SectionTitle title="Soporte" />
-          <MenuItem 
-            icon="help-circle" 
-            title="Preguntas frecuentes" 
+          <MenuItem
+            icon="help-circle"
+            title="Preguntas frecuentes"
             onPress={() => router.push('/sections/faq')}
           />
-          <MenuItem 
-            icon="chatbubble-ellipses" 
-            title="Contactar con soporte" 
+          <MenuItem
+            icon="chatbubble-ellipses"
+            title="Contactar con soporte"
             onPress={() => router.push('/sections/support')}
           />
-          <MenuItem 
-            icon="log-out" 
-            title="Cerrar sesión" 
+          <MenuItem
+            icon="log-out"
+            title="Cerrar sesión"
             onPress={() => {
               // Aquí puedes agregar la lógica de cierre de sesión
               // router.push('/auth/login')
@@ -173,6 +182,24 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 24,
   },
+  button: {
+    padding: 16,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  buttonLight: {
+    backgroundColor: '#007BFF',
+  },
+  buttonDark: {
+    backgroundColor: '#1E90FF',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },  
   profileCardLight: {
     backgroundColor: '#FFFFFF',
   },

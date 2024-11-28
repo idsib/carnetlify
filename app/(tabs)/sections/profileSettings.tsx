@@ -9,8 +9,10 @@ import * as ImagePicker from 'expo-image-picker';
 const ProfileSettingsPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
-  const { height } = Dimensions.get('window');
+  const { height, width } = Dimensions.get('window');
   const hasDynamicIsland = Platform.OS === 'ios' && height >= 852;
+  const isSmallDevice = height < 700;
+  const isTablet = width > 768;
 
   const pickImage = async () => {
     // Solicitar permisos
@@ -50,12 +52,13 @@ const ProfileSettingsPage = () => {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
-      paddingTop: Platform.OS === 'ios' 
-        ? hasDynamicIsland 
+      paddingTop: Platform.select({
+        ios: hasDynamicIsland 
           ? insets.top + 12
-          : 60
-        : 16,
-      marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+          : insets.top + 8,
+        android: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
+        default: 16,
+      }),
     },
     headerTitle: {
       fontWeight: 'bold',
@@ -63,12 +66,17 @@ const ProfileSettingsPage = () => {
       marginLeft: 8,
       fontSize: Platform.OS === 'ios' 
         ? hasDynamicIsland 
-          ? 30
-          : 34
-        : 28,
+          ? 24
+          : isSmallDevice ? 20 : 22
+        : isSmallDevice ? 18 : 20,
     },
     backButton: {
-      padding: 8,
+      padding: Platform.select({
+        ios: isSmallDevice ? 6 : 8,
+        android: isSmallDevice ? 4 : 6,
+        default: 8,
+      }),
+      marginRight: 4,
     },
     profileSection: {
       alignItems: 'center',
@@ -172,12 +180,14 @@ const ProfileSettingsPage = () => {
             <TouchableOpacity style={styles.backButton}>
               <Ionicons 
                 name="arrow-back" 
-                size={24} 
+                size={isSmallDevice ? 22 : 24} 
                 color={isDark ? '#FFFFFF' : '#000000'} 
               />
             </TouchableOpacity>
           </Link>
-          <Text style={styles.headerTitle}>Detalles alumno</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            Detalles alumno
+          </Text>
         </View>
 
         <View style={styles.profileSection}>

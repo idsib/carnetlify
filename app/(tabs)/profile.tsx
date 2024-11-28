@@ -142,11 +142,6 @@ export default function ProfileScreen() {
           />
         </View>
       </ScrollView>
-      <div>
-      {/* Botón que ejecuta la función al hacer clic */}
-      <button onClick={uidUser}>Haz clic aquí</button>
-    </div>
-
       <TabBar />
     </SafeAreaView>
   );

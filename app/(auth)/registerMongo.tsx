@@ -11,7 +11,8 @@ import {
   KeyboardAvoidingView, 
   Platform, 
   ScrollView, 
-  Dimensions 
+  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';

@@ -220,6 +220,7 @@ export default function MainScreen() {
         >
           <Ionicons name="person" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
           <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Perfil</Text>
+
         </TouchableOpacity>
       </View>
     </SafeAreaView>

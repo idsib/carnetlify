@@ -10,7 +10,6 @@ const SupportPage = () => {
   const insets = useSafeAreaInsets();
   const { height } = Dimensions.get('window');
   
-  // Detectar si el dispositivo probablemente tiene Dynamic Island
   const hasDynamicIsland = Platform.OS === 'ios' && height >= 852;
 
   const styles = StyleSheet.create({

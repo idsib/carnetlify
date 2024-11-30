@@ -21,9 +21,8 @@ const PersonalInfoPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
   const { height, width } = Dimensions.get('window');
-  const hasDynamicIsland = Platform.OS === 'ios' && height >= 852;
   const isSmallDevice = height < 700;
-  const isTablet = width > 768;
+  const isLargeScreen = width > 768;
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -52,33 +51,20 @@ const PersonalInfoPage = () => {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
-      paddingTop: Platform.OS === 'ios' 
-        ? hasDynamicIsland 
-          ? insets.top + 12
-          : insets.top + 8
-        : StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
       marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     headerTitle: {
       fontWeight: 'bold',
       color: isDark ? '#FFFFFF' : '#000000',
       marginLeft: 8,
-      fontSize: Platform.OS === 'ios' 
-        ? hasDynamicIsland 
-          ? 24
-          : isSmallDevice ? 20 : 22
-        : isSmallDevice ? 18 : 20,
+      fontSize: isLargeScreen ? 24 : (isSmallDevice ? 20 : 22),
     },
     backButton: {
       padding: 8,
     },
     content: {
       flex: 1,
-      padding: isTablet ? 24 : 16,
-      maxWidth: isTablet ? 800 : '100%',
-      marginHorizontal: 'auto',
-      width: '100%',
-      marginTop: isTablet ? 24 : 0,
+      padding: isLargeScreen ? 24 : 16,
     },
     inputContainer: {
       marginBottom: isSmallDevice ? 12 : 16,
@@ -160,7 +146,7 @@ const PersonalInfoPage = () => {
             <TouchableOpacity style={styles.backButton}>
               <Ionicons 
                 name="arrow-back" 
-                size={isSmallDevice ? 22 : 24} 
+                size={24} 
                 color={isDark ? '#FFFFFF' : '#000000'} 
               />
             </TouchableOpacity>
@@ -172,6 +158,7 @@ const PersonalInfoPage = () => {
           style={styles.content}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           {renderInput('Nombre', 'nombre')}
           {renderInput('Apellidos', 'apellidos')}
@@ -182,7 +169,7 @@ const PersonalInfoPage = () => {
           {renderInput('Ciudad', 'ciudad')}
           {renderInput('Código Postal', 'codigoPostal', 'numeric')}
           {renderInput('Domicilio', 'domicilio')}
-          {renderInput('Teléfono', 'telefono', 'phone-pad')}
+          {renderInput('Teléfono', 'telefono')}
 
           <TouchableOpacity 
             style={styles.saveButton}

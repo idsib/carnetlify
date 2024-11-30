@@ -192,10 +192,10 @@ const ProfileSettingsPage = () => {
 
         <View style={styles.profileSection}>
           <TouchableOpacity onPress={pickImage}>
-            <Image
-              source={require('@/assets/images/default-avatar.png')}
-              style={styles.profileImage}
-            />
+              <Image
+                source={require('@/assets/images/default-avatar.png')}
+                style={styles.profileImage}
+              />
             <View style={styles.editIconContainer}>
               <Ionicons 
                 name="camera" 

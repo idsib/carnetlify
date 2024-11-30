@@ -7,12 +7,16 @@ import TabBar from '../../components/TabBar';
 
 //backend
 import {logOutFirebase} from '@/backend/firebase/logOut';
-import {uidUser} from '@/backend/firebase/InfoUser';
-function printUID(){
-  console.log(uidUser);
-}
-//final backend
+import {getFullInfoUser} from '@/backend/firebase/InfoUserCurrentUser';
+import {fullInfoFirebase} from '@/backend/firebase/InfoUserOnAuthStateChanged';
+import {nameUserMongo} from '@/backend/firebase/config'
+import {SetUidFirebase} from "@/backend/mainBackend";
 
+SetUidFirebase();
+
+function getNameUser (){
+  nameUserMongo(localStorage.getItem("uid"))
+}
 
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -77,7 +81,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, isDark ? styles.buttonDark : styles.buttonLight]}
-          onPress={printUID}
+          onPress={getNameUser}
         >
           <Text style={[styles.buttonText, isDark ? styles.textDark : styles.textLight]}>
             Cual es mi UID?

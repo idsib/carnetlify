@@ -53,6 +53,17 @@ app.post('/register', verifyToken, async (req, res) => {
   res.status(201).send('Usuario registrado');
 });
 
+// Ruta para sacar el nombre de usuario en MongoDB
+
+app.post('/users/info', verifyToken, async (req, res) => {
+  const userUid = req.body;
+  try {
+    const users = await usersCollection.findOne({ userUid });
+    console.log(users)
+  } catch (error) {
+    res.status(400).send('no va');
+  }
+});
 // Middleware para verificar el token de Firebase
 async function verifyTokenInPage(req, res, next) {
   const token = req.headers.authorization;

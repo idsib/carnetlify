@@ -33,4 +33,16 @@ export const registerUserInBackend = async (userData) => {
   });
 };
 
+export const nameUserMongo = async (uid) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/users/info', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify({ userId: uid }),
+  });
+};
+
 

@@ -54,16 +54,27 @@ app.post('/register', verifyToken, async (req, res) => {
 });
 
 // Ruta para sacar el nombre de usuario en MongoDB
-
 app.post('/users/info', verifyToken, async (req, res) => {
-  const userUid = req.body;
+  const { userId } = req.body; // Asegúrate de que el body contiene userId
+
+  if (!userId) {
+    return res.status(400).send({ error: 'El userId es requerido.' });
+  }
+
   try {
-    const users = await usersCollection.findOne({ userUid });
-    console.log(users)
+    // Buscar el usuario por userId
+    const user = await usersCollection.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).send({ error: 'Usuario no encontrado.' });
+    }
+    res.status(200).send(user);
   } catch (error) {
-    res.status(400).send('no va');
+    console.error('Error al buscar el usuario:', error);
+    res.status(500).send({ error: 'Error interno del servidor.' });
   }
 });
+
 // Middleware para verificar el token de Firebase
 async function verifyTokenInPage(req, res, next) {
   const token = req.headers.authorization;

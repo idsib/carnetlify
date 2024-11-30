@@ -42,7 +42,16 @@ export const nameUserMongo = async (uid) => {
       'Authorization': token,
     },
     body: JSON.stringify({ userId: uid }),
-  });
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('Error al obtener el usuario');
+    }
+    return response.json();
+  })
+  .then((user) => {
+    console.log("Puede ser? " + JSON.stringify(user))
+  } );
 };
 
 

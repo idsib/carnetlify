@@ -18,6 +18,10 @@ function getNameUser (){
   nameUserMongo(localStorage.getItem("uid"))
 }
 
+function PrintMandanga(){
+  console.log(localStorage.getItem("actualUser"))
+}
+
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
   title: string;
@@ -89,10 +93,10 @@ export default function ProfileScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, isDark ? styles.buttonDark : styles.buttonLight]}
-          onPress={logOutFirebase}
+          onPress={PrintMandanga}
         >
           <Text style={[styles.buttonText, isDark ? styles.textDark : styles.textLight]}>
-            deslogueo
+            PrintMandanga
           </Text>
         </TouchableOpacity>
         

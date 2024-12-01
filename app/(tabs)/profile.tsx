@@ -11,6 +11,7 @@ import {getFullInfoUser} from '@/backend/firebase/InfoUserCurrentUser';
 import {fullInfoFirebase} from '@/backend/firebase/InfoUserOnAuthStateChanged';
 import {nameUserMongo} from '@/backend/firebase/config'
 import {SetUidFirebase} from "@/backend/mainBackend";
+//import {infoUserInterficie} from "@/backend/interficie"
 
 SetUidFirebase();
 
@@ -19,8 +20,14 @@ function getNameUser (){
 }
 
 function PrintMandanga(){
-  console.log(localStorage.getItem("actualUser"))
+  console.log(localStorage.getItem("infoUser"))
 }
+
+
+
+
+
+//finBackend
 
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -75,7 +82,7 @@ export default function ProfileScreen() {
           />
           <View style={styles.profileInfo}>
             <Text style={[styles.profileName, isDark ? styles.textDark : styles.textLight]}>
-              Joel Jara
+              {localStorage.getItem("infoUser")}
             </Text>
             <Text style={[styles.profileLink, isDark ? styles.textDark : styles.textLight]}>
               Ver perfil

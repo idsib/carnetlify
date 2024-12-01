@@ -1,128 +1,240 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated, Dimensions, useColorScheme } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Animated, Dimensions, useColorScheme, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-//backend
+import { LinearGradient } from 'expo-linear-gradient';
+import TabBar from '../../components/TabBar';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 const auth = getAuth();
-const router = useRouter();
+const HEADER_HEIGHT = Platform.OS === 'ios' ? 120 : 100;
+const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 85 : 70;
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user
-    const uid = user.uid;
-    console.log(uid);
-    } else {
-    //router.push('../(auth)/login');
-  }
-});
-
-const HEADER_HEIGHT = 120; 
-
-interface DayButtonProps {
-  day: string;
-  active: boolean;
+interface LessonCardProps {
+  icon: React.ReactNode;
+  block: string;
+  title: string;
+  duration: string;
+  onPress?: () => void;
 }
 
-const DayButton: React.FC<DayButtonProps> = ({ day, active }) => {
+const LessonCard: React.FC<LessonCardProps> = ({ 
+  icon, 
+  block, 
+  title, 
+  duration, 
+  onPress 
+}) => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      friction: 3,
+      tension: 40
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 3,
+      tension: 40
+    }).start();
+  };
 
   return (
     <TouchableOpacity 
-      style={[
-        styles.dayButton, 
-        active && { backgroundColor: isDarkMode ? '#3478F6' : '#007AFF' },
-        isDarkMode ? styles.darkDayButton : styles.lightDayButton
-      ]}
+      onPress={onPress}
+      activeOpacity={0.8}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
     >
-      <Text 
+      <Animated.View 
         style={[
-          styles.dayButtonText, 
-          active && styles.activeDayButtonText,
-          isDarkMode ? styles.darkDayButtonText : styles.lightDayButtonText
+          styles.lessonCard, 
+          isDarkMode ? styles.darkLessonCard : styles.lightLessonCard,
+          { transform: [{ scale: scaleAnim }] }
         ]}
       >
-        {day}
-      </Text>
-      {active && (
-        <View style={[
-          styles.activeDot,
-          { backgroundColor: isDarkMode ? '#3478F6' : '#007AFF' }
-        ]} />
-      )}
+        <LinearGradient
+          colors={isDarkMode 
+            ? ['#2C2C2E', '#1C1C1E'] 
+            : ['#F5F5F5', '#FFFFFF']
+          }
+          style={styles.lessonCardGradient}
+        >
+          <View style={styles.lessonCardContent}>
+            <View style={[
+              styles.iconContainer, 
+              isDarkMode 
+                ? { backgroundColor: '#3A3A3C' } 
+                : { backgroundColor: '#E5E5E5' }
+            ]}>
+              {icon}
+            </View>
+            <View style={styles.lessonInfo}>
+              <Text style={[
+                styles.lessonBlock, 
+                isDarkMode ? styles.darkText : styles.lightText
+              ]}>
+                {block}
+              </Text>
+              <Text 
+                style={[
+                  styles.lessonTitleHeader, 
+                  isDarkMode ? styles.darkText : styles.lightText
+                ]}
+                numberOfLines={2}
+              >
+                {title}
+              </Text>
+              <View style={styles.lessonDuration}>
+                <Ionicons 
+                  name="time-outline" 
+                  size={16} 
+                  color={isDarkMode ? "#8E8E93" : "#6E6E73"} 
+                />
+                <Text style={[
+                  styles.lessonDurationText, 
+                  isDarkMode ? styles.darkSubText : styles.lightSubText
+                ]}>
+                  {duration}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
+      </Animated.View>
     </TouchableOpacity>
   );
 };
 
-interface LessonCardProps {
-  image: string;
-  block: string;
-  title: string;
-  duration: string;
-}
+const StreakWidget = () => {
+  const isDarkMode = useColorScheme() === 'dark';
+  const progressAnim = useRef(new Animated.Value(0)).current;
 
-const LessonCard: React.FC<LessonCardProps> = ({ image, block, title, duration }) => {
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === 'dark';
+  useEffect(() => {
+    Animated.timing(progressAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: false
+    }).start();
+  }, []);
 
   return (
-    <View style={[styles.lessonCard, isDarkMode ? styles.darkLessonCard : styles.lightLessonCard]}>
-      <View style={[
-        styles.iconContainer, 
-        isDarkMode ? { backgroundColor: '#2C2C2E' } : { backgroundColor: '#F5F5F5' }
-      ]}>
-        <Ionicons 
-          name={image as any} 
-          size={50} 
-          color={isDarkMode ? "#FFFFFF" : "#666"} 
-        />
+    <LinearGradient
+      colors={isDarkMode 
+        ? ['#1C1C1E', '#2C2C2E'] 
+        : ['#FFFFFF', '#F5F5F5']
+      }
+      style={[
+        styles.streakCard, 
+        isDarkMode ? styles.darkStreakCard : styles.lightStreakCard
+      ]}
+    >
+      <View style={styles.streakHeader}>
+        <Text style={[styles.todayText, isDarkMode ? styles.darkText : styles.lightText]}>
+          Progreso Diario
+        </Text>
       </View>
-      <View style={styles.lessonInfo}>
-        <Text style={[styles.lessonBlock, isDarkMode ? styles.darkText : styles.lightText]}>{block}</Text>
-        <Text style={[styles.lessonTitle, isDarkMode ? styles.darkText : styles.lightText]}>{title}</Text>
-        <View style={styles.lessonDuration}>
-          <Ionicons name="time-outline" size={16} color={isDarkMode ? "#FFFFFF" : "#666"} />
-          <Text style={[styles.lessonDurationText, isDarkMode ? styles.darkText : styles.lightText]}>{duration}</Text>
+
+      <View style={styles.statsContainer}>
+        <View style={styles.streakContainer}>
+          <Ionicons name="flame" size={24} color="#0A84FF" />
+          <Text style={[styles.streakText, { color: '#0A84FF' }]}>
+            <Text style={[styles.streakNumber, { color: '#0A84FF' }]}>7</Text> días seguidos
+          </Text>
+        </View>
+        <View style={styles.daysContainer}>
+          <Text style={[styles.daysText, isDarkMode ? styles.darkSubText : styles.lightSubText]}>
+            Lecciones: <Text style={styles.daysNumber}>4/9</Text>
+          </Text>
         </View>
       </View>
-    </View>
+
+      <View style={[styles.progressContainer, { backgroundColor: 'transparent' }]}>
+        {[...Array(9)].map((_, index) => (
+          <Animated.View
+            key={index}
+            style={[
+              styles.progressDot,
+              {
+                width: progressAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 100],
+                  extrapolate: 'clamp'
+                }),
+                backgroundColor: index < 3 
+                  ? '#0A84FF'
+                  : 'rgba(10, 132, 255, 0.3)',
+                marginHorizontal: 2
+              }
+            ]}
+          />
+        ))}
+      </View>
+    </LinearGradient>
   );
 };
 
 export default function MainScreen() {
   const router = useRouter();
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const [headerVisible, setHeaderVisible] = useState(true);
-  const today = new Date().getDay();
-  const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-  const adjustedToday = today === 0 ? 6 : today - 1;
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
+  const [activeTab, setActiveTab] = useState('pending');
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT - HEADER_MIN_HEIGHT],
+    outputRange: [HEADER_HEIGHT, HEADER_MIN_HEIGHT],
+    extrapolate: 'clamp'
+  });
 
   const headerOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_HEIGHT],
+    inputRange: [0, HEADER_HEIGHT - HEADER_MIN_HEIGHT],
     outputRange: [1, 0],
-    extrapolate: 'clamp',
+    extrapolate: 'clamp'
+  });
+
+  const logoOpacity = scrollY.interpolate({
+    inputRange: [0, (HEADER_HEIGHT - HEADER_MIN_HEIGHT) * 0.5],
+    outputRange: [1, 0],
+    extrapolate: 'clamp'
+  });
+
+  const logoScale = scrollY.interpolate({
+    inputRange: [0, (HEADER_HEIGHT - HEADER_MIN_HEIGHT) * 0.5],
+    outputRange: [1, 0.8],
+    extrapolate: 'clamp'
   });
 
   useEffect(() => {
-    const forceUpdate = () => {
-      setHeaderVisible(prev => prev);
-    };
-    forceUpdate();
-  }, [colorScheme]);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('User logged in:', user.uid);
+      } else {
+        // Uncomment to redirect to login if not authenticated
+        // router.push('../(auth)/login');
+      }
+    });
 
-  const scrollListener = useCallback(({ value }: { value: number }) => {
-    setHeaderVisible(value < HEADER_HEIGHT);
+    return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const listener = scrollY.addListener(scrollListener);
-    return () => scrollY.removeListener(listener);
-  }, [scrollY, scrollListener]);
+  const renderIcons = (name: string, size: number = 50) => (
+    <Ionicons 
+      name={name as any} 
+      size={size} 
+      color={isDarkMode ? "#FFFFFF" : "#666"} 
+    />
+  );
 
   return (
     <SafeAreaView 
@@ -133,26 +245,35 @@ export default function MainScreen() {
     >
       <Animated.View 
         style={[
-          styles.header,
-          { opacity: headerOpacity },
-          isDarkMode ? styles.darkHeader : styles.lightHeader
+          styles.headerContainer,
+          {
+            height: headerHeight,
+            opacity: headerOpacity
+          }
         ]}
-        key={colorScheme}
       >
-        <Image
-          source={require('@/assets/images/carnetlify.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <View style={styles.daysContainer}>
-          {days.map((day, index) => (
-            <DayButton
-              key={index}
-              day={day}
-              active={index === adjustedToday}
+        <BlurView
+          intensity={isDarkMode ? 30 : 50}
+          tint={isDarkMode ? 'dark' : 'light'}
+          style={[
+            styles.headerBlur,
+            isDarkMode ? styles.darkHeader : styles.lightHeader
+          ]}
+        >
+          <Animated.View style={[
+            styles.headerContent,
+            {
+              transform: [{ scale: logoScale }],
+              opacity: logoOpacity
+            }
+          ]}>
+            <Image
+              source={require('@/assets/images/carnetlify.png')}
+              style={styles.logo}
+              resizeMode="contain"
             />
-          ))}
-        </View>
+          </Animated.View>
+        </BlurView>
       </Animated.View>
 
       <Animated.ScrollView
@@ -161,68 +282,69 @@ export default function MainScreen() {
           { useNativeDriver: false }
         )}
         scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 100,
+          paddingTop: Platform.OS === 'ios' ? 70 : 60,
+        }}
+        bounces={true}
+        overScrollMode="always"
       >
-        <View style={{ height: HEADER_HEIGHT }} /> 
-
-        <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Mis lecciones</Text>
-
-        <View style={styles.tabContainer}>
-          <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-            <Text style={[styles.tabText, styles.activeTabText]}>Lecciones pendientes</Text>
+        <View style={styles.tabsContainer}>
+          <TouchableOpacity 
+            style={[styles.tab, activeTab === 'pending' && styles.activeTab]} 
+            onPress={() => setActiveTab('pending')}
+          >
+            <Text style={[
+              styles.tabText, 
+              activeTab === 'pending' ? styles.activeTabText : { color: '#666666' }
+            ]}>Lecciones pendientes</Text>
+            {activeTab === 'pending' && <View style={styles.activeIndicator} />}
           </TouchableOpacity>
-          <TouchableOpacity style={styles.tab}>
-            <Text style={styles.tabText}>Lecciones completadas</Text>
+          <TouchableOpacity 
+            style={[styles.tab, activeTab === 'completed' && styles.activeTab]} 
+            onPress={() => setActiveTab('completed')}
+          >
+            <Text style={[
+              styles.tabText, 
+              activeTab === 'completed' ? styles.activeTabText : { color: '#666666' }
+            ]}>Lecciones completadas</Text>
+            {activeTab === 'completed' && <View style={styles.activeIndicator} />}
           </TouchableOpacity>
         </View>
+        <StreakWidget />
 
         <LessonCard
-          image="people-outline"
+          icon={renderIcons('people-outline')}
           block="Bloque 1"
-          title="Lección 01 -  Definiciones relativas al factor humano"
-          duration="10m"
+          title="Lección 01 - Definiciones Relacionadas con Factores Humanos"
+          duration="10 min"
+          onPress={() => {/* Navigate to lesson */}}
         />
         <LessonCard
-          image="car-outline"
+          icon={renderIcons('car-outline')}
           block="Bloque 2"
-          title="Lección 02 - 1.2 Definiciones relativas al factor vehículo"
-          duration="15m"
+          title="Lección 02 - Definiciones de Factores Vehiculares"
+          duration="15 min"
+          onPress={() => {/* Navigate to lesson */}}
         />
         <LessonCard
-          image="https://example.com/cyclist.jpg"
+          icon={renderIcons('bicycle-outline')}
           block="Bloque 3"
-          title="Lección 03 - Definiciones relativas al factor vía"
-          duration="10m"
+          title="Lección 03 - Definiciones de Factores Viales"
+          duration="10 min"
+          onPress={() => {/* Navigate to lesson */}}
         />
         <LessonCard
-          image="https://example.com/car.jpg"
-          block="Bloque "
-          title="Lección 04 - Luces para ser vistos"
-          duration="15m"
+          icon={renderIcons('headlight-outline')}
+          block="Bloque 4"
+          title="Lección 04 - Visibilidad e Iluminación"
+          duration="15 min"
+          onPress={() => {/* Navigate to lesson */}}
         />
       </Animated.ScrollView>
 
-      <View style={[styles.tabBar, isDarkMode ? styles.darkTabBar : styles.lightTabBar]}>
-        <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="home" size={24} color={isDarkMode ? "#3478F6" : "#007AFF"} />
-          <Text style={[styles.tabBarText, { color: isDarkMode ? "#3478F6" : "#007AFF" }]}>Inicio</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="calendar" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
-          <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Reservar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabBarItem}>
-          <Ionicons name="chatbubbles" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
-          <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Mensajes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.tabBarItem}
-          onPress={() => router.push('/profile')}
-        >
-          <Ionicons name="person" size={24} color={isDarkMode ? "#FFFFFF" : "#666"} />
-          <Text style={[styles.tabBarText, isDarkMode ? styles.darkText : styles.lightText]}>Perfil</Text>
-
-        </TouchableOpacity>
-      </View>
+      <TabBar />
     </SafeAreaView>
   );
 }
@@ -230,6 +352,7 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
   },
   lightContainer: {
     backgroundColor: '#F5F5F5',
@@ -237,121 +360,91 @@ const styles = StyleSheet.create({
   darkContainer: {
     backgroundColor: '#000000',
   },
-  header: {
+  headerContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 1,
+    zIndex: 100,
+    overflow: 'hidden',
+  },
+  headerBlur: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  headerContent: {
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingBottom: Platform.OS === 'ios' ? 10 : 5,
   },
   lightHeader: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
   },
   darkHeader: {
-    backgroundColor: '#000000',
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
   },
   logo: {
-    width: Dimensions.get('window').width * 0.5,
-    height: 100,
-    marginTop: 20,
-  },
-  daysContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  dayButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  lightDayButton: {
-    backgroundColor: '#E0E0E0',
-  },
-  darkDayButton: {
-    backgroundColor: '#333333',
-  },
-  dayButtonText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  lightDayButtonText: {
-    color: '#666',
-  },
-  darkDayButtonText: {
-    color: '#FFFFFF',
-  },
-  activeDayButtonText: {
-    color: 'white',
-  },
-  activeDot: {
-    position: 'absolute',
-    bottom: -4,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#007AFF',
+    width: 80,
+    height: 80,
+    alignSelf: 'center',
+    marginBottom: -20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 16,
-    marginTop: 16,
-    marginBottom: 16,
-  },
-  tabContainer: {
-    flexDirection: 'row',
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginTop: 16,
+    marginBottom: 24,
   },
-  tab: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
+  darkText: {
+    color: '#FFFFFF',
   },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#007AFF',
+  lightText: {
+    color: '#000000',
   },
-  tabText: {
-    fontSize: 14,
-    color: '#666',
+  darkSubText: {
+    color: '#8E8E93',
   },
-  activeTabText: {
-    color: '#007AFF',
-    fontWeight: 'bold',
+  lightSubText: {
+    color: '#6E6E73',
   },
   lessonCard: {
-    borderRadius: 8,
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 12,
+    borderRadius: 16,
     overflow: 'hidden',
-  },
-  lightLessonCard: {
-    backgroundColor: 'white',
   },
   darkLessonCard: {
     backgroundColor: '#1C1C1E',
   },
-  lessonImage: {
-    width: '100%',
-    height: 150,
+  lightLessonCard: {
+    backgroundColor: '#FFFFFF',
   },
-  lessonInfo: {
+  lessonCardGradient: {
+    width: '100%',
+  },
+  lessonCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 16,
   },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  lessonInfo: {
+    flex: 1,
+  },
   lessonBlock: {
-    fontSize: 12,
+    fontSize: 14,
     marginBottom: 4,
   },
-  lessonTitle: {
+  lessonTitleHeader: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginBottom: 8,
   },
   lessonDuration: {
@@ -362,36 +455,93 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 4,
   },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
+  streakCard: {
+    marginHorizontal: 16,
+    marginVertical: 12,
+    padding: 16,
+    borderRadius: 16,
   },
-  lightTabBar: {
-    backgroundColor: 'white',
-  },
-  darkTabBar: {
+  darkStreakCard: {
     backgroundColor: '#1C1C1E',
   },
-  tabBarItem: {
+  lightStreakCard: {
+    backgroundColor: '#FFFFFF',
+  },
+  streakHeader: {
+    marginBottom: 16,
+  },
+  todayText: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  streakContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  tabBarText: {
-    fontSize: 12,
-    marginTop: 4,
-    color: '#666',
+  streakText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#0A84FF',
   },
-  lightText: {
-    color: '#000000',
+  streakNumber: {
+    fontWeight: 'bold',
+    color: '#0A84FF',
   },
-  darkText: {
-    color: '#FFFFFF',
+  daysContainer: {
+    alignItems: 'flex-end',
   },
-  iconContainer: {
-    height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+  daysText: {
+    fontSize: 14,
+  },
+  daysNumber: {
+    fontWeight: 'bold',
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressDot: {
+    height: '100%',
+    backgroundColor: '#0A84FF',
+    flex: 1,
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: 8,
+  },
+  tab: {
+    paddingVertical: 8,
+    marginRight: 24,
+    position: 'relative',
+  },
+  activeTab: {
+    // Style will be handled by the indicator
+  },
+  tabText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: '#0A84FF',
+    fontWeight: '600',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: -8,
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: '#0A84FF',
   },
 });

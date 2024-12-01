@@ -9,15 +9,24 @@ import TabBar from '../../components/TabBar';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const auth = getAuth();
-const HEADER_HEIGHT = Platform.OS === 'ios' ? 120 : 100;
-const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 85 : 70;
+const router = useRouter();
 
-interface LessonCardProps {
-  icon: React.ReactNode;
-  block: string;
-  title: string;
-  duration: string;
-  onPress?: () => void;
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    const uid = user.uid;
+    console.log(uid);
+    } else {
+    //router.push('../(auth)/login');
+  }
+});
+
+const HEADER_HEIGHT = 120; 
+
+interface DayButtonProps {
+  day: string;
+  active: boolean;
 }
 
 const LessonCard: React.FC<LessonCardProps> = ({ 

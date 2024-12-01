@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 // Inicializa Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 // Inicializa y exporta la autenticación
 export const auth = getAuth(app);
@@ -31,6 +31,27 @@ export const registerUserInBackend = async (userData) => {
     },
     body: JSON.stringify(userData),
   });
+};
+
+export const nameUserMongo = async (uid) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/users/info', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify({ userId: uid }),
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('Error al obtener el usuario');
+    }
+    return response.json();
+  })
+  .then((user) => {
+    console.log("Puede ser? " + JSON.stringify(user))
+  } );
 };
 
 

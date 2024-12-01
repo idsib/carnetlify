@@ -122,7 +122,8 @@ const DrivingInstructorRegistration = () => {
               />
             </TouchableOpacity>
           </Link>
-          <Text style={styles.headerTitle}>Inscripción como Profesor de Autoescuela</Text>
+          <Text style={styles.headerTitle}>Inscripción como Profesor
+          </Text>
         </View>
 
         <ScrollView style={styles.content}>

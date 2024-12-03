@@ -50,6 +50,10 @@
     },
     "fonts": {
       "Archivo": "./assets/fonts/Archivo-Bold.ttf"
-    }
+    },
+    "assetBundlePatterns": [
+      "**/*",
+      "assets/images/*"
+    ]
   }
 }

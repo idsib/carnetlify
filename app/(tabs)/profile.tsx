@@ -95,7 +95,6 @@ export default function ProfileScreen() {
     try {
       await logOutFirebase();
       setShowLogoutPopup(false);
-      // Navegar a la pantalla de login o inicio
       router.replace('/');
     } catch (error) {
       console.error('Error during logout:', error);
@@ -147,65 +146,11 @@ logout            </Text>
         </TouchableOpacity>
 
         <View style={styles.section}>
-          <SectionTitle title="Ajustes" />
           <MenuItem
-            icon="person-circle"
-            title="Información personal"
-            onPress={() => router.push('/sections/personalInfo')}
+            icon="log-out"
+            title="Cerrar Sesión"
+            onPress={() => setShowLogoutPopup(true)}
           />
-          <MenuItem
-            icon="card"
-            title="Método de pago"
-            onPress={() => router.push('/sections/paymethod')}
-          />
-          <MenuItem
-            icon="notifications"
-            title="Notificaciones"
-            onPress={() => router.push('/sections/notifications')}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <SectionTitle title="Profesores" />
-          <MenuItem
-            icon="school"
-            title="Conviértete en profesor"
-            onPress={() => router.push('/sections/teacher')}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <SectionTitle title="Subscripción" />
-          <MenuItem
-            icon="pricetag"
-            title="Escoge tu plan"
-            onPress={() => router.push('/sections/subscriptionPlan')}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <SectionTitle title="Soporte" />
-          <MenuItem
-            icon="help-circle"
-            title="Preguntas frecuentes"
-            onPress={() => router.push('/sections/faq')}
-          />
-          <MenuItem
-            icon="chatbubble-ellipses"
-            title="Contactar con soporte"
-            onPress={() => router.push('/sections/support')}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <SectionTitle title="Cuenta" />
-          <View style={styles.menuSection}>
-            <MenuItem
-              icon="log-out"
-              title="Cerrar Sesión"
-              onPress={() => setShowLogoutPopup(true)}
-            />
-          </View>
         </View>
       </ScrollView>
 

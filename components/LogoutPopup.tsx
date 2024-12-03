@@ -36,7 +36,30 @@ const LogoutPopup: React.FC<LogoutPopupProps> = ({ visible, onLogout, onCancel }
     scale.value = visible ? withSpring(1, { damping: 10 }) : withTiming(0);
   }, [visible]);
 
-  const renderContent = () => {
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onCancel}
+    >
+      {Platform.OS === 'ios' ? (
+        <BlurView 
+          intensity={isDark ? 80 : 50}
+          tint={isDark ? 'dark' : 'light'}
+          style={styles.blurContainer}
+        >
+          {renderContent()}
+        </BlurView>
+      ) : (
+        <View style={[styles.blurContainer, isDark && styles.blurContainerDark]}>
+          {renderContent()}
+        </View>
+      )}
+    </Modal>
+  );
+
+  function renderContent() {
     return (
       <Animated.View 
         style={[
@@ -55,17 +78,12 @@ const LogoutPopup: React.FC<LogoutPopupProps> = ({ visible, onLogout, onCancel }
         
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
-            style={[
-              styles.button, 
-              styles.cancelButton,
-              isDark && styles.cancelButtonDark
-            ]} 
+            style={[styles.button, styles.cancelButton, isDark && styles.cancelButtonDark]} 
             onPress={onCancel}
           >
-            <Text style={[
-              styles.cancelText,
-              isDark && styles.darkCancelText
-            ]}>Cancelar</Text>
+            <Text style={[styles.cancelText, isDark && styles.darkCancelText]}>
+              Cancelar
+            </Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -77,33 +95,7 @@ const LogoutPopup: React.FC<LogoutPopupProps> = ({ visible, onLogout, onCancel }
         </View>
       </Animated.View>
     );
-  };
-
-  return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onCancel}
-    >
-      {Platform.OS === 'ios' ? (
-        <BlurView 
-          intensity={isDark ? 80 : 50}
-          tint={isDark ? 'dark' : 'light'}
-          style={styles.blurContainer}
-        >
-          {renderContent()}
-        </BlurView>
-      ) : (
-        <View style={[
-          styles.blurContainer,
-          isDark && styles.blurContainerDark
-        ]}>
-          {renderContent()}
-        </View>
-      )}
-    </Modal>
-  );
+  }
 };
 
 const styles = StyleSheet.create({

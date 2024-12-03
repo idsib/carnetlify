@@ -40,24 +40,23 @@ const PersonalInfoPage = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-    },
-    containerLight: {
-      backgroundColor: '#F5F5F5',
-    },
-    containerDark: {
-      backgroundColor: '#000000',
+      backgroundColor: isDark ? '#000000' : '#F5F5F5',
     },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 16,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
       marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
-    headerTitle: {
-      fontWeight: 'bold',
-      color: isDark ? '#FFFFFF' : '#000000',
-      marginLeft: 8,
+    title: {
       fontSize: isLargeScreen ? 24 : (isSmallDevice ? 20 : 22),
+      fontWeight: '600',
+      marginLeft: 8,
+      color: isDark ? '#FFFFFF' : '#000000',
+    },
+    darkText: {
+      color: '#FFFFFF',
     },
     backButton: {
       padding: 8,
@@ -136,22 +135,22 @@ const PersonalInfoPage = () => {
   );
 
   return (
-    <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+    <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
         <View style={styles.header}>
-          <Link href="/(tabs)/profile" asChild>
+          <Link href="../profile" asChild>
             <TouchableOpacity style={styles.backButton}>
               <Ionicons 
-                name="arrow-back" 
+                name="chevron-back" 
                 size={24} 
                 color={isDark ? '#FFFFFF' : '#000000'} 
               />
             </TouchableOpacity>
           </Link>
-          <Text style={styles.headerTitle}>Información Personal</Text>
+          <Text style={[styles.title, isDark && styles.darkText]}>Información Personal</Text>
         </View>
 
         <ScrollView 

@@ -83,26 +83,23 @@ const SubscriptionPlanPage = () => {
       flex: 1,
       backgroundColor: isDark ? '#000000' : '#F5F5F5',
     },
+    darkContainer: {
+      backgroundColor: '#000000',
+    },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 16,
-      paddingTop: Platform.OS === 'ios' 
-        ? hasDynamicIsland 
-          ? insets.top + 12
-          : 60
-        : 16,
-      marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
     },
-    headerTitle: {
-      fontWeight: 'bold',
-      color: isDark ? '#FFFFFF' : '#000000',
+    title: {
+      fontSize: 20,
+      fontWeight: '600',
       marginLeft: 8,
-      fontSize: Platform.OS === 'ios' 
-        ? hasDynamicIsland 
-          ? 24
-          : isSmallDevice ? 20 : 22
-        : isSmallDevice ? 18 : 20,
+      color: '#000000',
+    },
+    darkText: {
+      color: '#FFFFFF',
     },
     backButton: {
       padding: 8,
@@ -390,18 +387,18 @@ const SubscriptionPlanPage = () => {
         barStyle="light-content"
         backgroundColor="#000000"
       />
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={isDark ? [styles.container, styles.darkContainer] : styles.container}>
         <View style={styles.header}>
-          <Link href="/(tabs)/profile" asChild>
+          <Link href="../profile" asChild>
             <TouchableOpacity style={styles.backButton}>
               <Ionicons 
-                name="arrow-back" 
+                name="chevron-back" 
                 size={24} 
-                color="#FFFFFF" 
+                color={isDark ? '#FFFFFF' : '#000000'} 
               />
             </TouchableOpacity>
           </Link>
-          <Text style={styles.headerTitle}>Planes y Precios</Text>
+          <Text style={[styles.title, isDark && styles.darkText]}>Plan de Suscripción</Text>
         </View>
 
         {isLargeScreen ? (

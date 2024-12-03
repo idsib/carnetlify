@@ -46,14 +46,17 @@ const DrivingInstructorRegistration = () => {
     header: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 16,
-      marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
     },
-    headerTitle: {
-      fontWeight: 'bold',
-      color: isDark ? '#FFFFFF' : '#000000',
+    title: {
+      fontSize: 20,
+      fontWeight: '600',
       marginLeft: 8,
-      fontSize: 22,
+      color: '#000000',
+    },
+    darkText: {
+      color: '#FFFFFF',
     },
     backButton: {
       padding: 8,
@@ -113,17 +116,16 @@ const DrivingInstructorRegistration = () => {
         style={styles.container}
       >
         <View style={styles.header}>
-          <Link href="/(tabs)/profile" asChild>
+          <Link href="../profile" asChild>
             <TouchableOpacity style={styles.backButton}>
               <Ionicons 
-                name="arrow-back" 
+                name="chevron-back" 
                 size={24} 
                 color={isDark ? '#FFFFFF' : '#000000'} 
               />
             </TouchableOpacity>
           </Link>
-          <Text style={styles.headerTitle}>Inscripción como Profesor
-          </Text>
+          <Text style={[styles.title, isDark && styles.darkText]}>Registro de Instructor</Text>
         </View>
 
         <ScrollView style={styles.content}>

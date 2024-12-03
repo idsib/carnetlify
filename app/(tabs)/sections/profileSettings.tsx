@@ -41,42 +41,28 @@ const ProfileSettingsPage = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: isDark ? '#000000' : '#F5F5F5',
     },
-    containerLight: {
-      backgroundColor: '#F5F5F5',
-    },
-    containerDark: {
+    darkContainer: {
       backgroundColor: '#000000',
     },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 16,
-      paddingTop: Platform.select({
-        ios: hasDynamicIsland 
-          ? insets.top + 12
-          : insets.top + 8,
-        android: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
-        default: 16,
-      }),
+      paddingHorizontal: 16,
+      paddingVertical: 12,
     },
-    headerTitle: {
-      fontWeight: 'bold',
-      color: isDark ? '#FFFFFF' : '#000000',
+    title: {
+      fontSize: 20,
+      fontWeight: '600',
       marginLeft: 8,
-      fontSize: Platform.OS === 'ios' 
-        ? hasDynamicIsland 
-          ? 24
-          : isSmallDevice ? 20 : 22
-        : isSmallDevice ? 18 : 20,
+      color: '#000000',
+    },
+    darkText: {
+      color: '#FFFFFF',
     },
     backButton: {
-      padding: Platform.select({
-        ios: isSmallDevice ? 6 : 8,
-        android: isSmallDevice ? 4 : 6,
-        default: 8,
-      }),
-      marginRight: 4,
+      padding: 8,
     },
     profileSection: {
       alignItems: 'center',
@@ -174,20 +160,18 @@ const ProfileSettingsPage = () => {
         barStyle={isDark ? 'light-content' : 'dark-content'}
         backgroundColor={isDark ? '#000000' : '#F5F5F5'}
       />
-      <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Link href="/(tabs)/profile" asChild>
+          <Link href="../profile" asChild>
             <TouchableOpacity style={styles.backButton}>
               <Ionicons 
-                name="arrow-back" 
-                size={isSmallDevice ? 22 : 24} 
+                name="chevron-back" 
+                size={24} 
                 color={isDark ? '#FFFFFF' : '#000000'} 
               />
             </TouchableOpacity>
           </Link>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            Detalles alumno
-          </Text>
+          <Text style={[styles.title, isDark && styles.darkText]}>Configuración</Text>
         </View>
 
         <View style={styles.profileSection}>

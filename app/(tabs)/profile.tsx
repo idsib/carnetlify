@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import TabBar from '../../components/TabBar';
+import LogoutPopup from '../../components/LogoutPopup';
 
 //backend
 import {logOutFirebase} from '@/backend/firebase/logOut';
@@ -56,8 +57,20 @@ const SectionTitle: React.FC<{ title: string }> = ({ title }) => {
 };
 
 export default function ProfileScreen() {
-  const router = useRouter();
   const isDark = useColorScheme() === 'dark';
+  const router = useRouter();
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logOutFirebase();
+      setShowLogoutPopup(false);
+      // Navegar a la pantalla de login o inicio
+      router.replace('/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
@@ -82,22 +95,6 @@ export default function ProfileScreen() {
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={isDark ? '#666666' : '#999999'} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, isDark ? styles.buttonDark : styles.buttonLight]}
-          onPress={getNameUser}
-        >
-          <Text style={[styles.buttonText, isDark ? styles.textDark : styles.textLight]}>
-            Cual es mi UID?
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, isDark ? styles.buttonDark : styles.buttonLight]}
-          onPress={PrintMandanga}
-        >
-          <Text style={[styles.buttonText, isDark ? styles.textDark : styles.textLight]}>
-            PrintMandanga
-          </Text>
         </TouchableOpacity>
         
         <View style={styles.section}>
@@ -149,16 +146,26 @@ export default function ProfileScreen() {
             title="Contactar con soporte"
             onPress={() => router.push('/sections/support')}
           />
-          <MenuItem
-            icon="log-out"
-            title="Cerrar sesión"
-            onPress={() => {
-              // Aquí puedes agregar la lógica de cierre de sesión
-              // router.push('/auth/login')
-            }}
-          />
+        </View>
+
+        <View style={styles.section}>
+          <SectionTitle title="Cuenta" />
+          <View style={styles.menuSection}>
+            <MenuItem
+              icon="log-out"
+              title="Cerrar Sesión"
+              onPress={() => setShowLogoutPopup(true)}
+            />
+          </View>
         </View>
       </ScrollView>
+
+      <LogoutPopup
+        visible={showLogoutPopup}
+        onLogout={handleLogout}
+        onCancel={() => setShowLogoutPopup(false)}
+      />
+      
       <TabBar />
     </SafeAreaView>
   );
@@ -269,5 +276,8 @@ const styles = StyleSheet.create({
   },
   textDark: {
     color: '#FFFFFF',
+  },
+  menuSection: {
+    marginBottom: 24,
   },
 });

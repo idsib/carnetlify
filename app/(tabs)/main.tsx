@@ -5,28 +5,22 @@ import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import Sidebar from '../../components/SideBar';
 import TabBar from '../../components/TabBar';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
-const auth = getAuth();
+import CalendarWidget from '../../components/CalendarWidget';
 const router = useRouter();
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user
-    const uid = user.uid;
-    console.log(uid);
-    } else {
-    //router.push('../(auth)/login');
-  }
-});
+const auth = getAuth();
+const HEADER_HEIGHT = Platform.OS === 'ios' ? 80 : 70;
+const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 60 : 50;
 
-const HEADER_HEIGHT = 120; 
-
-interface DayButtonProps {
-  day: string;
-  active: boolean;
+interface LessonCardProps {
+  icon: React.ReactNode;
+  block: string;
+  title: string;
+  duration: string;
+  onPress?: () => void;
 }
 
 const LessonCard: React.FC<LessonCardProps> = ({ 
@@ -199,6 +193,8 @@ export default function MainScreen() {
   const isDarkMode = colorScheme === 'dark';
   const [activeTab, setActiveTab] = useState('pending');
   const scrollY = useRef(new Animated.Value(0)).current;
+  const isWeb = Platform.OS === 'web';
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT - HEADER_MIN_HEIGHT],
@@ -249,111 +245,129 @@ export default function MainScreen() {
     <SafeAreaView 
       style={[
         styles.container, 
-        isDarkMode ? styles.darkContainer : styles.lightContainer
+        isDarkMode ? styles.containerDark : styles.container
       ]}
     >
-      <Animated.View 
-        style={[
-          styles.headerContainer,
-          {
-            height: headerHeight,
-            opacity: headerOpacity
-          }
-        ]}
-      >
-        <BlurView
-          intensity={isDarkMode ? 30 : 50}
-          tint={isDarkMode ? 'dark' : 'light'}
-          style={[
-            styles.headerBlur,
-            isDarkMode ? styles.darkHeader : styles.lightHeader
-          ]}
-        >
-          <Animated.View style={[
-            styles.headerContent,
-            {
-              transform: [{ scale: logoScale }],
-              opacity: logoOpacity
-            }
-          ]}>
-            <Image
-              source={require('@/assets/images/carnetlify.png')}
-              style={styles.logo}
-              resizeMode="contain"
+      <View style={styles.contentWrapper}>
+        {isWeb && <Sidebar onClose={() => {}} />}
+        <View style={styles.mainContent}>
+          {!isWeb && (
+            <Animated.View 
+              style={[
+                styles.headerContainer,
+                {
+                  height: headerHeight,
+                  opacity: headerOpacity
+                }
+              ]}
+            >
+              <BlurView
+                intensity={isDarkMode ? 30 : 50}
+                tint={isDarkMode ? 'dark' : 'light'}
+                style={[
+                  styles.headerBlur,
+                  isDarkMode ? styles.darkHeader : styles.lightHeader
+                ]}
+              >
+                <Animated.View style={[
+                  styles.headerContent,
+                  {
+                    transform: [{ scale: logoScale }],
+                    opacity: logoOpacity
+                  }
+                ]}>
+                  <Image
+                    source={require('@/assets/images/carnetlify.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                </Animated.View>
+              </BlurView>
+            </Animated.View>
+          )}
+
+          <Animated.ScrollView
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: false }
+            )}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={[
+              {
+                paddingBottom: Platform.OS === 'ios' ? 85 : 70,
+              },
+              isWeb ? {
+                paddingTop: 20,
+              } : {
+                paddingTop: HEADER_HEIGHT + 10,
+              }
+            ]}
+            bounces={true}
+            overScrollMode="always"
+          >
+            <View style={styles.tabsContainer}>
+              <TouchableOpacity 
+                style={[styles.tab, activeTab === 'pending' && styles.activeTab]} 
+                onPress={() => setActiveTab('pending')}
+              >
+                <Text style={[
+                  styles.tabText, 
+                  activeTab === 'pending' ? styles.activeTabText : { color: '#666666' }
+                ]}>Lecciones pendientes</Text>
+                {activeTab === 'pending' && <View style={styles.activeIndicator} />}
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.tab, activeTab === 'completed' && styles.activeTab]} 
+                onPress={() => setActiveTab('completed')}
+              >
+                <Text style={[
+                  styles.tabText, 
+                  activeTab === 'completed' ? styles.activeTabText : { color: '#666666' }
+                ]}>Lecciones completadas</Text>
+                {activeTab === 'completed' && <View style={styles.activeIndicator} />}
+              </TouchableOpacity>
+            </View>
+            <StreakWidget />
+
+            <LessonCard
+              icon={renderIcons('people-outline')}
+              block="Bloque 1"
+              title="Lección 01 - Definiciones Relacionadas con Factores Humanos"
+              duration="10 min"
+              onPress={() => {/* Navigate to lesson */}}
             />
-          </Animated.View>
-        </BlurView>
-      </Animated.View>
-
-      <Animated.ScrollView
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 100,
-          paddingTop: Platform.OS === 'ios' ? 70 : 60,
-        }}
-        bounces={true}
-        overScrollMode="always"
-      >
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity 
-            style={[styles.tab, activeTab === 'pending' && styles.activeTab]} 
-            onPress={() => setActiveTab('pending')}
-          >
-            <Text style={[
-              styles.tabText, 
-              activeTab === 'pending' ? styles.activeTabText : { color: '#666666' }
-            ]}>Lecciones pendientes</Text>
-            {activeTab === 'pending' && <View style={styles.activeIndicator} />}
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.tab, activeTab === 'completed' && styles.activeTab]} 
-            onPress={() => setActiveTab('completed')}
-          >
-            <Text style={[
-              styles.tabText, 
-              activeTab === 'completed' ? styles.activeTabText : { color: '#666666' }
-            ]}>Lecciones completadas</Text>
-            {activeTab === 'completed' && <View style={styles.activeIndicator} />}
-          </TouchableOpacity>
+            <LessonCard
+              icon={renderIcons('car-outline')}
+              block="Bloque 2"
+              title="Lección 02 - Definiciones de Factores Vehiculares"
+              duration="15 min"
+              onPress={() => {/* Navigate to lesson */}}
+            />
+            <LessonCard
+              icon={renderIcons('bicycle-outline')}
+              block="Bloque 3"
+              title="Lección 03 - Definiciones de Factores Viales"
+              duration="10 min"
+              onPress={() => {/* Navigate to lesson */}}
+            />
+            <LessonCard
+              icon={renderIcons('headlight-outline')}
+              block="Bloque 4"
+              title="Lección 04 - Visibilidad e Iluminación"
+              duration="15 min"
+              onPress={() => {/* Navigate to lesson */}}
+            />
+          </Animated.ScrollView>
         </View>
-        <StreakWidget />
-
-        <LessonCard
-          icon={renderIcons('people-outline')}
-          block="Bloque 1"
-          title="Lección 01 - Definiciones Relacionadas con Factores Humanos"
-          duration="10 min"
-          onPress={() => {/* Navigate to lesson */}}
-        />
-        <LessonCard
-          icon={renderIcons('car-outline')}
-          block="Bloque 2"
-          title="Lección 02 - Definiciones de Factores Vehiculares"
-          duration="15 min"
-          onPress={() => {/* Navigate to lesson */}}
-        />
-        <LessonCard
-          icon={renderIcons('bicycle-outline')}
-          block="Bloque 3"
-          title="Lección 03 - Definiciones de Factores Viales"
-          duration="10 min"
-          onPress={() => {/* Navigate to lesson */}}
-        />
-        <LessonCard
-          icon={renderIcons('headlight-outline')}
-          block="Bloque 4"
-          title="Lección 04 - Visibilidad e Iluminación"
-          duration="15 min"
-          onPress={() => {/* Navigate to lesson */}}
-        />
-      </Animated.ScrollView>
-
-      <TabBar />
+        {isWeb && <CalendarWidget />}
+        {isSidebarOpen && (
+          <Sidebar onClose={() => setIsSidebarOpen(false)} />
+        )}
+      </View>
+      {Platform.OS !== 'web' && (
+        <TabBar />
+      )}
     </SafeAreaView>
   );
 }
@@ -362,40 +376,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: '#FFFFFF',
   },
-  lightContainer: {
-    backgroundColor: '#F5F5F5',
-  },
-  darkContainer: {
+  containerDark: {
     backgroundColor: '#000000',
+  },
+  contentWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    width: '100%',
+  },
+  mainContent: {
+    flex: 1,
+    width: '100%',
+    overflow: 'hidden',
   },
   headerContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 100,
-    overflow: 'hidden',
+    zIndex: 1,
+    backgroundColor: 'transparent',
   },
   headerBlur: {
     flex: 1,
-    justifyContent: 'flex-end',
-  },
-  headerContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingBottom: Platform.OS === 'ios' ? 10 : 5,
-  },
-  lightHeader: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
   darkHeader: {
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  lightHeader: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+  },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
   logo: {
-    width: 80,
-    height: 80,
-    alignSelf: 'center',
-    marginBottom: -20,
+    width: 100,
+    height: 100,
   },
   title: {
     fontSize: 24,

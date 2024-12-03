@@ -117,9 +117,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: Platform.OS === 'web' ? '5%' : 16,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 16,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 12,
     alignItems: 'center',
     width: '100%',
+    zIndex: 1,
   },
   blurContainer: {
     borderRadius: Platform.OS === 'web' ? 16 : 24,

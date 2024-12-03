@@ -51,6 +51,7 @@ export const nameUserMongo = async (uid) => {
   })
   .then((user) => {
     console.log("Puede ser? " + JSON.stringify(user))
+    localStorage.setItem("infoUser", user.fullName)
   } );
 };
 

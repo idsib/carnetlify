@@ -6,6 +6,47 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
+//backend
+import {nameUserMongo} from '@/backend/firebase/config'
+import {SetUidFirebase} from "@/backend/mainBackend";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const auth = getAuth();
+
+SetUidFirebase()
+
+let userInfo: any;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+      
+    nameUserMongo(localStorage.getItem("uid")).then((user) => {
+
+      userInfo = user;
+      
+    })
+      
+
+  } else  {
+
+    userInfo = {
+      email: "null",
+      fullName: "User Not Registred",
+      userId : "Null",
+      profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+    }
+      console.log("no hay un usuario registrado")
+  }
+})
+
+function prueba(){
+  console.log(userInfo)
+}
+
+
+
+
+//finBackend
 const ProfileSettingsPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
@@ -177,7 +218,7 @@ const ProfileSettingsPage = () => {
         <View style={styles.profileSection}>
           <TouchableOpacity onPress={pickImage}>
               <Image
-                source={require('@/assets/images/default-avatar.png')}
+                source={userInfo.profile_img}
                 style={styles.profileImage}
               />
             <View style={styles.editIconContainer}>
@@ -188,7 +229,7 @@ const ProfileSettingsPage = () => {
               />
             </View>
           </TouchableOpacity>
-          <Text style={styles.userName}>Joel Jara</Text>
+          <Text style={styles.userName}>{userInfo.fullName}</Text>
           <Text style={styles.location}>Badalona, Cataluña</Text>
         </View>
 

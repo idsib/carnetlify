@@ -33,26 +33,31 @@ export const registerUserInBackend = async (userData) => {
   });
 };
 
-export const nameUserMongo = async (uid) => {
-  const token = await auth.currentUser.getIdToken();
-  await fetch('http://localhost:3000/users/info', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': token,
-    },
-    body: JSON.stringify({ userId: uid }),
-  })
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error('Error al obtener el usuario');
-    }
-    return response.json();
-  })
-  .then((user) => {
-    console.log("Puede ser? " + JSON.stringify(user))
-    localStorage.setItem("infoUser", user.fullName)
-  } );
+export const nameUserMongo = async (userId) => {
+  try {
+    const token = await auth.currentUser.getIdToken();
+
+    const response = await fetch('http://localhost:3000/users/info', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        body: JSON.stringify({ userId: userId }),
+      });
+  
+      if(!response.ok){
+        console.log("No se pudo obtener el usuario")
+      };
+
+      const user = await response.json();
+
+      return user;
+
+  } catch (error) {
+    console.log("Error", error);
+    throw error;
+  }  
 };
 
 

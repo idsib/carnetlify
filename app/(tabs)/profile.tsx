@@ -13,16 +13,30 @@ import {fullInfoFirebase} from '@/backend/firebase/InfoUserOnAuthStateChanged';
 import {nameUserMongo} from '@/backend/firebase/config'
 import {SetUidFirebase} from "@/backend/mainBackend";
 //import {infoUserInterficie} from "@/backend/interficie"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-SetUidFirebase();
+const auth = getAuth();
 
-function getNameUser (){
-  nameUserMongo(localStorage.getItem("uid"))
-}
+SetUidFirebase()
 
-function PrintMandanga(){
-  console.log(localStorage.getItem("infoUser"))
-}
+let userInfo: any;
+
+onAuthStateChanged(auth, (user) => {
+
+  if (user) {
+      
+    nameUserMongo(localStorage.getItem("uid")).then((user) => {
+
+      userInfo = user;
+    
+    })
+      
+
+  } else  {
+      console.log("no hay un usuario registrado")
+  }
+})
+
 
 
 
@@ -95,7 +109,7 @@ export default function ProfileScreen() {
           />
           <View style={styles.profileInfo}>
             <Text style={[styles.profileName, isDark ? styles.textDark : styles.textLight]}>
-              {localStorage.getItem("infoUser")}
+              {userInfo.fullName}
             </Text>
             <Text style={[styles.profileLink, isDark ? styles.textDark : styles.textLight]}>
               Ver perfil

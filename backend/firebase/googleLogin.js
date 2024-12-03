@@ -33,7 +33,7 @@ export async function googleLogin() {
     }); */
 
 
-     try {
+    try {
 
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);

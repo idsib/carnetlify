@@ -22,7 +22,6 @@ export const auth = getAuth(app);
 // Función para registrar usuarios en el backend
 export const registerUserInBackend = async (userData) => {
   const token = await auth.currentUser.getIdToken();
-  userData.profile_img = "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=sharing";
   await fetch('http://localhost:3000/register', {
     method: 'POST',
     headers: {

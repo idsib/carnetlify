@@ -5,7 +5,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { MotiView, MotiText } from 'moti';
 import { useFonts } from 'expo-font';
-
+//backend
+import {googleLogin} from "@/backend/firebase/googleLogin"
+//finBackend
 const { width } = Dimensions.get('window');
 
 const MainMenu = () => {
@@ -91,7 +93,7 @@ const MainMenu = () => {
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'spring', delay: 700 }}
         >
-          <TouchableOpacity style={styles.button} onPress={() => alert('Continuar con Google')}>
+          <TouchableOpacity style={styles.button} onPress={() => {googleLogin(); router.push("/(tabs)/main")}}>
             <AntDesign name="google" size={20} color="#000000" style={styles.buttonIcon} />
             <Text style={styles.buttonText}>Continuar con Google</Text>
           </TouchableOpacity>

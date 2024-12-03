@@ -22,22 +22,30 @@ SetUidFirebase()
 let userInfo: any;
 
 onAuthStateChanged(auth, (user) => {
-
   if (user) {
       
     nameUserMongo(localStorage.getItem("uid")).then((user) => {
 
       userInfo = user;
-    
+      
     })
       
 
   } else  {
+
+    userInfo = {
+      email: "null",
+      fullName: "User Not Registred",
+      userId : "Null",
+      profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+    }
       console.log("no hay un usuario registrado")
   }
 })
 
-
+function prueba(){
+  console.log(userInfo)
+}
 
 
 
@@ -103,7 +111,7 @@ export default function ProfileScreen() {
           onPress={() => router.push('/sections/profileSettings')}
         >
           <Image
-            source={require('@/assets/images/default-avatar.png')}
+            source={userInfo.profile_img}
             style={styles.profileImage}
             resizeMode="cover"
           />

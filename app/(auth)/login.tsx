@@ -43,7 +43,7 @@ const Login = () => {
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       router.push('../main'); // Redirigir al home después del inicio de sesión
     } catch (error) {
       console.error('Error al iniciar sesión:', error);

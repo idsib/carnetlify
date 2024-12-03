@@ -21,10 +21,11 @@ SetUidFirebase()
 
 let userInfo: any;
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
+
   if (user) {
       
-    nameUserMongo(localStorage.getItem("uid")).then((user) => {
+    await nameUserMongo(localStorage.getItem("uid")).then((user) => {
 
       userInfo = user;
       
@@ -89,7 +90,7 @@ export default function ProfileScreen() {
   const isDark = useColorScheme() === 'dark';
   const router = useRouter();
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-
+  
   const handleLogout = async () => {
     try {
       await logOutFirebase();
@@ -125,7 +126,26 @@ export default function ProfileScreen() {
           </View>
           <Ionicons name="chevron-forward" size={24} color={isDark ? '#666666' : '#999999'} />
         </TouchableOpacity>
-        
+
+        <TouchableOpacity
+          style={[styles.profileCard, isDark ? styles.profileCardDark : styles.profileCardLight]}
+          onPress={() => logOutFirebase()}
+        >
+          <Image
+            source={userInfo.profile_img}
+            style={styles.profileImage}
+            resizeMode="cover"
+          />
+          <View style={styles.profileInfo}>
+            <Text style={[styles.profileName, isDark ? styles.textDark : styles.textLight]}>
+              {userInfo.fullName}
+            </Text>
+            <Text style={[styles.profileLink, isDark ? styles.textDark : styles.textLight]}>
+logout            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={24} color={isDark ? '#666666' : '#999999'} />
+        </TouchableOpacity>
+
         <View style={styles.section}>
           <SectionTitle title="Ajustes" />
           <MenuItem

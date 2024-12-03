@@ -124,6 +124,57 @@ export default function ProfileScreen() {
           </View>
           <Ionicons name="chevron-forward" size={24} color={isDark ? '#666666' : '#999999'} />
         </TouchableOpacity>
+
+        <View style={styles.section}>
+          <SectionTitle title="Ajustes" />
+          <MenuItem
+            icon="person-circle"
+            title="Información personal"
+            onPress={() => router.push('/sections/personalInfo')}
+          />
+          <MenuItem
+            icon="card"
+            title="Método de pago"
+            onPress={() => router.push('/sections/paymethod')}
+          />
+          <MenuItem
+            icon="notifications"
+            title="Notificaciones"
+            onPress={() => router.push('/sections/notifications')}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <SectionTitle title="Profesores" />
+          <MenuItem
+            icon="school"
+            title="Conviértete en profesor"
+            onPress={() => router.push('/sections/teacher')}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <SectionTitle title="Subscripción" />
+          <MenuItem
+            icon="pricetag"
+            title="Escoge tu plan"
+            onPress={() => router.push('/sections/subscriptionPlan')}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <SectionTitle title="Soporte" />
+          <MenuItem
+            icon="help-circle"
+            title="Preguntas frecuentes"
+            onPress={() => router.push('/sections/faq')}
+          />
+          <MenuItem
+            icon="chatbubble-ellipses"
+            title="Contactar con soporte"
+            onPress={() => router.push('/sections/support')}
+          />
+        </View>
         
         <View style={styles.section}>
           <MenuItem

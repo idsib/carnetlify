@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Platform, StatusBar, Dimensions, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
@@ -10,41 +10,10 @@ import * as ImagePicker from 'expo-image-picker';
 import {nameUserMongo} from '@/backend/firebase/config'
 import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
 
 const auth = getAuth();
-
-SetUidFirebase()
-
-let userInfo: any;
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-      
-    nameUserMongo(localStorage.getItem("uid")).then((user) => {
-
-      userInfo = user;
-      
-    })
-      
-
-  } else  {
-
-    userInfo = {
-      email: "null",
-      fullName: "User Not Registred",
-      userId : "Null",
-      profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
-    }
-      console.log("no hay un usuario registrado")
-  }
-})
-
-function prueba(){
-  console.log(userInfo)
-}
-
-
-
+SetUidFirebase();
 
 //finBackend
 const ProfileSettingsPage = () => {
@@ -54,6 +23,36 @@ const ProfileSettingsPage = () => {
   const hasDynamicIsland = Platform.OS === 'ios' && height >= 852;
   const isSmallDevice = height < 700;
   const isTablet = width > 768;
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    email: "null",
+    fullName: "User Not Registered",
+    userId: "null",
+    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+  });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        nameUserMongo(localStorage.getItem("uid"))
+          .then((userData) => {
+            setUserInfo(userData);
+          })
+          .catch((error) => {
+            console.error('Error fetching user data:', error);
+          });
+      } else {
+        setUserInfo({
+          email: "null",
+          fullName: "User Not Registered",
+          userId: "null",
+          profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+        });
+        console.log("No user is registered");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const pickImage = async () => {
     // Solicitar permisos
@@ -218,7 +217,7 @@ const ProfileSettingsPage = () => {
         <View style={styles.profileSection}>
           <TouchableOpacity onPress={pickImage}>
               <Image
-                source={userInfo.profile_img}
+                source={{ uri: userInfo.profile_img }}
                 style={styles.profileImage}
               />
             <View style={styles.editIconContainer}>

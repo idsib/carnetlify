@@ -13,16 +13,10 @@ import {fullInfoFirebase} from '@/backend/firebase/InfoUserOnAuthStateChanged';
 import {nameUserMongo} from '@/backend/firebase/config';
 import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
 
 const auth = getAuth();
 SetUidFirebase();
-
-interface UserInfo {
-  email: string;
-  fullName: string;
-  userId: string;
-  profile_img: string;
-}
 
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;

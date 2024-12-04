@@ -80,7 +80,10 @@ export default function ProfileScreen() {
     try {
       await logOutFirebase();
       setShowLogoutPopup(false);
-      router.replace('/');
+      await router.replace('/');
+      setTimeout(() => {
+        window.location.reload();
+    }, 100);
     } catch (error) {
       console.error('Error during logout:', error);
     }

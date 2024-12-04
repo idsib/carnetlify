@@ -68,7 +68,7 @@ const Register = () => {
       };
       await registerUserInBackend(userData);
       console.log('Usuario registrado en el backend');
-      
+      router.push('../main');
       // Lógica después del registro, como redirigir a otra pantalla
     } catch (error) {
       console.error('Error al registrar usuario:', error);

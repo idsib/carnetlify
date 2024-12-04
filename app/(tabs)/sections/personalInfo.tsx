@@ -173,7 +173,7 @@ const PersonalInfoPage = () => {
           <TouchableOpacity 
             style={styles.saveButton}
             onPress={() => {
-              // Lógica para guardar
+              window.location.reload()
             }}
           >
             <Text style={styles.saveButtonText}>Guardar Cambios</Text>

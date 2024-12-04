@@ -7,6 +7,10 @@ import { MotiView, MotiText } from 'moti';
 import { useFonts } from 'expo-font';
 //backend
 import {googleLogin} from "@/backend/firebase/googleLogin"
+async function google() {
+            await googleLogin()
+            window.location.reload()
+}
 //finBackend
 const { width } = Dimensions.get('window');
 
@@ -93,7 +97,7 @@ const MainMenu = () => {
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'spring', delay: 700 }}
         >
-          <TouchableOpacity style={styles.button} onPress={() => {googleLogin(); router.push("/(tabs)/main")}}>
+          <TouchableOpacity style={styles.button} onPress={() => {google(); router.push("/(tabs)/main")}}>
             <AntDesign name="google" size={20} color="#000000" style={styles.buttonIcon} />
             <Text style={styles.buttonText}>Continuar con Google</Text>
           </TouchableOpacity>

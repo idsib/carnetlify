@@ -14,29 +14,19 @@ import {nameUserMongo} from '@/backend/firebase/config'
 import {SetUidFirebase} from "@/backend/mainBackend";
 //import {infoUserInterficie} from "@/backend/interficie"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 const auth = getAuth();
-
 SetUidFirebase()
-
 let userInfo: any;
-
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-      
+  if (user) { 
     nameUserMongo(localStorage.getItem("uid")).then((user) => {
-
-      userInfo = user;
-      
+    userInfo = user;
     })
-      
-
   } else  {
-
     userInfo = {
       email: "null",
       fullName: "User Not Registred",
-      userId : "Null",
+      userId : "null",
       profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
     }
       console.log("no hay un usuario registrado")
@@ -46,10 +36,6 @@ onAuthStateChanged(auth, (user) => {
 function prueba(){
   console.log(userInfo)
 }
-
-
-
-
 //finBackend
 
 interface MenuItemProps {

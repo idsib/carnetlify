@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,33 +10,19 @@ import LogoutPopup from '../../components/LogoutPopup';
 import {logOutFirebase} from '@/backend/firebase/logOut';
 import {getFullInfoUser} from '@/backend/firebase/InfoUserCurrentUser';
 import {fullInfoFirebase} from '@/backend/firebase/InfoUserOnAuthStateChanged';
-import {nameUserMongo} from '@/backend/firebase/config'
+import {nameUserMongo} from '@/backend/firebase/config';
 import {SetUidFirebase} from "@/backend/mainBackend";
-//import {infoUserInterficie} from "@/backend/interficie"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-const auth = getAuth();
-SetUidFirebase()
-let userInfo: any;
-onAuthStateChanged(auth, (user) => {
-  if (user) { 
-    nameUserMongo(localStorage.getItem("uid")).then((user) => {
-    userInfo = user;
-    })
-  } else  {
-    userInfo = {
-      email: "null",
-      fullName: "User Not Registred",
-      userId : "null",
-      profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
-    }
-      console.log("no hay un usuario registrado")
-  }
-})
 
-function prueba(){
-  console.log(userInfo)
+const auth = getAuth();
+SetUidFirebase();
+
+interface UserInfo {
+  email: string;
+  fullName: string;
+  userId: string;
+  profile_img: string;
 }
-//finBackend
 
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -75,6 +61,36 @@ export default function ProfileScreen() {
   const isDark = useColorScheme() === 'dark';
   const router = useRouter();
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    email: "null",
+    fullName: "User Not Registered",
+    userId: "null",
+    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+  });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        nameUserMongo(localStorage.getItem("uid"))
+          .then((userData) => {
+            setUserInfo(userData);
+          })
+          .catch((error) => {
+            console.error('Error fetching user data:', error);
+          });
+      } else {
+        setUserInfo({
+          email: "null",
+          fullName: "User Not Registered",
+          userId: "null",
+          profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+        });
+        console.log("No user is registered");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -99,7 +115,7 @@ export default function ProfileScreen() {
           onPress={() => router.push('/sections/profileSettings')}
         >
           <Image
-            source={userInfo.profile_img}
+            source={{ uri: userInfo.profile_img }}
             style={styles.profileImage}
             resizeMode="cover"
           />

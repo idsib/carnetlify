@@ -121,18 +121,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     zIndex: 1,
+    ...(Platform.OS === 'web' && {
+      pointerEvents: 'box-none',
+    }),
   },
   blurContainer: {
-    borderRadius: Platform.OS === 'web' ? 16 : 24,
+    borderRadius: Platform.OS === 'web' ? 12 : 24,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
-    width: Platform.OS === 'web' ? 500 : '100%',
+    width: Platform.OS === 'web' ? '100%' : '100%',
+    maxWidth: Platform.OS === 'web' ? 480 : undefined,
     alignSelf: 'center',
-    margin: Platform.OS === 'web' ? 20 : 0,
+    margin: Platform.OS === 'web' ? 16 : 0,
   },
   tabBar: {
     flexDirection: 'row',
@@ -144,27 +148,28 @@ const styles = StyleSheet.create({
   tabBarItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: Platform.OS === 'web' ? 0 : 1,
+    flex: 1,
+    minWidth: Platform.OS === 'web' ? 80 : undefined,
   },
   webTabBarItem: {
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    margin: 4,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    margin: 2,
   },
   webActiveTabBarItem: {
     backgroundColor: 'rgba(0,122,255,0.1)',
   },
   iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: Platform.OS === 'web' ? 40 : 50,
+    height: Platform.OS === 'web' ? 40 : 50,
+    borderRadius: Platform.OS === 'web' ? 20 : 25,
     justifyContent: 'center',
     alignItems: 'center',
   },
   webIconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   }
 });
 

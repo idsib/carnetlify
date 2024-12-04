@@ -335,7 +335,7 @@ export default function MainScreen() {
               block="Bloque 1"
               title="Lección 01 - Definiciones Relacionadas con Factores Humanos"
               duration="10 min"
-              onPress={() => {/* Navigate to lesson */}}
+              onPress={() => router.push('/lessons/firsTask')}
             />
             <LessonCard
               icon={renderIcons('car-outline')}

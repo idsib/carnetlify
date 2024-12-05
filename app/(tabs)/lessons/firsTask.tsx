@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Alert, Platform, Animated as RNAnimated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Alert, Platform, Animated as RNAnimated, useColorScheme } from 'react-native';
 import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { 
@@ -27,6 +27,7 @@ interface DraggableItemProps {
 
 export default function Lesson1() {
   const router = useRouter();
+  const isDark = useColorScheme() === 'dark';
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const fadeAnim = useSharedValue(0);
@@ -104,7 +105,8 @@ export default function Lesson1() {
     transform: [{ scale: withSpring(fadeAnim.value ? 1 : 0.8) }],
   }));
 
-  const DraggableItem = ({ item, onDragEnd }: DraggableItemProps) => {
+  const DraggableItem: React.FC<DraggableItemProps> = ({ item, onDragEnd }) => {
+    const isDark = useColorScheme() === 'dark';
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
     const isDragging = useSharedValue(false);
@@ -176,8 +178,8 @@ export default function Lesson1() {
 
     return (
       <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.conceptItem, animatedStyle]}>
-          <Text style={styles.conceptText}>{item}</Text>
+        <Animated.View style={[styles.draggableItem, isDark && styles.draggableItemDark, animatedStyle]}>
+          <Text style={[styles.itemText, isDark && styles.textDark]}>{item}</Text>
         </Animated.View>
       </GestureDetector>
     );
@@ -189,7 +191,7 @@ export default function Lesson1() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
         {showFeedback && (
           <Animated.View style={[
             styles.feedbackContainer,
@@ -204,7 +206,7 @@ export default function Lesson1() {
                   {isCorrect ? '✓' : '✕'}
                 </Text>
               </View>
-              <Text style={styles.feedbackText}>
+              <Text style={[styles.feedbackText, isDark && styles.textDark]}>
                 {isCorrect ? '¡Correcto!' : 'Incorrecto'}
               </Text>
               <TouchableOpacity 
@@ -224,13 +226,13 @@ export default function Lesson1() {
             </View>
           </Animated.View>
         )}
-        <Text style={styles.title}>Agrupa los siguientes conceptos de las luces largas</Text>
+        <Text style={[styles.title, isDark && styles.titleDark]}>Agrupa los siguientes conceptos de las luces largas</Text>
         
         <View style={styles.dropZonesContainer}>
           <View style={styles.dropZoneRow}>
             <View style={[styles.category, { flex: 1 }]}>
-              <Text style={styles.categoryTitle}>Prohibidas</Text>
-              <View style={[styles.dropZone, styles.prohibidasZone]}>
+              <Text style={[styles.categoryTitle, isDark && styles.textDark]}>Prohibidas</Text>
+              <View style={[styles.dropZone, styles.prohibidasZone, isDark && styles.dropZoneDark]}>
                 {categories.prohibidas.map((item, index) => (
                   <DraggableItem 
                     key={index} 
@@ -242,8 +244,8 @@ export default function Lesson1() {
             </View>
 
             <View style={[styles.category, { flex: 1 }]}>
-              <Text style={styles.categoryTitle}>Permitidas</Text>
-              <View style={[styles.dropZone, styles.permitidasZone]}>
+              <Text style={[styles.categoryTitle, isDark && styles.textDark]}>Permitidas</Text>
+              <View style={[styles.dropZone, styles.permitidasZone, isDark && styles.dropZoneDark]}>
                 {categories.permitidas.map((item, index) => (
                   <DraggableItem 
                     key={index} 
@@ -270,7 +272,7 @@ export default function Lesson1() {
           style={styles.confirmButton} 
           onPress={handleConfirm}
         >
-          <Text style={styles.confirmButtonText}>Confirmar elección</Text>
+          <Text style={[styles.confirmButtonText, isDark && styles.textDark]}>Confirmar elección</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </GestureHandlerRootView>
@@ -281,14 +283,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F5F5F5',
+  },
+  containerDark: {
+    backgroundColor: '#1A1A1A',
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
     marginBottom: 20,
-    color: '#333',
+    textAlign: 'center',
+    color: '#000000',
+  },
+  titleDark: {
+    color: '#FFFFFF',
+  },
+  text: {
+    color: '#000000',
+  },
+  textDark: {
+    color: '#FFFFFF',
   },
   dropZonesContainer: {
     flex: 1,
@@ -313,23 +327,27 @@ const styles = StyleSheet.create({
   },
   dropZone: {
     flex: 1,
+    borderWidth: 2,
+    borderStyle: 'dashed',
     borderRadius: 10,
     padding: 10,
-    minHeight: 250, 
+    minHeight: 250,
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexWrap: 'wrap',
     flexDirection: 'row',
+    backgroundColor: '#F5F5F5',
+    borderColor: '#E0E0E0',
+  },
+  dropZoneDark: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: '#666666',
   },
   prohibidasZone: {
-    backgroundColor: '#ffebee',
-    borderWidth: 2,
-    borderColor: '#ffcdd2',
+    marginRight: 8,
   },
   permitidasZone: {
-    backgroundColor: '#e8f5e9',
-    borderWidth: 2,
-    borderColor: '#c8e6c9',
+    marginLeft: 8,
   },
   unassignedContainer: {
     flexDirection: 'row',
@@ -338,40 +356,29 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 20,
   },
-  conceptItem: {
-    backgroundColor: 'white',
-    borderRadius: 8,
+  draggableItem: {
     padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
     margin: 6,
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    minWidth: 120, 
-    height: 45, 
+    minWidth: 120,
+    height: 45,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  conceptText: {
+  draggableItemDark: {
+    backgroundColor: '#333333',
+    shadowColor: '#FFFFFF',
+  },
+  itemText: {
     fontSize: 16,
-    color: '#333',
+    color: '#000000',
     textAlign: 'center',
-  },
-  placedItem: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 12,
-    margin: 6,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    minWidth: 120, 
-    height: 45, 
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   confirmButton: {
     backgroundColor: '#2196F3',

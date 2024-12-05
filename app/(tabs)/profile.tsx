@@ -59,7 +59,8 @@ export default function ProfileScreen() {
     email: "null",
     fullName: "User Not Registered",
     userId: "null",
-    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link",
+    plan: "null"
   });
 
   useEffect(() => {
@@ -73,12 +74,6 @@ export default function ProfileScreen() {
             console.error('Error fetching user data:', error);
           });
       } else {
-        setUserInfo({
-          email: "null",
-          fullName: "User Not Registered",
-          userId: "null",
-          profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
-        });
         console.log("No user is registered");
       }
     });

@@ -3,4 +3,5 @@ export interface UserInfo {
   fullName: string;
   userId: string;
   profile_img: string;
+  plan: string;
 }

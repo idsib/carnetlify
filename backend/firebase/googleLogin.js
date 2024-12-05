@@ -41,7 +41,8 @@ export async function googleLogin() {
         const userData = {
             fullName: result.user.displayName,
             email: result.user.email,
-            profile_img: result.user.photoURL
+            profile_img: result.user.photoURL,
+            plan: "null"
         };
         await registerUserInBackend(userData);
         console.log('Usuario registrado en el backend'); 

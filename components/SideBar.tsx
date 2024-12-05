@@ -24,10 +24,10 @@ const menuItems: Array<{ icon: IconName; activeIcon: IconName; label: string; pa
     path: '/main'
   },
   { 
-    icon: 'calendar-outline',
-    activeIcon: 'calendar',
-    label: 'Calendario',
-    path: '/calendar'
+    icon: 'id-card-outline',
+    activeIcon: 'id-card',
+    label: 'Reservar',
+    path: '/booking'
   },
   { 
     icon: 'chatbubbles-outline',

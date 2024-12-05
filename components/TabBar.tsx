@@ -24,10 +24,10 @@ const TabBar = () => {
       icon: 'home-outline'
     },
     { 
-      name: 'calendar-outline', 
-      activeName: 'calendar',
-      path: '/calendar',
-      icon: 'calendar-outline'
+      name: 'id-card-outline', 
+      activeName: 'id-card',
+      path: '/booking',
+      icon: 'id-card-outline'
     },
     { 
       name: 'chatbubbles-outline', 

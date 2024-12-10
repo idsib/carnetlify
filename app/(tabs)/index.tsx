@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, useColorScheme, Image, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, useColorScheme, Image, Dimensions, Platform } from 'react-native';
 import Splash from '../../components/Splash';
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -152,20 +152,20 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: width < 380 ? 20 : 30,
-    paddingTop: width < 380 ? 30 : 50,
-    paddingBottom: width < 380 ? 15 : 20,
+    paddingVertical: 20,
   },
   logoContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: Platform.OS === 'web' ? 40 : 20,
   },
   logo: {
-    width: width < 380 ? 150 : 200,
-    height: width < 380 ? 150 : 200,
+    width: width < 380 ? 120 : 150,
+    height: width < 380 ? 120 : 150,
     marginBottom: width < 380 ? 5 : 10,
   },
   title: {
@@ -176,8 +176,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    maxWidth: 450,
+    maxWidth: 350,
     alignSelf: 'center',
+    marginVertical: 20,
   },
   button: {
     flexDirection: 'row',

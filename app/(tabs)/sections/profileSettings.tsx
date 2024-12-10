@@ -27,7 +27,8 @@ const ProfileSettingsPage = () => {
     email: "null",
     fullName: "User Not Registered",
     userId: "null",
-    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link",
+    plan: "null"
   });
 
   useEffect(() => {
@@ -45,7 +46,8 @@ const ProfileSettingsPage = () => {
           email: "null",
           fullName: "User Not Registered",
           userId: "null",
-          profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
+          profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link",
+          plan: "null"
         });
         console.log("No user is registered");
       }

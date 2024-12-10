@@ -6,6 +6,7 @@ import {
   StyleSheet, 
   useWindowDimensions,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
@@ -209,7 +210,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    outline: 'none',
+    ...(Platform.OS === 'web' && {
+      outlineWidth: 0,
+      outlineStyle: 'none'
+    }),
   },
   methodName: {
     fontSize: 14,

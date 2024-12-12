@@ -113,7 +113,10 @@ const TabBar = () => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
+    bottom: Platform.select({
+      web: 40,
+      default: 0
+    }),
     left: 0,
     right: 0,
     paddingHorizontal: Platform.OS === 'web' ? '5%' : 16,

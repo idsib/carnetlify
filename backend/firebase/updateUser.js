@@ -3,12 +3,23 @@ import { auth } from '@/backend/firebase/config';
 
 export function updateProfile(newDisplayName, newPhotoURL, newEmail, newPassword) {
 
-    if (newDisplayName && newPhotoURL) {
+    if (newDisplayName) {
         updateProfile(auth.currentUser, {
-            displayName: newDisplayName, photoURL: newPhotoURL
+            displayName: newDisplayName
 
         }).then(() => {
-            console.log("Usuario actualizado con los datos => name: " + newDisplayName + " photoURL: " + newPhotoURL)
+            console.log("Usuario actualizado con los datos => name: " + newDisplayName)
+        }).catch((error) => {
+            console.log("Error con actualizacion con nombre y foto: " + error)
+        });
+    }
+
+    if (newPhotoURL) {
+        updateProfile(auth.currentUser, {
+            photoURL: newPhotoURL
+
+        }).then(() => {
+            console.log("Usuario actualizado con los datos => photoURL: " + newPhotoURL)
         }).catch((error) => {
             console.log("Error con actualizacion con nombre y foto: " + error)
         });
@@ -30,6 +41,5 @@ export function updateProfile(newDisplayName, newPhotoURL, newEmail, newPassword
             console.log("Error con actualización con email: " + error)
           });
     }
-
-
+    
 }

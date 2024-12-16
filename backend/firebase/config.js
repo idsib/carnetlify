@@ -20,7 +20,7 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Función para registrar usuarios en el backend
-export const registerUserInBackend = async (userData) => {
+export const  registerUserInBackend = async (userData) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/register', {
     method: 'POST',
@@ -59,4 +59,15 @@ export const nameUserMongo = async (userId) => {
   }  
 };
 
+export const  updateUserInBackend = async (userData) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userData),
+  });
+};
 

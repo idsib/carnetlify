@@ -49,6 +49,8 @@ app.post('/register', verifyToken, async (req, res) => {
   const existingUser = await usersCollection.findOne({ userId });
   if (!existingUser) {
     await usersCollection.insertOne({ userId, ...userData });
+/*   } else if (existingUser){
+    await usersCollection.replaceOne({userId, }) */
   }
   res.status(201).send('Usuario registrado');
 });

@@ -27,8 +27,9 @@ const ProfileSettingsPage = () => {
     email: "null",
     fullName: "User Not Registered",
     userId: "null",
-    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link",
-    plan: "null"
+    plan: "null",
+    isLocked: "true",
+    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
   });
 
   useEffect(() => {
@@ -42,13 +43,6 @@ const ProfileSettingsPage = () => {
             console.error('Error fetching user data:', error);
           });
       } else {
-        setUserInfo({
-          email: "null",
-          fullName: "User Not Registered",
-          userId: "null",
-          profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link",
-          plan: "null"
-        });
         console.log("No user is registered");
       }
     });

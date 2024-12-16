@@ -59,8 +59,9 @@ export default function ProfileScreen() {
     email: "null",
     fullName: "User Not Registered",
     userId: "null",
-    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link",
-    plan: "null"
+    plan: "null",
+    isLocked: "true",
+    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
   });
 
   useEffect(() => {

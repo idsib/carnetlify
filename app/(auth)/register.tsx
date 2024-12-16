@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-  useColorScheme,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Dimensions
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  SafeAreaView, 
+  useColorScheme, 
+  Image, 
+  KeyboardAvoidingView, 
+  Platform, 
+  ScrollView, 
+  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../backend/firebase/config';
+import { auth, registerUserInBackend } from '../../backend/firebase/config'; // Asegúrate de que esta ruta sea correcta
 
 const { width, height } = Dimensions.get('window');
 
@@ -57,11 +58,23 @@ const Register = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Usuario registrado:', userCredential.user);
-      // Lógica después del registro
+      // Llama a la función para registrar el usuario en el backend
+      const userData = {
+        fullName: name,
+        email: email,
+        plan: "null",
+        isLocked: "true",
+        profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=sharing"
+      };
+      await registerUserInBackend(userData);
+      console.log('Usuario registrado en el backend');
+      router.push('../main');
+      // Lógica después del registro, como redirigir a otra pantalla
     } catch (error) {
       console.error('Error al registrar usuario:', error);
     }
   };
+  
 
   return (
     <SafeAreaView style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
@@ -71,7 +84,7 @@ const Register = () => {
         style={styles.keyboardAvoidingView}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView
+        <ScrollView 
           contentContainerStyle={styles.scrollViewContent}
           keyboardShouldPersistTaps="handled"
         >
@@ -82,13 +95,12 @@ const Register = () => {
             <View style={styles.logoContainer}>
               <Image
                 source={isDarkMode 
-                  ? require('@/assets/images/carnetlify-white.png')
-                  : require('@/assets/images/carnetlify-black.png')
+                  ? require('../../assets/images/carnetlify-white.png')
+                  : require('../../assets/images/carnetlify-black.png')
                 }
                 style={styles.logo}
                 resizeMode="contain"
               />
-
               <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Crea tu cuenta</Text>
             </View>
             <View style={styles.content}>

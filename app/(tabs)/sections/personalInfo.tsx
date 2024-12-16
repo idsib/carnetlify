@@ -168,7 +168,7 @@ const PersonalInfoPage = () => {
           {renderInput('Ciudad', 'ciudad')}
           {renderInput('Código Postal', 'codigoPostal', 'numeric')}
           {renderInput('Domicilio', 'domicilio')}
-          {renderInput('Teléfono', 'telefono')}
+          {renderInput('Teléfono', 'telefono', 'numeric')}
 
           <TouchableOpacity 
             style={styles.saveButton}

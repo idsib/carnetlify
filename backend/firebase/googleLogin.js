@@ -42,7 +42,8 @@ export async function googleLogin() {
             fullName: result.user.displayName,
             email: result.user.email,
             profile_img: result.user.photoURL,
-            plan: "null"
+            plan: "null",
+            isLocked: "true"
         };
         await registerUserInBackend(userData);
         console.log('Usuario registrado en el backend'); 

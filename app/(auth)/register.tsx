@@ -31,28 +31,11 @@ const Register = () => {
   const router = useRouter();
 
   const [name, setName] = useState('');
-  const [dni, setDni] = useState('');
   const [email, setEmail] = useState('');
-  const [birthDate, setBirthDate] = useState('');
   const [password, setPassword] = useState('');
 
   const validateName = (text: string) => text.length >= 2 && text.length <= 50;
-  const validateDNI = (text: string) => /^\d{8}[a-zA-Z]$/.test(text);
   const validateEmail = (text: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
-  const validateBirthDate = (text: string) => /^\d{2}\/\d{2}\/\d{4}$/.test(text);
-
-  const formatDNI = (text: string) => {
-    const numbers = text.replace(/\D/g, '');
-    const letter = text.slice(-1).toUpperCase();
-    return numbers.length === 8 && /[A-Z]/.test(letter) ? `${numbers}${letter}` : numbers;
-  };
-
-  const formatBirthDate = (text: string) => {
-    const numbers = text.replace(/\D/g, '');
-    if (numbers.length <= 2) return numbers;
-    if (numbers.length <= 4) return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
-    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
-  };
 
   const handleRegister = async () => {
     try {
@@ -117,19 +100,6 @@ const Register = () => {
               <TextInput
                 style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
                 placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                placeholder="DNI"
-                value={dni}
-                onChangeText={(text) => {
-                  const formattedDNI = formatDNI(text);
-                  setDni(formattedDNI);
-                  validateDNI(formattedDNI);
-                }}
-                maxLength={9}
-                keyboardType="numeric"
-              />
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
                 placeholder="Correo electrónico"
                 value={email}
                 onChangeText={(text) => {
@@ -145,19 +115,6 @@ const Register = () => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
-              />
-              <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-                placeholderTextColor={isDarkMode ? '#777' : '#999'}
-                placeholder="Fecha de nacimiento (DD/MM/AAAA)"
-                value={birthDate}
-                onChangeText={(text) => {
-                  const formattedDate = formatBirthDate(text);
-                  setBirthDate(formattedDate);
-                  validateBirthDate(formattedDate);
-                }}
-                maxLength={10}
-                keyboardType="numeric"
               />
               <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
                 <Text style={styles.registerButtonText}>Registrarse</Text>

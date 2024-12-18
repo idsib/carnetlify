@@ -177,7 +177,6 @@ const PersonalInfoPage = () => {
           <TouchableOpacity 
             style={styles.saveButton}
             onPress={() => {
-              updateProfile()
               window.location.reload()
             }}
           >

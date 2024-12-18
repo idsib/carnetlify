@@ -49,6 +49,21 @@ app.post('/register', verifyToken, async (req, res) => {
   const existingUser = await usersCollection.findOne({ userId });
   if (!existingUser) {
     await usersCollection.insertOne({ userId, ...userData });
+  } else if (existingUser){
+    await usersCollection.replaceOne({userId, ...userData });
+  }
+  res.status(201).send('Usuario registrado');
+  console.log(req);
+});
+
+// Ruta para actualizar usuarios en MongoDB
+app.post('/updateUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const userData = req.body;
+
+  const existingUser = await usersCollection.findOne({ userId });
+  if (!existingUser) {
+    await usersCollection.insertOne({ userId, ...userData });
 /*   } else if (existingUser){
     await usersCollection.replaceOne({userId, }) */
   }

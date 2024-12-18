@@ -1,7 +1,7 @@
 import { updateProfile, updateEmail } from "firebase/auth";
 import { auth } from '@/backend/firebase/config';
 
-export function updateProfile(newDisplayName, newPhotoURL, newEmail, newPassword) {
+export function updateProfile(newDisplayName, newDni, newAge, newContry, newProvince, newCity, newPostalCode, newHome, newPhotoURL, newEmail, newPassword) {
 
     if (newDisplayName) {
         updateProfile(auth.currentUser, {
@@ -12,6 +12,9 @@ export function updateProfile(newDisplayName, newPhotoURL, newEmail, newPassword
         }).catch((error) => {
             console.log("Error con actualizacion con nombre y foto: " + error)
         });
+        
+        let userName = `"name":"${newDisplayName}"`
+        
     }
 
     if (newPhotoURL) {
@@ -42,4 +45,8 @@ export function updateProfile(newDisplayName, newPhotoURL, newEmail, newPassword
           });
     }
     
+}function saludo(nombre,text){
+    alert(`Hola ${nombre} ${text}`);
 }
+
+saludo("bauti", "que");

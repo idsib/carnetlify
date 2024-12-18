@@ -1,6 +1,5 @@
 export interface PersonalInfo {
   name: string;
-  surname: string;
   dni: string;
   age: string;
   country: string;

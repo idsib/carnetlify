@@ -17,6 +17,10 @@ import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+//backEnd
+import {updateProfile} from '@/backend/firebase/updateUser'
+//finBackEnd
+
 const PersonalInfoPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
@@ -173,6 +177,7 @@ const PersonalInfoPage = () => {
           <TouchableOpacity 
             style={styles.saveButton}
             onPress={() => {
+              updateProfile()
               window.location.reload()
             }}
           >

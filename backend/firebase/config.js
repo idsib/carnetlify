@@ -32,6 +32,67 @@ export const  registerUserInBackend = async (userData) => {
   });
 };
 
+// Función para actualizar usuarios en el backend
+export const  updateNameUserInBackend = async (userName) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateNameUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userName),
+  });
+};
+
+export const  updateDniUserInBackend = async (userDni) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateNameUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userDni),
+  });
+};
+
+export const  updateAgeUserInBackend = async (userAge) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateNameUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userAge),
+  });
+};
+
+export const  updateCountryUserInBackend = async (userCountry) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateNameUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userCountry),
+  });
+};
+
+export const  updateProvinceUserInBackend = async (userProvince) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateNameUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userProvince),
+  });
+};
+
 export const nameUserMongo = async (userId) => {
   try {
     const token = await auth.currentUser.getIdToken();
@@ -57,17 +118,5 @@ export const nameUserMongo = async (userId) => {
     console.log("Error", error);
     throw error;
   }  
-};
-
-export const  updateUserInBackend = async (userData) => {
-  const token = await auth.currentUser.getIdToken();
-  await fetch('http://localhost:3000/update', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': token,
-    },
-    body: JSON.stringify(userData),
-  });
 };
 

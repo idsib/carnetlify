@@ -1,20 +1,23 @@
 import { updateProfile, updateEmail } from "firebase/auth";
 import { auth } from '@/backend/firebase/config';
+import { updateNameUserInBackend } from '@/backend/firebase/config';
 
-export function updateUserProfile(newDisplayName, newDni, newAge, newContry, newProvince, newCity, newPostalCode, newHome, newPhotoURL, newEmail, newPassword) {
+export async function updateUserProfile(newDisplayName, newDni, newAge, newContry, newProvince, newCity, newPostalCode, newHome, newPhotoURL, newEmail, newPassword) {
 
     if (newDisplayName) {
-        updateProfile(auth.currentUser, {
+        await updateProfile(auth.currentUser, {
             displayName: newDisplayName
 
         }).then(() => {
-            console.log("Usuario actualizado con los datos => name: " + newDisplayName)
+            console.log("Usuario actualizado en firebase con los datos => name: " + newDisplayName)
         }).catch((error) => {
             console.log("Error con actualizacion con nombre y foto: " + error)
         });
         
-        let userName = `"name":"${newDisplayName}"`
-        
+        const userName = {
+            fullName: newDisplayName
+          };
+        await updateNameUserInBackend(userName)
     }
 
     if (newPhotoURL) {

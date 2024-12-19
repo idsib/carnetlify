@@ -178,7 +178,6 @@ const PersonalInfoPage = () => {
           <TouchableOpacity 
             style={styles.saveButton}
             onPress={() => {
-              window.location.reload()
               updateUserProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono)
             }}
           >

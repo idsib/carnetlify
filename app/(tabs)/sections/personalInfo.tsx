@@ -17,6 +17,10 @@ import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+const { height, width } = Dimensions.get('window');
+const isSmallDevice = height < 700;
+const isLargeScreen = width > 768;
+
 //backEnd
 import {updateProfile} from '@/backend/firebase/updateUser'
 //finBackEnd
@@ -24,9 +28,6 @@ import {updateProfile} from '@/backend/firebase/updateUser'
 const PersonalInfoPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
-  const { height, width } = Dimensions.get('window');
-  const isSmallDevice = height < 700;
-  const isLargeScreen = width > 768;
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -178,6 +179,7 @@ const PersonalInfoPage = () => {
             style={styles.saveButton}
             onPress={() => {
               window.location.reload()
+              updateProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono)
             }}
           >
             <Text style={styles.saveButtonText}>Guardar Cambios</Text>

@@ -22,7 +22,7 @@ const isSmallDevice = height < 700;
 const isLargeScreen = width > 768;
 
 //backEnd
-import {updateProfile} from '@/backend/firebase/updateUser'
+import {updateUserProfile} from '@/backend/firebase/updateUser'
 //finBackEnd
 
 const PersonalInfoPage = () => {
@@ -179,7 +179,7 @@ const PersonalInfoPage = () => {
             style={styles.saveButton}
             onPress={() => {
               window.location.reload()
-              updateProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono)
+              updateUserProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono)
             }}
           >
             <Text style={styles.saveButtonText}>Guardar Cambios</Text>

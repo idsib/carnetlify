@@ -1,7 +1,7 @@
 import { updateProfile, updateEmail } from "firebase/auth";
 import { auth } from '@/backend/firebase/config';
 
-export function updateProfile(newDisplayName, newDni, newAge, newContry, newProvince, newCity, newPostalCode, newHome, newPhotoURL, newEmail, newPassword) {
+export function updateUserProfile(newDisplayName, newDni, newAge, newContry, newProvince, newCity, newPostalCode, newHome, newPhotoURL, newEmail, newPassword) {
 
     if (newDisplayName) {
         updateProfile(auth.currentUser, {
@@ -45,8 +45,4 @@ export function updateProfile(newDisplayName, newDni, newAge, newContry, newProv
           });
     }
     
-}function saludo(nombre,text){
-    alert(`Hola ${nombre} ${text}`);
 }
-
-saludo("bauti", "que");

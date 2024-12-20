@@ -97,9 +97,13 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
-      <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>Perfil</Text>
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>Perfil</Text>
 
-      <ScrollView style={styles.scrollView}>
         <TouchableOpacity
           style={[styles.profileCard, isDark ? styles.profileCardDark : styles.profileCardLight]}
           onPress={() => router.push('/sections/profileSettings')}
@@ -208,6 +212,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
   },
   profileCard: {
     flexDirection: 'row',

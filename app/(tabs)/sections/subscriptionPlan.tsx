@@ -112,7 +112,7 @@ const SubscriptionPlanPage = () => {
     },
     planContainer: {
       width: CARD_WIDTH,
-      padding: 16,
+      padding: isLargeScreen ? 16 : 12,
       paddingBottom: 120,
       alignSelf: 'flex-start',
     },
@@ -125,25 +125,30 @@ const SubscriptionPlanPage = () => {
     sectionContainer: {
       backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
       borderRadius: 16,
-      padding: 16,
-      marginBottom: 16,
+      padding: isLargeScreen ? 16 : 12,
+      marginBottom: isLargeScreen ? 16 : 12,
       width: '100%',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
     },
     featureItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 16,
-      paddingHorizontal: 8,
+      marginBottom: isLargeScreen ? 16 : 12,
+      paddingHorizontal: isLargeScreen ? 8 : 4,
     },
     featureIcon: {
-      width: 40,
+      width: isLargeScreen ? 40 : 32,
       alignItems: 'center',
       justifyContent: 'center',
     },
     featureContent: {
       flex: 1,
-      marginLeft: 12,
-      marginRight: 8,
+      marginLeft: isLargeScreen ? 12 : 8,
+      marginRight: isLargeScreen ? 8 : 4,
     },
     featureTitle: {
       fontSize: isLargeScreen ? 16 : 14,
@@ -154,23 +159,23 @@ const SubscriptionPlanPage = () => {
     featureDescription: {
       fontSize: isLargeScreen ? 14 : 12,
       color: '#8E8E93',
-      lineHeight: 18,
+      lineHeight: isLargeScreen ? 18 : 16,
     },
     sectionTitle: {
-      fontSize: isLargeScreen ? 20 : 18,
+      fontSize: isLargeScreen ? 20 : 16,
       fontWeight: 'bold',
       color: '#FFFFFF',
-      marginBottom: 16,
-      paddingHorizontal: 8,
+      marginBottom: isLargeScreen ? 16 : 12,
+      paddingHorizontal: isLargeScreen ? 8 : 4,
     },
     subscribeButton: {
       backgroundColor: '#007AFF',
       borderRadius: 25,
-      padding: 16,
+      padding: isLargeScreen ? 16 : 14,
       alignItems: 'center',
       marginHorizontal: 16,
       marginTop: 'auto',
-      marginBottom: 24,
+      marginBottom: insets.bottom + 32,
       position: 'absolute',
       bottom: 0,
       left: 0,
@@ -184,7 +189,7 @@ const SubscriptionPlanPage = () => {
     },
     subscribeText: {
       color: '#FFFFFF',
-      fontSize: 16,
+      fontSize: isLargeScreen ? 16 : 14,
       fontWeight: 'bold',
     },
     price: {
@@ -195,20 +200,20 @@ const SubscriptionPlanPage = () => {
       marginVertical: isLargeScreen ? 24 : 16,
     },
     priceNote: {
-      fontSize: isLargeScreen ? 16 : 14,
+      fontSize: isLargeScreen ? 16 : 12,
       color: '#8E8E93',
       textAlign: 'center',
       marginBottom: isLargeScreen ? 24 : 16,
-      paddingHorizontal: 16,
+      paddingHorizontal: isLargeScreen ? 16 : 12,
       paddingTop: isExtraSmallDevice ? 8 : 0,
       paddingBottom: 8,
     },
     paginationContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
-      marginVertical: 16,
+      marginVertical: isLargeScreen ? 16 : 12,
       position: 'absolute',
-      bottom: 120,
+      bottom: isLargeScreen ? 40 : 30,
       left: 0,
       right: 0,
     },
@@ -281,6 +286,9 @@ const SubscriptionPlanPage = () => {
       paddingTop: 16,
       borderTopWidth: 1,
       borderTopColor: isDark ? '#333' : '#E5E5EA',
+    },
+    mobileContainer: {
+      flex: 1,
     },
   });
 
@@ -397,7 +405,7 @@ const SubscriptionPlanPage = () => {
       </View>
 
       {isLargeScreen ? (
-        <View style={styles.desktopContainer}>
+        <ScrollView contentContainerStyle={styles.desktopContainer}>
           {plans.map((plan, index) => (
             <TouchableOpacity 
               key={plan.id} 
@@ -407,36 +415,50 @@ const SubscriptionPlanPage = () => {
                 plan.id === selectedPlanId && styles.selectedCard
               ]}
             >
-              <View style={styles.cardHeader}>
-                <Text style={styles.planTitle}>{plan.name}</Text>
-                <Text style={styles.price}>{plan.price}</Text>
-                <Text style={styles.priceNote}>Pago único • Incluye tasa DGT (94,05€)</Text>
-              </View>
-
-              <ScrollView 
-                style={styles.cardContent}
-                showsVerticalScrollIndicator={true}
-              >
-                <View style={styles.sectionContainer}>
-                  <Text style={styles.sectionTitle}>Experiencia Mejorada</Text>
-                  {plan.features.enhanced.map(renderFeatureItem)}
-                </View>
-
-                <View style={[styles.sectionContainer, styles.benefitsSection]}>
-                  <Text style={styles.sectionTitle}>Beneficios Adicionales</Text>
-                  {plan.features.creator.map(renderFeatureItem)}
-                </View>
-              </ScrollView>
+              {renderPlan(plan, index)}
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       ) : (
-        <TouchableOpacity 
-          style={styles.subscribeButton}
-          onPress={() => handlePlanSelect(selectedPlanId)}
-        >
-          <Text style={styles.subscribeText}>Seleccionar Plan</Text>
-        </TouchableOpacity>
+        <View style={styles.mobileContainer}>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={(e) => {
+              scrollX.value = e.nativeEvent.contentOffset.x;
+              const newIndex = Math.round(e.nativeEvent.contentOffset.x / CARD_WIDTH);
+              if (newIndex !== currentIndex) {
+                setCurrentIndex(newIndex);
+                setSelectedPlanId(plans[newIndex].id);
+              }
+            }}
+            scrollEventThrottle={16}
+          >
+            {plans.map((plan, index) => renderPlan(plan, index))}
+          </ScrollView>
+          
+          <View style={styles.paginationContainer}>
+            {plans.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.paginationDot,
+                  {
+                    backgroundColor: currentIndex === index ? '#007AFF' : '#8E8E93',
+                  },
+                ]}
+              />
+            ))}
+          </View>
+
+          <TouchableOpacity 
+            style={styles.subscribeButton}
+            onPress={() => handlePlanSelect(selectedPlanId)}
+          >
+            <Text style={styles.subscribeText}>Seleccionar Plan</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </SafeAreaView>
   );

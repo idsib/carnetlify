@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import TabBar from '../../components/TabBar';
 import LogoutPopup from '../../components/LogoutPopup';
 
@@ -22,21 +22,34 @@ interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
   title: string;
   onPress?: () => void;
+  isLocked?: boolean;
+  alwaysAccessible?: boolean;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onPress }) => {
+const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onPress, isLocked, alwaysAccessible }) => {
   const isDark = useColorScheme() === 'dark';
 
   return (
     <TouchableOpacity
       style={[styles.menuItem, isDark ? styles.menuItemDark : styles.menuItemLight]}
-      onPress={onPress}
+      onPress={isLocked && !alwaysAccessible ? undefined : onPress}
+      disabled={isLocked && !alwaysAccessible}
     >
       <View style={styles.menuIconContainer}>
         <Ionicons name={icon} size={24} color={isDark ? '#FFFFFF' : '#000000'} />
       </View>
-      <Text style={[styles.menuText, isDark ? styles.textDark : styles.textLight]}>{title}</Text>
-      <Ionicons name="chevron-forward" size={24} color={isDark ? '#666666' : '#999999'} />
+      <Text style={[
+        styles.menuText, 
+        isDark ? styles.textDark : styles.textLight,
+        isLocked && !alwaysAccessible && styles.lockedText
+      ]}>
+        {title}
+      </Text>
+      {isLocked && !alwaysAccessible ? (
+        <Ionicons name="lock-closed" size={24} color={isDark ? '#666666' : '#999999'} />
+      ) : (
+        <Ionicons name="chevron-forward" size={24} color={isDark ? '#666666' : '#999999'} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -54,7 +67,9 @@ const SectionTitle: React.FC<{ title: string }> = ({ title }) => {
 export default function ProfileScreen() {
   const isDark = useColorScheme() === 'dark';
   const router = useRouter();
+  const { unlocked } = useLocalSearchParams();
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [showUnlockPopup, setShowUnlockPopup] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     email: "null",
     fullName: "User Not Registered",
@@ -65,11 +80,24 @@ export default function ProfileScreen() {
   });
 
   useEffect(() => {
+    if (unlocked === 'true') {
+      setShowUnlockPopup(true);
+      setTimeout(() => {
+        setShowUnlockPopup(false);
+      }, 2000);
+    }
+  }, [unlocked]);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         nameUserMongo(localStorage.getItem("uid"))
           .then((userData) => {
-            setUserInfo(userData);
+            const isUnlocked = localStorage.getItem('isLocked') === 'false';
+            setUserInfo({
+              ...userData,
+              isLocked: isUnlocked ? "false" : userData.isLocked
+            });
           })
           .catch((error) => {
             console.error('Error fetching user data:', error);
@@ -93,6 +121,21 @@ export default function ProfileScreen() {
     } catch (error) {
       console.error('Error during logout:', error);
     }
+  };
+
+  const handleUnlockSections = () => {
+    setShowUnlockPopup(true);
+    setTimeout(() => {
+      setShowUnlockPopup(false);
+      setUserInfo(prev => ({
+        ...prev,
+        isLocked: "false"
+      }));
+    }, 2000);
+  };
+
+  const handlePaymentRedirect = () => {
+    router.push('/sections/paymethod');
   };
 
   return (
@@ -130,16 +173,19 @@ export default function ProfileScreen() {
             icon="person-circle"
             title="Información personal"
             onPress={() => router.push('/sections/personalInfo')}
+            isLocked={userInfo.isLocked === "true"}
           />
           <MenuItem
             icon="card"
             title="Método de pago"
             onPress={() => router.push('/sections/paymethod')}
+            isLocked={userInfo.isLocked === "true"}
           />
           <MenuItem
             icon="notifications"
             title="Notificaciones"
             onPress={() => router.push('/sections/notifications')}
+            isLocked={userInfo.isLocked === "true"}
           />
         </View>
 
@@ -149,6 +195,7 @@ export default function ProfileScreen() {
             icon="school"
             title="Conviértete en profesor"
             onPress={() => router.push('/sections/teacher')}
+            isLocked={userInfo.isLocked === "true"}
           />
         </View>
 
@@ -158,6 +205,7 @@ export default function ProfileScreen() {
             icon="pricetag"
             title="Escoge tu plan"
             onPress={() => router.push('/sections/subscriptionPlan')}
+            alwaysAccessible={true}
           />
         </View>
 
@@ -167,11 +215,13 @@ export default function ProfileScreen() {
             icon="help-circle"
             title="Preguntas frecuentes"
             onPress={() => router.push('/sections/faq')}
+            alwaysAccessible={true}
           />
           <MenuItem
             icon="chatbubble-ellipses"
             title="Contactar con soporte"
             onPress={() => router.push('/sections/support')}
+            alwaysAccessible={true}
           />
         </View>
         
@@ -180,6 +230,7 @@ export default function ProfileScreen() {
             icon="log-out"
             title="Cerrar Sesión"
             onPress={() => setShowLogoutPopup(true)}
+            alwaysAccessible={true}
           />
         </View>
       </ScrollView>
@@ -189,6 +240,14 @@ export default function ProfileScreen() {
         onLogout={handleLogout}
         onCancel={() => setShowLogoutPopup(false)}
       />
+
+      {showUnlockPopup && (
+        <View style={styles.unlockPopup}>
+          <Text style={styles.unlockPopupText}>
+            ¡Has desbloqueado todas las secciones del perfil!
+          </Text>
+        </View>
+      )}
       
       <TabBar />
     </SafeAreaView>
@@ -307,5 +366,24 @@ const styles = StyleSheet.create({
   },
   menuSection: {
     marginBottom: 24,
+  },
+  lockedText: {
+    opacity: 0.5,
+  },
+  unlockPopup: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -150 }, { translateY: -50 }],
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+    alignItems: 'center',
+  },
+  unlockPopupText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

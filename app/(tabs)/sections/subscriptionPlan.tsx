@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme, Platform, StatusBar, Dimensions, ScrollView, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
@@ -65,6 +65,7 @@ const plans = [
 
 const SubscriptionPlanPage = () => {
   const isDark = useColorScheme() === 'dark';
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { height } = Dimensions.get('window');
   const hasDynamicIsland = Platform.OS === 'ios' && height >= 852;
@@ -304,11 +305,6 @@ const SubscriptionPlanPage = () => {
             <Text style={styles.planTitle}>{plan.name}</Text>
             <Text style={styles.price}>{plan.price}</Text>
             <Text style={styles.priceNote}>Pago único • Incluye tasa DGT (94,05€)</Text>
-            <TouchableOpacity 
-              style={[styles.subscribeButton, { marginTop: 16 }]}
-            >
-              <Text style={styles.subscribeText}>Suscribirse Ahora</Text>
-            </TouchableOpacity>
           </View>
 
           <ScrollView 
@@ -373,115 +369,76 @@ const SubscriptionPlanPage = () => {
     );
   };
 
-  const scrollToIndex = (index: number) => {
-    scrollViewRef.current?.scrollTo({
-      x: index * CARD_WIDTH,
-      animated: true
-    });
-    setCurrentIndex(index);
+  const handlePlanSelect = (planId: string) => {
+    // Store selected plan
+    localStorage.setItem('selectedPlan', planId);
+    
+    // Immediately redirect to payment method page
+    router.push('/sections/paymethod');
   };
 
   return (
-    <>
+    <SafeAreaView style={[styles.container, isDark && styles.darkContainer]}>
       <StatusBar
         barStyle="light-content"
         backgroundColor="#000000"
       />
-      <SafeAreaView style={isDark ? [styles.container, styles.darkContainer] : styles.container}>
-        <View style={styles.header}>
-          <Link href="../profile" asChild>
-            <TouchableOpacity style={styles.backButton}>
-              <Ionicons 
-                name="chevron-back" 
-                size={24} 
-                color={isDark ? '#FFFFFF' : '#000000'} 
-              />
-            </TouchableOpacity>
-          </Link>
-          <Text style={[styles.title, isDark && styles.darkText]}>Plan de Suscripción</Text>
-        </View>
+      <View style={styles.header}>
+        <Link href="../profile" asChild>
+          <TouchableOpacity style={styles.backButton}>
+            <Ionicons 
+              name="chevron-back" 
+              size={24} 
+              color={isDark ? '#FFFFFF' : '#000000'} 
+            />
+          </TouchableOpacity>
+        </Link>
+        <Text style={[styles.title, isDark && styles.darkText]}>Plan de Suscripción</Text>
+      </View>
 
-        {isLargeScreen ? (
-          <View style={styles.desktopContainer}>
-            {plans.map((plan, index) => (
-              <TouchableOpacity 
-                key={plan.id} 
-                onPress={() => setSelectedPlanId(plan.id)}
-                style={[
-                  styles.desktopCard,
-                  plan.id === selectedPlanId && styles.selectedCard
-                ]}
+      {isLargeScreen ? (
+        <View style={styles.desktopContainer}>
+          {plans.map((plan, index) => (
+            <TouchableOpacity 
+              key={plan.id} 
+              onPress={() => handlePlanSelect(plan.id)}
+              style={[
+                styles.desktopCard,
+                plan.id === selectedPlanId && styles.selectedCard
+              ]}
+            >
+              <View style={styles.cardHeader}>
+                <Text style={styles.planTitle}>{plan.name}</Text>
+                <Text style={styles.price}>{plan.price}</Text>
+                <Text style={styles.priceNote}>Pago único • Incluye tasa DGT (94,05€)</Text>
+              </View>
+
+              <ScrollView 
+                style={styles.cardContent}
+                showsVerticalScrollIndicator={true}
               >
-                <View style={styles.cardHeader}>
-                  <Text style={styles.planTitle}>{plan.name}</Text>
-                  <Text style={styles.price}>{plan.price}</Text>
-                  <Text style={styles.priceNote}>Pago único • Incluye tasa DGT (94,05€)</Text>
-                  <TouchableOpacity 
-                    style={[styles.subscribeButton, { marginTop: 16 }]}
-                  >
-                    <Text style={styles.subscribeText}>Suscribirse Ahora</Text>
-                  </TouchableOpacity>
+                <View style={styles.sectionContainer}>
+                  <Text style={styles.sectionTitle}>Experiencia Mejorada</Text>
+                  {plan.features.enhanced.map(renderFeatureItem)}
                 </View>
 
-                <ScrollView 
-                  style={styles.cardContent}
-                  showsVerticalScrollIndicator={true}
-                >
-                  <View style={styles.sectionContainer}>
-                    <Text style={styles.sectionTitle}>Experiencia Mejorada</Text>
-                    {plan.features.enhanced.map(renderFeatureItem)}
-                  </View>
-
-                  <View style={[styles.sectionContainer, styles.benefitsSection]}>
-                    <Text style={styles.sectionTitle}>Beneficios Adicionales</Text>
-                    {plan.features.creator.map(renderFeatureItem)}
-                  </View>
-                </ScrollView>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onScroll={(event) => {
-                scrollX.value = event.nativeEvent.contentOffset.x;
-                const newIndex = Math.round(event.nativeEvent.contentOffset.x / CARD_WIDTH);
-                setCurrentIndex(newIndex);
-              }}
-              scrollEventThrottle={16}
-              contentContainerStyle={{ paddingBottom: 20 }}
-            >
-              {plans.map((plan, index) => renderPlan(plan, index))}
-            </ScrollView>
-
-            <View style={styles.paginationContainer}>
-              {plans.map((_, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => scrollToIndex(index)}
-                  style={[
-                    styles.paginationDot,
-                    {
-                      backgroundColor: index === currentIndex ? '#007AFF' : '#4A4A4A',
-                    },
-                  ]}
-                />
-              ))}
-            </View>
-          </>
-        )}
-
-        {!isLargeScreen && (
-          <TouchableOpacity style={styles.subscribeButton}>
-            <Text style={styles.subscribeText}>Suscribirse Ahora</Text>
-          </TouchableOpacity>
-        )}
-      </SafeAreaView>
-    </>
+                <View style={[styles.sectionContainer, styles.benefitsSection]}>
+                  <Text style={styles.sectionTitle}>Beneficios Adicionales</Text>
+                  {plan.features.creator.map(renderFeatureItem)}
+                </View>
+              </ScrollView>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ) : (
+        <TouchableOpacity 
+          style={styles.subscribeButton}
+          onPress={() => handlePlanSelect(selectedPlanId)}
+        >
+          <Text style={styles.subscribeText}>Seleccionar Plan</Text>
+        </TouchableOpacity>
+      )}
+    </SafeAreaView>
   );
 };
 

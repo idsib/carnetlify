@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 const { height, width } = Dimensions.get('window');
 const isSmallDevice = height < 700;
@@ -28,6 +29,7 @@ import {updateUserProfile} from '@/backend/firebase/updateUser'
 const PersonalInfoPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -178,7 +180,8 @@ const PersonalInfoPage = () => {
           <TouchableOpacity 
             style={styles.saveButton}
             onPress={() => {
-              updateUserProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono)
+              updateUserProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono),
+              window.location.replace('');
             }}
           >
             <Text style={styles.saveButtonText}>Guardar Cambios</Text>

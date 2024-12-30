@@ -120,3 +120,14 @@ export const nameUserMongo = async (userId) => {
   }  
 };
 
+export const  changeStateLocked = async (state) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/users/block', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(state),
+  });
+};

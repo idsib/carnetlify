@@ -180,8 +180,8 @@ const PersonalInfoPage = () => {
           <TouchableOpacity 
             style={styles.saveButton}
             onPress={() => {
-              updateUserProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono),
-              window.location.replace('');
+              updateUserProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono)/* ,
+              window.location.replace(''); */
             }}
           >
             <Text style={styles.saveButtonText}>Guardar Cambios</Text>

@@ -56,6 +56,43 @@ app.post('/register', verifyToken, async (req, res) => {
   console.log(req);
 });
 
+// Ruta para sacar el nombre de usuario en MongoDB
+app.post('/users/info', verifyToken, async (req, res) => {
+  const { userId } = req.body; // Asegúrate de que el body contiene userId
+
+  if (!userId) {
+    return res.status(400).send({ error: 'El userId es requerido.' });
+  }
+
+  try {
+    // Buscar el usuario por userId
+    const user = await usersCollection.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).send({ error: 'Usuario no encontrado.' });
+    }
+
+    res.status(200).send(user);
+  } catch (error) {
+    console.error('Error al buscar el usuario:', error);
+    res.status(500).send({ error: 'Error interno del servidor.' });
+  }
+});
+
+ app.post('/users/block', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const userData = req.body;
+
+  const existingUser = await usersCollection.findOne({ userId });
+  if (existingUser) {
+    await usersCollection.updateOne({userId}, {$set: {isLocked: "false"}}, {$unset: {isLocked: "true"}} );
+    console.log("Si se ha encontrado el usuario");
+  } else{
+    console.log("No se ha encontrado el usuario");
+  }
+  res.status(201).send('Usuario actualizado en Mongo = ' + userData);
+});
+
 // Ruta para actualizar nombre usuarios en MongoDB
 app.post('/updateNameUser', verifyToken, async (req, res) => {
   const userId = req.user.uid; // Obtener el ID del usuario autenticado
@@ -84,43 +121,221 @@ app.post('/updateNameUser', verifyToken, async (req, res) => {
   }
 });
 
-// Ruta para sacar el nombre de usuario en MongoDB
-app.post('/users/info', verifyToken, async (req, res) => {
-  const { userId } = req.body; // Asegúrate de que el body contiene userId
-
-  if (!userId) {
-    return res.status(400).send({ error: 'El userId es requerido.' });
-  }
+app.post('/updateDniUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { dni } = req.body; 
 
   try {
-    // Buscar el usuario por userId
-    const user = await usersCollection.findOne({ userId });
 
-    if (!user) {
-      return res.status(404).send({ error: 'Usuario no encontrado.' });
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { dni } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${dni}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
     }
-
-    res.status(200).send(user);
   } catch (error) {
-    console.error('Error al buscar el usuario:', error);
-    res.status(500).send({ error: 'Error interno del servidor.' });
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
   }
 });
 
- app.post('/updateNameUser', verifyToken, async (req, res) => {
-  const userId = req.user.uid;
-  const userData = req.body;
+app.post('/updateAgeUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { age } = req.body; 
 
-  const existingUser = await usersCollection.findOne({ userId });
-  if (existingUser) {
-    await usersCollection.updateOne({userId}, {$set: {isLocked: "false"}}, {$unset: {isLocked: "true"}} );
-    console.log("Si se ha encontrado el usuario");
-  } else{
-    console.log("No se ha encontrado el usuario");
+  try {
+
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { age } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${age}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
   }
-  res.status(201).send('Usuario actualizado en Mongo = ' + userData);
 });
 
+app.post('/updateCountryUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { country } = req.body; 
+
+  try {
+
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { country } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${country}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
+
+app.post('/updateProvinceUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { province } = req.body; 
+
+  try {
+
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { province } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${province}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
+
+app.post('/updateCityUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { city } = req.body; 
+
+  try {
+
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { city } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${city}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
+
+app.post('/updatePostalCodeUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { postalCode } = req.body; 
+
+  try {
+
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { postalCode } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${postalCode}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
+
+app.post('/updateHomeUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { home } = req.body; 
+
+  try {
+
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { home } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${home}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
+
+app.post('/updatePhoneUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid; 
+  const { phone } = req.body; 
+
+  try {
+
+    const existingUser = await usersCollection.findOne({ userId });
+
+    if (existingUser) {
+
+      await usersCollection.updateOne(
+        { userId },
+        { $set: { phone } }
+      );
+
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${phone}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
 
 // Middleware para verificar el token de Firebase
 async function verifyTokenInPage(req, res, next) {

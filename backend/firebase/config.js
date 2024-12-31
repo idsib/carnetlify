@@ -47,7 +47,7 @@ export const  updateNameUserInBackend = async (userName) => {
 
 export const  updateDniUserInBackend = async (userDni) => {
   const token = await auth.currentUser.getIdToken();
-  await fetch('http://localhost:3000/updateNameUser', {
+  await fetch('http://localhost:3000/updateDniUser', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const  updateDniUserInBackend = async (userDni) => {
 
 export const  updateAgeUserInBackend = async (userAge) => {
   const token = await auth.currentUser.getIdToken();
-  await fetch('http://localhost:3000/updateNameUser', {
+  await fetch('http://localhost:3000/updateAgeUser', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export const  updateAgeUserInBackend = async (userAge) => {
 
 export const  updateCountryUserInBackend = async (userCountry) => {
   const token = await auth.currentUser.getIdToken();
-  await fetch('http://localhost:3000/updateNameUser', {
+  await fetch('http://localhost:3000/updateCountryUser', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -83,13 +83,61 @@ export const  updateCountryUserInBackend = async (userCountry) => {
 
 export const  updateProvinceUserInBackend = async (userProvince) => {
   const token = await auth.currentUser.getIdToken();
-  await fetch('http://localhost:3000/updateNameUser', {
+  await fetch('http://localhost:3000/updateProvinceUser', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
     body: JSON.stringify(userProvince),
+  });
+};
+
+export const  updateCityUserInBackend = async (userCity) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateCityUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userCity),
+  });
+};
+
+export const  updatePostalCodeUserInBackend = async (userPostalCode) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updatePostalCodeUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userPostalCode),
+  });
+};
+
+export const  updateHomeUserInBackend = async (userHome) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateHomeUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userHome),
+  });
+};
+
+export const  updatePhoneUserInBackend = async (userPhone) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updatePhoneUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    body: JSON.stringify(userPhone),
   });
 };
 

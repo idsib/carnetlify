@@ -10,7 +10,7 @@ import LogoutPopup from '../../components/LogoutPopup';
 import {logOutFirebase} from '@/backend/firebase/logOut';
 import {getFullInfoUser} from '@/backend/firebase/InfoUserCurrentUser';
 import {fullInfoFirebase} from '@/backend/firebase/InfoUserOnAuthStateChanged';
-import {nameUserMongo} from '@/backend/firebase/config';
+import {getUserByUID} from '@/backend/firebase/config';
 import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
@@ -91,7 +91,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        nameUserMongo(localStorage.getItem("uid"))
+        getUserByUID(localStorage.getItem("uid"))
           .then((userData) => {
             const isUnlocked = localStorage.getItem('isLocked') === 'false';
             setUserInfo({

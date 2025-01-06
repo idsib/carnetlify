@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
 //backend
-import {nameUserMongo} from '@/backend/firebase/config'
+import {getUserByUID} from '@/backend/firebase/config'
 import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
@@ -35,7 +35,7 @@ const ProfileSettingsPage = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        nameUserMongo(localStorage.getItem("uid"))
+        getUserByUID(localStorage.getItem("uid"))
           .then((userData) => {
             setUserInfo(userData);
           })

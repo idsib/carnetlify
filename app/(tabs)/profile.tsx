@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, useColorScheme } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, useColorScheme, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import TabBar from '../../components/TabBar';
 import LogoutPopup from '../../components/LogoutPopup';
 
@@ -69,7 +70,6 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { unlocked } = useLocalSearchParams();
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-  const [showUnlockPopup, setShowUnlockPopup] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     email: "null",
     fullName: "User Not Registered",
@@ -81,27 +81,35 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     if (unlocked === 'true') {
-      setShowUnlockPopup(true);
-      setTimeout(() => {
-        setShowUnlockPopup(false);
-      }, 2000);
+      AsyncStorage.getItem('uid')
+        .then((uid) => {
+          getUserByUID(uid)
+            .then((userData) => {
+              setUserInfo({
+                ...userData,
+                isLocked: "false"
+              });
+            })
+            .catch((error) => {
+              console.error('Error updating user data:', error);
+            });
+        })
+        .catch((error) => {
+          console.error('Error fetching user data:', error);
+        });
     }
   }, [unlocked]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        getUserByUID(localStorage.getItem("uid"))
-          .then((userData) => {
-            const isUnlocked = localStorage.getItem('isLocked') === 'false';
-            setUserInfo({
-              ...userData,
-              isLocked: isUnlocked ? "false" : userData.isLocked
-            });
-          })
-          .catch((error) => {
-            console.error('Error fetching user data:', error);
-          });
+        try {
+          const uid = await AsyncStorage.getItem('uid');
+          const userData = await getUserByUID(uid);
+          setUserInfo(userData);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
       } else {
         console.log("No user is registered");
       }
@@ -113,29 +121,32 @@ export default function ProfileScreen() {
   const handleLogout = async () => {
     try {
       await logOutFirebase();
+      await AsyncStorage.removeItem('uid');
       setShowLogoutPopup(false);
-      await router.replace('/');
-      setTimeout(() => {
-        window.location.reload();
-    }, 100);
+      router.replace('/');
+      if (Platform.OS === 'web') {
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
     } catch (error) {
       console.error('Error during logout:', error);
     }
   };
 
   const handleUnlockSections = () => {
-    setShowUnlockPopup(true);
-    setTimeout(() => {
-      setShowUnlockPopup(false);
-      setUserInfo(prev => ({
-        ...prev,
-        isLocked: "false"
-      }));
-    }, 2000);
+    setUserInfo(prev => ({
+      ...prev,
+      isLocked: "false"
+    }));
   };
 
   const handlePaymentRedirect = () => {
     router.push('/sections/paymethod');
+  };
+
+  const handleLockedFeature = () => {
+    router.push('/sections/subscriptionPlan');
   };
 
   return (
@@ -172,19 +183,19 @@ export default function ProfileScreen() {
           <MenuItem
             icon="person-circle"
             title="Información personal"
-            onPress={() => router.push('/sections/personalInfo')}
+            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/personalInfo')}
             isLocked={userInfo.isLocked === "true"}
           />
           <MenuItem
             icon="card"
             title="Método de pago"
-            onPress={() => router.push('/sections/paymethod')}
+            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/paymethod')}
             isLocked={userInfo.isLocked === "true"}
           />
           <MenuItem
             icon="notifications"
             title="Notificaciones"
-            onPress={() => router.push('/sections/notifications')}
+            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/notifications')}
             isLocked={userInfo.isLocked === "true"}
           />
         </View>
@@ -194,7 +205,7 @@ export default function ProfileScreen() {
           <MenuItem
             icon="school"
             title="Conviértete en profesor"
-            onPress={() => router.push('/sections/teacher')}
+            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/teacher')}
             isLocked={userInfo.isLocked === "true"}
           />
         </View>
@@ -241,14 +252,6 @@ export default function ProfileScreen() {
         onCancel={() => setShowLogoutPopup(false)}
       />
 
-      {showUnlockPopup && (
-        <View style={styles.unlockPopup}>
-          <Text style={styles.unlockPopupText}>
-            ¡Has desbloqueado todas las secciones del perfil!
-          </Text>
-        </View>
-      )}
-      
       <TabBar />
     </SafeAreaView>
   );
@@ -369,21 +372,5 @@ const styles = StyleSheet.create({
   },
   lockedText: {
     opacity: 0.5,
-  },
-  unlockPopup: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{ translateX: -150 }, { translateY: -50 }],
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 20,
-    borderRadius: 10,
-    width: 300,
-    alignItems: 'center',
-  },
-  unlockPopupText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    textAlign: 'center',
   },
 });

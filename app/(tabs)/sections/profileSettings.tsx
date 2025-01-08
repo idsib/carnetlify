@@ -11,6 +11,7 @@ import {getUserByUID} from '@/backend/firebase/config'
 import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
+import Toast from '@/components/Toast';
 
 const auth = getAuth();
 SetUidFirebase();
@@ -31,6 +32,9 @@ const ProfileSettingsPage = () => {
     isLocked: "true",
     profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
   });
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -50,27 +54,89 @@ const ProfileSettingsPage = () => {
     return () => unsubscribe();
   }, []);
 
-  const pickImage = async () => {
-    // Solicitar permisos
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (status !== 'granted') {
-      alert('Se necesitan permisos para acceder a la galería');
-      return;
+  const updateProfileImage = async (imageUri: string) => {
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('No se encontró token de autenticación');
+      }
+
+      const response = await fetch('http://localhost:3000/updateProfileImage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({
+          profile_img: imageUri
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar la imagen de perfil');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
     }
+  };
 
-    // Abrir selector de imágenes
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  };
 
-    if (!result.canceled) {
-      // Aquí puedes implementar la lógica para subir la imagen a tu servidor
-      console.log('Nueva imagen seleccionada:', result.assets[0].uri);
-      // TODO: Implementar la lógica para actualizar la imagen en el backend
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        showToast('Se necesitan permisos para acceder a la galería', 'error');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5, // Reducido la calidad para optimizar el tamaño
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const selectedImage = result.assets[0];
+        
+        // Verificar el tamaño de la imagen (aproximadamente)
+        const response = await fetch(selectedImage.uri);
+        const blob = await response.blob();
+        const sizeInMB = blob.size / (1024 * 1024);
+
+        if (sizeInMB > 40) {
+          showToast('La imagen es demasiado grande. Por favor, selecciona una imagen más pequeña (menor a 40MB).', 'error');
+          return;
+        }
+        
+        try {
+          // Actualizar en el backend
+          await updateProfileImage(selectedImage.uri);
+          
+          // Si la actualización en el backend fue exitosa, actualizar el estado local
+          setUserInfo(prev => ({
+            ...prev,
+            profile_img: selectedImage.uri
+          }));
+          
+          showToast('Imagen de perfil actualizada correctamente');
+        } catch (error) {
+          console.error('Error al actualizar la imagen:', error);
+          showToast('Error al actualizar la imagen de perfil. Asegúrate de que la imagen no sea demasiado grande.', 'error');
+        }
+      }
+    } catch (error) {
+      console.error('Error al seleccionar la imagen:', error);
+      showToast('Hubo un error al seleccionar la imagen', 'error');
     }
   };
 
@@ -191,7 +257,7 @@ const ProfileSettingsPage = () => {
   });
 
   return (
-    <>
+    <View style={[styles.container, isDark && styles.darkContainer]}>
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
         backgroundColor={isDark ? '#000000' : '#F5F5F5'}
@@ -260,7 +326,13 @@ const ProfileSettingsPage = () => {
           </View>
         </View>
       </SafeAreaView>
-    </>
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
+    </View>
   );
 };
 

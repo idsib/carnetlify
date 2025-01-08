@@ -9,9 +9,7 @@ import LogoutPopup from '../../components/LogoutPopup';
 
 //backend
 import {logOutFirebase} from '@/backend/firebase/logOut';
-import {getFullInfoUser} from '@/backend/firebase/InfoUserCurrentUser';
-import {fullInfoFirebase} from '@/backend/firebase/InfoUserOnAuthStateChanged';
-import {getUserByUID} from '@/backend/firebase/config';
+import {getUserByUID, changeStateLocked} from '@/backend/firebase/config';
 import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
@@ -80,43 +78,49 @@ export default function ProfileScreen() {
   });
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userData = await getUserByUID(user.uid);
+          setUserInfo(userData);
+          
+          await changeStateLocked({
+            userId: user.uid,
+            isLocked: userData.isLocked
+          });
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     if (unlocked === 'true') {
       AsyncStorage.getItem('uid')
-        .then((uid) => {
-          getUserByUID(uid)
-            .then((userData) => {
-              setUserInfo({
-                ...userData,
-                isLocked: "false"
-              });
-            })
-            .catch((error) => {
-              console.error('Error updating user data:', error);
+        .then(async (uid) => {
+          try {
+            const userData = await getUserByUID(uid);
+            setUserInfo({
+              ...userData,
+              isLocked: "false"
             });
+            
+            await changeStateLocked({
+              userId: uid,
+              isLocked: "false"
+            });
+          } catch (error) {
+            console.error('Error updating user data:', error);
+          }
         })
         .catch((error) => {
           console.error('Error fetching user data:', error);
         });
     }
   }, [unlocked]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const uid = await AsyncStorage.getItem('uid');
-          const userData = await getUserByUID(uid);
-          setUserInfo(userData);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      } else {
-        console.log("No user is registered");
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -189,8 +193,8 @@ export default function ProfileScreen() {
           <MenuItem
             icon="card"
             title="Método de pago"
-            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/paymethod')}
-            isLocked={userInfo.isLocked === "true"}
+            onPress={() => router.push('/sections/paymethod')}
+            isLocked={userInfo.isLocked === "false"}
           />
           <MenuItem
             icon="notifications"
@@ -216,7 +220,7 @@ export default function ProfileScreen() {
             icon="pricetag"
             title="Escoge tu plan"
             onPress={() => router.push('/sections/subscriptionPlan')}
-            alwaysAccessible={true}
+            isLocked={userInfo.isLocked === "false"}
           />
         </View>
 

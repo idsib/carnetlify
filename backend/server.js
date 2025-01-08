@@ -14,7 +14,9 @@ const app = express();
 // Habilita CORS para todas las rutas
 app.use(cors());
 
-app.use(express.json());
+// Aumentar el límite de tamaño para las solicitudes
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
 
 // Conexión a MongoDB
 const client = new MongoClient(process.env.MONGO_URL);
@@ -338,6 +340,28 @@ app.post('/updatePhoneUser', verifyToken, async (req, res) => {
   }
 });
 
+// Ruta para actualizar la imagen de perfil
+app.post('/updateProfileImage', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const { profile_img } = req.body;
+
+  try {
+    const result = await usersCollection.updateOne(
+      { userId },
+      { $set: { profile_img } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send({ error: 'Usuario no encontrado.' });
+    }
+
+    res.status(200).send({ message: 'Imagen de perfil actualizada correctamente.' });
+  } catch (error) {
+    console.error('Error al actualizar la imagen de perfil:', error);
+    res.status(500).send({ error: 'Error interno del servidor.' });
+  }
+});
+
 // Middleware para verificar el token de Firebase
 async function verifyTokenInPage(req, res, next) {
   const token = req.headers.authorization;
@@ -349,7 +373,7 @@ async function verifyTokenInPage(req, res, next) {
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
     req.user = decodedToken; // Adjunta la información del usuario al objeto req
-    next(); // Permite continuar con la ejecución de la ruta
+    next(); 
   } catch (error) {
     return res.status(403).send('Token no válido.');
   }
@@ -358,7 +382,6 @@ async function verifyTokenInPage(req, res, next) {
 app.get('../app/(tabs)', verifyToken, (req, res) => {
   res.send('Este archivo está protegido y solo es accesible con una sesión válida.');
 });
-
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;

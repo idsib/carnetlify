@@ -50,7 +50,8 @@ app.post('/register', verifyToken, async (req, res) => {
   if (!existingUser) {
     await usersCollection.insertOne({ userId, ...userData });
   }  else if (existingUser){
-    await usersCollection.replaceOne({userId}, {userId, ...userData });
+    /* await usersCollection.replaceOne({userId}, {userId, ...userData }); */
+    console.log("Ya existe una cuenta")
   } 
   res.status(201).send('Usuario registrado');
   console.log(req);

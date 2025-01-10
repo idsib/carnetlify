@@ -12,11 +12,12 @@ import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
 import Toast from '@/components/Toast';
+import { useUser } from '@/context/UserContext';
 
+//finBackend
 const auth = getAuth();
 SetUidFirebase();
 
-//finBackend
 const ProfileSettingsPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
@@ -24,14 +25,7 @@ const ProfileSettingsPage = () => {
   const hasDynamicIsland = Platform.OS === 'ios' && height >= 852;
   const isSmallDevice = height < 700;
   const isTablet = width > 768;
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    email: "null",
-    fullName: "User Not Registered",
-    userId: "null",
-    plan: "null",
-    isLocked: "true",
-    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
-  });
+  const { userInfo, updateUserInfo } = useUser();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
@@ -41,7 +35,7 @@ const ProfileSettingsPage = () => {
       if (user) {
         getUserByUID(localStorage.getItem("uid"))
           .then((userData) => {
-            setUserInfo(userData);
+            updateUserInfo(userData);
           })
           .catch((error) => {
             console.error('Error fetching user data:', error);
@@ -76,7 +70,9 @@ const ProfileSettingsPage = () => {
         throw new Error('Error al actualizar la imagen de perfil');
       }
 
-      return await response.json();
+      const result = await response.json();
+      updateUserInfo({ profile_img: imageUri });
+      return result;
     } catch (error) {
       console.error('Error:', error);
       throw error;
@@ -123,11 +119,6 @@ const ProfileSettingsPage = () => {
           await updateProfileImage(selectedImage.uri);
           
           // Si la actualización en el backend fue exitosa, actualizar el estado local
-          setUserInfo(prev => ({
-            ...prev,
-            profile_img: selectedImage.uri
-          }));
-          
           showToast('Imagen de perfil actualizada correctamente');
         } catch (error) {
           console.error('Error al actualizar la imagen:', error);

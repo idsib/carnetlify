@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
-    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-camera-roll/camera-roll": "^7.9.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.1.18",
@@ -44,6 +44,7 @@
     "lucide-react": "^0.456.0",
     "lucide-react-native": "^0.460.0",
     "mongodb": "^6.10.0",
+    "mongoose": "^8.9.4",
     "moti": "^0.29.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",

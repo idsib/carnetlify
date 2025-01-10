@@ -13,6 +13,7 @@ import {getUserByUID, changeStateLocked} from '@/backend/firebase/config';
 import {SetUidFirebase} from "@/backend/mainBackend";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
+import { useUser } from '@/context/UserContext';
 
 const auth = getAuth();
 SetUidFirebase();
@@ -68,34 +69,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { unlocked } = useLocalSearchParams();
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    email: "null",
-    fullName: "User Not Registered",
-    userId: "null",
-    plan: "null",
-    isLocked: "true",
-    profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
-  });
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userData = await getUserByUID(user.uid);
-          setUserInfo(userData);
-          
-          await changeStateLocked({
-            userId: user.uid,
-            isLocked: userData.isLocked
-          });
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const { userInfo } = useUser();
 
   useEffect(() => {
     if (unlocked === 'true') {
@@ -103,11 +77,6 @@ export default function ProfileScreen() {
         .then(async (uid) => {
           try {
             const userData = await getUserByUID(uid);
-            setUserInfo({
-              ...userData,
-              isLocked: "false"
-            });
-            
             await changeStateLocked({
               userId: uid,
               isLocked: "false"
@@ -139,10 +108,7 @@ export default function ProfileScreen() {
   };
 
   const handleUnlockSections = () => {
-    setUserInfo(prev => ({
-      ...prev,
-      isLocked: "false"
-    }));
+    router.push('/sections/subscriptionPlan');
   };
 
   const handlePaymentRedirect = () => {

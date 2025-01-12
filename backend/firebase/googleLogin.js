@@ -1,4 +1,4 @@
-//Importamos el auth con la configuración del proyecto y la función de registro en MongoDB.
+// Importamos el auth con la configuración del proyecto y la función de registro en MongoDB.
 import { auth, registerUserInBackend } from '@/backend/firebase/config';
 // Importamos GoogleAuthProvider que es un objeto para nuestros usuarios registrados en google,
 // También importamos signInWithPopup, una aplicación proporcionada por Google para registrarse en un ventana emergente.

@@ -123,7 +123,47 @@ app.post('/updateNameUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
-// Ruta para actualizar el Dni de un usuario en MongoDB
+// Ruta para actualizar el email de un usuario en MongoDB
+app.post('/updateEmailUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const { email } = req.body;
+  try {
+    const existingUser = await usersCollection.findOne({ userId });
+    if (existingUser) {
+      // Actualizar el campo email.
+      await usersCollection.updateOne({ userId }, { $set: { email } });
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${email}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
+// Ruta para actualizar el url de la imagen de perfil de un usuario en MongoDB
+app.post('/updatePhotoURLUser', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const { profile_img } = req.body;
+  try {
+    const existingUser = await usersCollection.findOne({ userId });
+    if (existingUser) {
+      // Actualizar el campo profile_img.
+      await usersCollection.updateOne({ userId }, { $set: { profile_img } });
+      console.log("Usuario encontrado y actualizado.");
+      res.status(200).send(`Usuario actualizado en Mongo con fullName = ${profile_img}`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+});
+// Ruta para actualizar el dni de un usuario en MongoDB
 app.post('/updateDniUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const { dni } = req.body;

@@ -75,7 +75,7 @@ export const changeStateLocked = async (state) => {
   });
 };
 
-// Función para actualizar usuarios en el backend.
+// Función para actualizar nombre en el backend.
 export const updateNameUserInBackend = async (userName) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updateNameUser', {
@@ -86,6 +86,32 @@ export const updateNameUserInBackend = async (userName) => {
     },
     // Enviamos el nombre del usuario en formato JSON.
     body: JSON.stringify(userName),
+  });
+};
+// Función para actualizar email en el backend.
+export const updateEmailUserInBackend = async (userEmail) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updateEmailUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    // Enviamos el email del usuario en formato JSON.
+    body: JSON.stringify(userEmail),
+  });
+};
+// Función para actualizar url de la imagen de perfil en el backend.
+export const updatePhotoURLUserInBackend = async (PhotoURL) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/updatePhotoURLUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    // Enviamos la url del usuario en formato JSON.
+    body: JSON.stringify(PhotoURL),
   });
 };
 // Función para actualizar dni en el backend.

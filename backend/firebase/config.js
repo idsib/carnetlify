@@ -18,7 +18,7 @@ export const app = initializeApp(firebaseConfig);
 // Inicializamos y exportamos la autenticación.
 export const auth = getAuth(app);
 
-// Funciones para operar en MongoDB, aqui tenemos las funciones que enviaran los fetch al servidor Mongo.
+// Funciones para operar en MongoDB, aqui tenemos las funciones que enviaran los fetch al servidor Mongo =>.
 // Función para registrar usuarios en el backend.
 export const registerUserInBackend = async (userData) => {
   // Enviamos el token del usuario actual, donde esta su información de firebase
@@ -88,7 +88,7 @@ export const updateNameUserInBackend = async (userName) => {
     body: JSON.stringify(userName),
   });
 };
-
+// Función para actualizar dni en el backend.
 export const updateDniUserInBackend = async (userDni) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updateDniUser', {
@@ -97,10 +97,11 @@ export const updateDniUserInBackend = async (userDni) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el dni del usuario en formato JSON.
     body: JSON.stringify(userDni),
   });
 };
-
+// Función para actualizar edad en el backend.
 export const updateAgeUserInBackend = async (userAge) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updateAgeUser', {
@@ -109,10 +110,11 @@ export const updateAgeUserInBackend = async (userAge) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el edad del usuario en formato JSON.
     body: JSON.stringify(userAge),
   });
 };
-
+// Función para actualizar país en el backend.
 export const updateCountryUserInBackend = async (userCountry) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updateCountryUser', {
@@ -121,10 +123,11 @@ export const updateCountryUserInBackend = async (userCountry) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el país del usuario en formato JSON.
     body: JSON.stringify(userCountry),
   });
 };
-
+// Función para actualizar provincia en el backend.
 export const updateProvinceUserInBackend = async (userProvince) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updateProvinceUser', {
@@ -133,10 +136,11 @@ export const updateProvinceUserInBackend = async (userProvince) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el nombre del usuario en formato JSON.
     body: JSON.stringify(userProvince),
   });
 };
-
+// Función para actualizar ciudad en el backend.
 export const updateCityUserInBackend = async (userCity) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updateCityUser', {
@@ -145,10 +149,11 @@ export const updateCityUserInBackend = async (userCity) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el ciudad del usuario en formato JSON.
     body: JSON.stringify(userCity),
   });
 };
-
+// Función para actualizar codigo postal en el backend.
 export const updatePostalCodeUserInBackend = async (userPostalCode) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updatePostalCodeUser', {
@@ -157,10 +162,11 @@ export const updatePostalCodeUserInBackend = async (userPostalCode) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el codigo postal del usuario en formato JSON.
     body: JSON.stringify(userPostalCode),
   });
 };
-
+// Función para actualizar casa en el backend.
 export const updateHomeUserInBackend = async (userHome) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updateHomeUser', {
@@ -169,10 +175,11 @@ export const updateHomeUserInBackend = async (userHome) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el casa del usuario en formato JSON.
     body: JSON.stringify(userHome),
   });
 };
-
+// Función para actualizar teléfono en el backend.
 export const updatePhoneUserInBackend = async (userPhone) => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/updatePhoneUser', {
@@ -181,6 +188,7 @@ export const updatePhoneUserInBackend = async (userPhone) => {
       'Content-Type': 'application/json',
       'Authorization': token,
     },
+    // Enviamos el teléfono del usuario en formato JSON.
     body: JSON.stringify(userPhone),
   });
 };

@@ -1,43 +1,15 @@
+// Importamos el auth con la configuración del proyecto y la función de registro en MongoDB.
 import { auth, registerUserInBackend } from '@/backend/firebase/config';
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult} from 'firebase/auth';
-
+// Importamos GoogleAuthProvider que es un objeto para nuestros usuarios registrados en google,
+// También importamos signInWithPopup, una aplicación proporcionada por Google para registrarse en un ventana emergente.
+import { GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
 export async function googleLogin() {
-
+// Creamos una instancia del objeto GoogleAuthProvider.
     const provider = new GoogleAuthProvider();
-/* 
-    signInWithPopup(auth, provider)
-    .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
-    const user = result.user;
-    console.log(user)
-    const userData = {
-        displayName: user,displayName,
-        email: email,
-        profile_img: photoUrl
-    };
-
-    await registerUserInBackend(userData);
-    
-    }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-    }); */
-
-
     try {
-
+        // Usamos la función signInWithPopup para que el usuario se registre con su cuenta y guardamos el resultado, o sea sus datos.
         const result = await signInWithPopup(auth, provider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        console.log("credenciales google " + credential);
+        // Creamos un objeto a partir de los datos recibidos en result y rellenamos predeterminadamente el resto.
         const userData = {
             fullName: result.user.displayName,
             email: result.user.email,
@@ -45,6 +17,7 @@ export async function googleLogin() {
             isLocked: "true",
             profile_img: result.user.photoURL
         };
+        // Utilizamos la funcion para registrarlo tambíen en Mongo si no esta registrado.
         await registerUserInBackend(userData);
         console.log('Usuario registrado en el backend'); 
 

@@ -9,6 +9,7 @@ const { MongoClient } = require('mongodb');
 // Importamos cors, vital para la funcionalidad y escalabildad del proyecto en ciertos navegadores,
 // que muchos restringen el intercambio de recursos entre diferentes dominios.
 const cors = require('cors');
+const path = require('path');
 // Importamos dotenvm, que carga mi .env contenedor de información sensible del proyecto, 
 // si fuera un proyecto real, ocultaria url.env en un git ignore.
 require('dotenv').config({ path: './url.env' });

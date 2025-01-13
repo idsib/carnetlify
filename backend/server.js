@@ -2,6 +2,7 @@ const express = require('express');
 const admin = require('firebase-admin');
 const { MongoClient } = require('mongodb');
 const cors = require('cors'); // Importa cors
+const path = require('path'); // Importa path
 require('dotenv').config({ path: './url.env' });
 
 // Inicializar Firebase Admin
@@ -381,6 +382,17 @@ async function verifyTokenInPage(req, res, next) {
 // Ruta protegida (requiere autenticación)
 app.get('../app/(tabs)', verifyToken, (req, res) => {
   res.send('Este archivo está protegido y solo es accesible con una sesión válida.');
+});
+
+// Actualizar la ruta de los archivos estáticos
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// Añadir una ruta catch-all para el frontend
+app.get('*', (req, res) => {
+  // Solo redirige a index.html si la petición no es para la API
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+  }
 });
 
 // Iniciar el servidor

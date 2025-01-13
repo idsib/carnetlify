@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, useColorScheme, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { resetPassword } from '../../backend/firebase/resetPassword';
 
 const { width, height } = Dimensions.get('window');
 
@@ -12,9 +13,35 @@ const ResetPassword = () => {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const validateEmail = (text: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+  };
+
+  const handleResetPassword = async () => {
+    if (!validateEmail(email)) {
+      setError('Por favor, introduce un correo electrónico válido');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await resetPassword(email);
+      setSuccess(result.message);
+      setTimeout(() => {
+        router.back();
+      }, 3000);
+    } catch (error: any) {
+      setError(error.message || 'Error al restablecer la contraseña');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,24 +69,51 @@ const ResetPassword = () => {
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Restablecer contraseña</Text>
+              <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
+                Restablecer contraseña
+              </Text>
             </View>
             <View style={styles.content}>
+              {error ? (
+                <Text style={styles.errorText}>{error}</Text>
+              ) : null}
+              {success ? (
+                <Text style={styles.successText}>{success}</Text>
+              ) : null}
               <TextInput
-                style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
+                style={[
+                  styles.input, 
+                  isDarkMode ? styles.darkInput : styles.lightInput,
+                  error ? styles.inputError : null
+                ]}
                 placeholderTextColor={isDarkMode ? '#777' : '#999'}
                 placeholder="Correo electrónico"
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  validateEmail(text);
+                  setError('');
                 }}
                 keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!isLoading}
               />
-              <TouchableOpacity style={styles.resetButton}>
-                <Text style={styles.resetButtonText}>Enviar enlace de restablecimiento</Text>
+              <TouchableOpacity 
+                style={[styles.resetButton, isLoading ? styles.resetButtonDisabled : null]}
+                onPress={handleResetPassword}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.resetButtonText}>
+                    Enviar enlace de restablecimiento
+                  </Text>
+                )}
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => router.push('/login')}>
+              <TouchableOpacity 
+                onPress={() => router.push('/login')}
+                disabled={isLoading}
+              >
                 <Text style={[styles.backToLoginText, isDarkMode ? styles.darkText : styles.lightText]}>
                   Volver al inicio de sesión
                 </Text>
@@ -139,12 +193,18 @@ const styles = StyleSheet.create({
     color: '#000000',
     backgroundColor: '#F5F8FA',
   },
+  inputError: {
+    borderColor: '#FF3B30',
+  },
   resetButton: {
     backgroundColor: '#1DA1F2',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 16,
+  },
+  resetButtonDisabled: {
+    opacity: 0.7,
   },
   resetButtonText: {
     color: '#FFFFFF',
@@ -162,6 +222,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 16,
     color: '#1DA1F2',
+  },
+  errorText: {
+    color: '#FF3B30',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  successText: {
+    color: '#34C759',
+    textAlign: 'center',
+    marginBottom: 16,
   },
 });
 

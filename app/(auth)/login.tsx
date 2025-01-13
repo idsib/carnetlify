@@ -104,8 +104,31 @@ const Login = () => {
                 secureTextEntry
               />
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
-              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  { backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff' },
+                ]}
+                onPress={handleLogin}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    { color: isDarkMode ? '#ffffff' : '#000000' },
+                  ]}>
+                  Iniciar Sesión
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.forgotPasswordButton}
+                onPress={() => router.push('/resetpass')}>
+                <Text
+                  style={[
+                    styles.forgotPasswordText,
+                    { color: isDarkMode ? '#ffffff' : '#000000' },
+                  ]}>
+                  ¿Olvidaste tu contraseña?
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -182,22 +205,31 @@ const styles = StyleSheet.create({
     color: '#000000',
     backgroundColor: '#F5F8FA',
   },
-  loginButton: {
+  button: {
     backgroundColor: '#1DA1F2',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 16,
   },
-  loginButtonText: {
+  buttonText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
   },
+  forgotPasswordButton: {
+    marginTop: 10,
+    padding: 10,
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+  },
   errorText: {
     color: 'red',
+    marginTop: 10,
     textAlign: 'center',
-    marginBottom: 10,
   },
   darkText: {
     color: '#FFFFFF',

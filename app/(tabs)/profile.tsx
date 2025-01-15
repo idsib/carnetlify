@@ -10,7 +10,7 @@ import LogoutPopup from '../../components/LogoutPopup';
 //backend
 import {logOutFirebase} from '@/backend/firebase/logOut';
 import {getUserByUID, changeStateLocked} from '@/backend/firebase/config';
-import {SetUidFirebase} from "@/backend/mainBackend";
+import {SetUidFirebase} from "@/backend/firebase/setUidLocalStorage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
 import { useUser } from '@/context/UserContext';

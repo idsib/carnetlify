@@ -8,7 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 //backend
 import {getUserByUID} from '@/backend/firebase/config'
-import {SetUidFirebase} from "@/backend/mainBackend";
+import {SetUidFirebase} from "@/backend/firebase/setUidLocalStorage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {UserInfo} from "@/backend/interficie/UserInfoInterficie";
 import Toast from '@/components/Toast';

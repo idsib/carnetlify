@@ -8,7 +8,7 @@ export const get = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Unauthorized");
+      throw new Error("No autorizado");
     }
 
     const currentUser = await getUserByClerkId({
@@ -17,7 +17,7 @@ export const get = query({
     });
 
     if (!currentUser) {
-      throw new ConvexError("User not found");
+      throw new ConvexError("Usuario no encontrado");
     }
 
     const requests = await ctx.db
@@ -30,7 +30,7 @@ export const get = query({
         const sender = await ctx.db.get(request.sender);
 
         if (!sender) {
-          throw new ConvexError(`Request sender could not be found`);
+          throw new ConvexError(`No se ha podido encontrar al remitente de la solicitud.`);
         }
 
         return {
@@ -50,7 +50,7 @@ export const count = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Unauthorized");
+      throw new Error("No autorizado");
     }
 
     const currentUser = await getUserByClerkId({
@@ -59,7 +59,7 @@ export const count = query({
     });
 
     if (!currentUser) {
-      throw new ConvexError("User not found");
+      throw new ConvexError("Usuario no encontrado");
     }
 
     const requests = await ctx.db

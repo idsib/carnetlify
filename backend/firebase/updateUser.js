@@ -8,7 +8,7 @@ import { updateProfile, updateEmail, updatePassword} from "firebase/auth";
 import { auth } from '@/backend/firebase/config';
 // Importamos las funciones para operar en MongoDB, cada una para un dato distinto del usuario.
 import { updateNameUserInBackend, updateDniUserInBackend, updateAgeUserInBackend, updateCountryUserInBackend, updateProvinceUserInBackend, updateCityUserInBackend, updatePostalCodeUserInBackend, updateHomeUserInBackend, updatePhoneUserInBackend } from '@/backend/firebase/config';
-export async function updateUserProfile(newDisplayName, newDni, newAge, newContry, newProvince, newCity, newPostalCode, newHome, newPhone, newPhotoURL, newEmail, newPassword) {
+export async function updateUserProfile(newDisplayName, newDni, newAge, newContry, newProvince, newCity, newPostalCode, newHome, newPhone) {
     // Condicional para actualizar el nombre.
     if (newDisplayName) {
         // Actualizamos el nombre en Firebase.
@@ -26,6 +26,8 @@ export async function updateUserProfile(newDisplayName, newDni, newAge, newContr
         // Actualizamos el nombre en MongoDB.
         await updateNameUserInBackend(userName)
     }
+    /*
+    // De momento comento esta parte porque se hace localmente lo de la foto de perfil, quizas lo incluyamos mas tarde.
     // Condicional para actualizar el la imagen de perfil.
     if (newPhotoURL) {
         updateProfile(auth.currentUser, {
@@ -40,28 +42,7 @@ export async function updateUserProfile(newDisplayName, newDni, newAge, newContr
             profile_img: newPhotoURL
         };
         await updateDniUserInBackend(userPhotoURL)
-    }
-    // Condicional para actualizar el email.
-    if (newEmail) {
-        updateEmail(auth.currentUser, newEmail).then(() => {
-            console.log("Usuario actualizado con los datos => email: " + newEmail)
-        }).catch((error) => {
-            console.log("Error con actualización con email: " + error)
-        });
-        const userEmail = {
-            email: newEmail
-        };
-        await updateDniUserInBackend(userEmail)
-    }
-    // Condicional para actualizar el contraseña.
-    if (newPassword) {
-        const user = auth.currentUser;
-        updatePassword(user, newPassword).then(() => {
-            console.log("Usuario actualizado con los datos => contraseña: " + newEmail)
-        }).catch((error) => {
-            console.log("Error con actualización con email: " + error)
-        });
-    }
+    }*/
     // Condicional para actualizar el dni.
     if (newDni) {
         const userDni = {

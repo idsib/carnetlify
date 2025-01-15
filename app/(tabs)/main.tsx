@@ -9,7 +9,6 @@ import Sidebar from '../../components/SideBar';
 import TabBar from '../../components/TabBar';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CalendarWidget from '../../components/CalendarWidget';
-const router = useRouter();
 
 const auth = getAuth();
 const HEADER_HEIGHT = Platform.OS === 'ios' ? 80 : 70;
@@ -119,8 +118,11 @@ const LessonCard: React.FC<LessonCardProps> = ({
   );
 };
 
-const StreakWidget = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+interface StreakWidgetProps {
+  isDarkMode: boolean;
+}
+
+const StreakWidget: React.FC<StreakWidgetProps> = ({ isDarkMode }) => {
   const progressAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -328,35 +330,35 @@ export default function MainScreen() {
                 {activeTab === 'completed' && <View style={styles.activeIndicator} />}
               </TouchableOpacity>
             </View>
-            <StreakWidget />
+            <StreakWidget isDarkMode={isDarkMode} />
 
             <LessonCard
               icon={renderIcons('people-outline')}
               block="Bloque 1"
               title="Lección 01 - Definiciones Relacionadas con Factores Humanos"
               duration="10 min"
-              onPress={() => router.push('/lessons/firsTask')}
+              onPress={() => router.push('/lessons/sub1/Block')}
             />
             <LessonCard
               icon={renderIcons('car-outline')}
               block="Bloque 2"
               title="Lección 02 - Definiciones de Factores Vehiculares"
               duration="15 min"
-              onPress={() => {/* Navigate to lesson */}}
+              onPress={() => router.push('/lessons/sub1/Block')}
             />
             <LessonCard
               icon={renderIcons('bicycle-outline')}
               block="Bloque 3"
               title="Lección 03 - Definiciones de Factores Viales"
               duration="10 min"
-              onPress={() => {/* Navigate to lesson */}}
+              onPress={() => router.push('/lessons/sub1/Block')}
             />
             <LessonCard
-              icon={renderIcons('headlight-outline')}
+              icon={renderIcons('flashlight-outline')}
               block="Bloque 4"
               title="Lección 04 - Visibilidad e Iluminación"
               duration="15 min"
-              onPress={() => {/* Navigate to lesson */}}
+              onPress={() => router.push('/lessons/sub1/Block')}
             />
           </Animated.ScrollView>
         </View>

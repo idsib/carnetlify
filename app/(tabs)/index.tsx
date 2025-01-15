@@ -87,7 +87,7 @@ const MainMenu = () => {
           transition={{ type: 'spring', delay: 500 }}
         >
           <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
-            Prepárate para tu examen de conducir con Carnetlify
+            Prepárate para tu exámen de conducir con Carnetlify
           </Text>
         </MotiView>
         

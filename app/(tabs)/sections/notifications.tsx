@@ -9,18 +9,24 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
-  Button
+  StatusBar,
+  Dimensions,
+  useColorScheme
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useColorScheme } from 'react-native';
 import { useNotifications } from '../../../hooks/useNotifications';
 import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
 import { Linking } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const NotificationsPage = () => {
   const isDark = useColorScheme() === 'dark';
+  const insets = useSafeAreaInsets();
+  const { height, width } = Dimensions.get('window');
+  const isSmallDevice = height < 700;
   const { 
     fcmToken, 
     notification, 
@@ -31,17 +37,41 @@ const NotificationsPage = () => {
   const [testsEnabled, setTestsEnabled] = useState(false);
   const [offersEnabled, setOffersEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSupported, setIsSupported] = useState(true);
 
   useEffect(() => {
+    checkDeviceSupport();
     checkNotificationPermissions();
   }, []);
 
+  const checkDeviceSupport = async () => {
+    if (Platform.OS === 'web') {
+      if (!('Notification' in window)) {
+        setIsSupported(false);
+        return;
+      }
+    } else {
+      const isDevice = await Device.isDevice;
+      setIsSupported(isDevice);
+    }
+  };
+
   const checkNotificationPermissions = async () => {
-    const { status } = await Notifications.getPermissionsAsync();
-    const isEnabled = status === 'granted';
-    setPracticeEnabled(isEnabled);
-    setTestsEnabled(isEnabled);
-    setOffersEnabled(isEnabled);
+    if (Platform.OS === 'web') {
+      if ('Notification' in window) {
+        const permission = await window.Notification.requestPermission();
+        const isEnabled = permission === 'granted';
+        setPracticeEnabled(isEnabled);
+        setTestsEnabled(isEnabled);
+        setOffersEnabled(isEnabled);
+      }
+    } else {
+      const { status } = await Notifications.getPermissionsAsync();
+      const isEnabled = status === 'granted';
+      setPracticeEnabled(isEnabled);
+      setTestsEnabled(isEnabled);
+      setOffersEnabled(isEnabled);
+    }
   };
 
   const handleToggleNotification = async (
@@ -51,17 +81,30 @@ const NotificationsPage = () => {
   ) => {
     try {
       if (!currentValue) {
-        const { status } = await Notifications.requestPermissionsAsync();
-        if (status === 'granted') {
-          setter(true);
-          // Schedule a test notification when enabling practice notifications
-          if (type === 'practice') {
-            await scheduleLocalNotification(
-              'Recordatorio de Práctica',
-              '¡No olvides tu próxima clase de práctica!',
-              5,
-              { type: 'practice' }
-            );
+        if (Platform.OS === 'web') {
+          if ('Notification' in window) {
+            const permission = await window.Notification.requestPermission();
+            if (permission === 'granted') {
+              setter(true);
+              if (type === 'practice') {
+                new window.Notification('Carnetlify', {
+                  body: '¡Notificaciones activadas correctamente!',
+                });
+              }
+            }
+          }
+        } else {
+          const { status } = await Notifications.requestPermissionsAsync();
+          if (status === 'granted') {
+            setter(true);
+            if (type === 'practice') {
+              await scheduleLocalNotification(
+                'Recordatorio de Práctica',
+                '¡No olvides tu próxima clase de práctica!',
+                5,
+                { type: 'practice' }
+              );
+            }
           }
         }
       } else {
@@ -74,8 +117,10 @@ const NotificationsPage = () => {
               { text: 'Abrir Configuración', onPress: () => Linking.openSettings() }
             ]
           );
-        } else {
+        } else if (Platform.OS === 'android') {
           Linking.openSettings();
+        } else {
+          setter(false);
         }
       }
     } catch (error) {
@@ -87,7 +132,13 @@ const NotificationsPage = () => {
   const onSendPushNotification = async () => {
     setIsLoading(true);
     try {
-      if (fcmToken) {
+      if (Platform.OS === 'web') {
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new window.Notification('Carnetlify Test', {
+            body: 'Esta es una notificación de prueba',
+          });
+        }
+      } else if (fcmToken) {
         await sendTestNotification();
         Alert.alert('Éxito', 'Notificación enviada correctamente');
       } else {
@@ -101,152 +152,122 @@ const NotificationsPage = () => {
     }
   };
 
-  const onSendLocalNotification = async () => {
-    try {
-      await scheduleLocalNotification(
-        'Notificación Local',
-        '¡Esta es una notificación local de prueba!',
-        5,
-        { type: 'test' }
-      );
-      Alert.alert('Éxito', 'Notificación local programada');
-    } catch (error) {
-      console.error('Error scheduling local notification:', error);
-      Alert.alert('Error', 'No se pudo programar la notificación local');
-    }
-  };
+  if (!isSupported) {
+    return (
+      <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+        <View style={styles.content}>
+          <Text style={[styles.title, isDark && styles.darkText]}>
+            Notificaciones no soportadas
+          </Text>
+          <Text style={[styles.description, isDark && styles.darkText]}>
+            Tu dispositivo no soporta notificaciones. Por favor, usa un dispositivo físico o un navegador compatible.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <SafeAreaView style={[styles.container, isDark && styles.darkContainer]}>
-      <View style={[styles.header, isDark && styles.darkHeader]}>
+    <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+      <View style={styles.header}>
         <Link href="../profile" asChild>
           <TouchableOpacity style={styles.backButton}>
             <Ionicons 
-              name="chevron-back" 
-              size={24} 
-              color={isDark ? '#FFFFFF' : '#000000'} 
+              name="chevron-back"
+              size={24}
+              color={isDark ? '#FFFFFF' : '#000000'}
             />
           </TouchableOpacity>
         </Link>
-        <Text style={[styles.title, isDark && styles.darkText]}>Notificaciones</Text>
+        <Text style={[styles.title, isDark && styles.darkText]}>
+          Notificaciones
+        </Text>
       </View>
 
       <ScrollView style={styles.content}>
-        <Text style={[styles.sectionTitle, isDark && styles.darkText]}>
-          Preferencias de Notificación
-        </Text>
-
         <View style={[styles.section, isDark && styles.darkSection]}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Ionicons 
-                name="car" 
-                size={24} 
-                color={isDark ? '#3478F6' : '#007AFF'} 
-                style={styles.settingIcon}
-              />
-              <View style={styles.textContainer}>
-                <Text style={[styles.settingTitle, isDark && styles.darkText]}>
-                  Recordatorios de Práctica
-                </Text>
-                <Text style={[styles.settingDescription, isDark && styles.darkSettingDescription]}>
-                  Recibe recordatorios sobre tus clases programadas
-                </Text>
-              </View>
+          <Text style={[styles.sectionTitle, isDark && styles.darkText]}>
+            Preferencias
+          </Text>
+          
+          <View style={[styles.optionContainer, isDark && styles.darkBorder]}>
+            <View style={styles.optionTextContainer}>
+              <Text style={[styles.optionTitle, isDark && styles.darkText]}>
+                Prácticas
+              </Text>
+              <Text style={[styles.optionDescription, isDark && styles.darkSecondaryText]}>
+                Recordatorios de prácticas y clases
+              </Text>
             </View>
             <Switch
-              style={styles.switch}
-              trackColor={{ false: '#767577', true: '#3478F6' }}
-              thumbColor={practiceEnabled ? '#FFFFFF' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => handleToggleNotification('practice', practiceEnabled, setPracticeEnabled)}
               value={practiceEnabled}
+              onValueChange={(value) => 
+                handleToggleNotification('practice', practiceEnabled, setPracticeEnabled)
+              }
+              trackColor={{ false: isDark ? '#3A3A3C' : '#D1D1D6', true: '#34C759' }}
+              thumbColor={practiceEnabled ? '#FFFFFF' : isDark ? '#FFFFFF' : '#FFFFFF'}
+              ios_backgroundColor={isDark ? '#3A3A3C' : '#D1D1D6'}
             />
           </View>
-        </View>
 
-        <View style={[styles.section, isDark && styles.darkSection]}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Ionicons 
-                name="document-text" 
-                size={24} 
-                color={isDark ? '#3478F6' : '#007AFF'} 
-                style={styles.settingIcon}
-              />
-              <View style={styles.textContainer}>
-                <Text style={[styles.settingTitle, isDark && styles.darkText]}>
-                  Actualizaciones de Tests
-                </Text>
-                <Text style={[styles.settingDescription, isDark && styles.darkSettingDescription]}>
-                  Notificaciones sobre nuevos tests y resultados
-                </Text>
-              </View>
+          <View style={[styles.optionContainer, isDark && styles.darkBorder]}>
+            <View style={styles.optionTextContainer}>
+              <Text style={[styles.optionTitle, isDark && styles.darkText]}>
+                Tests
+              </Text>
+              <Text style={[styles.optionDescription, isDark && styles.darkSecondaryText]}>
+                Alertas de nuevos tests disponibles
+              </Text>
             </View>
             <Switch
-              style={styles.switch}
-              trackColor={{ false: '#767577', true: '#3478F6' }}
-              thumbColor={testsEnabled ? '#FFFFFF' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => handleToggleNotification('tests', testsEnabled, setTestsEnabled)}
               value={testsEnabled}
+              onValueChange={(value) =>
+                handleToggleNotification('tests', testsEnabled, setTestsEnabled)
+              }
+              trackColor={{ false: isDark ? '#3A3A3C' : '#D1D1D6', true: '#34C759' }}
+              thumbColor={testsEnabled ? '#FFFFFF' : isDark ? '#FFFFFF' : '#FFFFFF'}
+              ios_backgroundColor={isDark ? '#3A3A3C' : '#D1D1D6'}
             />
           </View>
-        </View>
 
-        <View style={[styles.section, isDark && styles.darkSection]}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Ionicons 
-                name="pricetag" 
-                size={24} 
-                color={isDark ? '#3478F6' : '#007AFF'} 
-                style={styles.settingIcon}
-              />
-              <View style={styles.textContainer}>
-                <Text style={[styles.settingTitle, isDark && styles.darkText]}>
-                  Ofertas y Promociones
-                </Text>
-                <Text style={[styles.settingDescription, isDark && styles.darkSettingDescription]}>
-                  Recibe ofertas especiales y descuentos
-                </Text>
-              </View>
+          <View style={[styles.optionContainer, isDark && styles.darkBorder]}>
+            <View style={styles.optionTextContainer}>
+              <Text style={[styles.optionTitle, isDark && styles.darkText]}>
+                Ofertas
+              </Text>
+              <Text style={[styles.optionDescription, isDark && styles.darkSecondaryText]}>
+                Promociones y ofertas especiales
+              </Text>
             </View>
             <Switch
-              style={styles.switch}
-              trackColor={{ false: '#767577', true: '#3478F6' }}
-              thumbColor={offersEnabled ? '#FFFFFF' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => handleToggleNotification('offers', offersEnabled, setOffersEnabled)}
               value={offersEnabled}
+              onValueChange={(value) =>
+                handleToggleNotification('offers', offersEnabled, setOffersEnabled)
+              }
+              trackColor={{ false: isDark ? '#3A3A3C' : '#D1D1D6', true: '#34C759' }}
+              thumbColor={offersEnabled ? '#FFFFFF' : isDark ? '#FFFFFF' : '#FFFFFF'}
+              ios_backgroundColor={isDark ? '#3A3A3C' : '#D1D1D6'}
             />
           </View>
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={[styles.button, isLoading && styles.buttonDisabled]} 
-            onPress={onSendPushNotification}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text style={styles.buttonText}>Enviar Notificación Push</Text>
-            )}
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={onSendLocalNotification}
-          >
-            <Text style={styles.buttonText}>Enviar Notificación Local</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={[styles.footerText, isDark && styles.darkFooterText]}>
-          Puedes cambiar estas preferencias en cualquier momento. Las notificaciones te ayudarán a mantenerte al día con tu progreso y no perderte información importante.
-        </Text>
+        <TouchableOpacity
+          style={[
+            styles.testButton,
+            isDark && styles.darkButton,
+            isLoading && styles.disabledButton
+          ]}
+          onPress={onSendPushNotification}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.testButtonText}>
+              Probar Notificaciones
+            </Text>
+          )}
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -255,30 +276,33 @@ const NotificationsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  containerLight: {
     backgroundColor: '#F5F5F5',
   },
-  darkContainer: {
+  containerDark: {
     backgroundColor: '#000000',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    paddingBottom: 8,
-  },
-  darkHeader: {
-    backgroundColor: '#000000',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   backButton: {
-    marginRight: 16,
+    padding: 8,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '600',
+    marginLeft: 8,
     color: '#000000',
   },
   darkText: {
     color: '#FFFFFF',
+  },
+  darkSecondaryText: {
+    color: '#8E8E93',
   },
   content: {
     flex: 1,
@@ -287,17 +311,20 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    marginHorizontal: 16,
-    marginBottom: 16,
     padding: 16,
-    shadowColor: '#000000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 20,
+    ...Platform.select({
+      web: {
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+      },
+      default: {
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+    }),
   },
   darkSection: {
     backgroundColor: '#1C1C1E',
@@ -305,88 +332,59 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
+    marginBottom: 16,
     color: '#000000',
-    marginLeft: 16,
-    marginTop: 24,
-    marginBottom: 12,
   },
-  settingRow: {
+  optionContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  settingInfo: {
-    flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5EA',
   },
-  textContainer: {
+  darkBorder: {
+    borderBottomColor: '#38383A',
+  },
+  optionTextContainer: {
     flex: 1,
+    marginRight: 16,
   },
-  settingIcon: {
-    marginRight: 12,
-  },
-  settingTitle: {
+  optionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#000000',
-    marginBottom: 4,
   },
-  settingDescription: {
+  optionDescription: {
     fontSize: 14,
     color: '#666666',
-    flexWrap: 'wrap',
+    marginTop: 4,
   },
-  darkSettingDescription: {
-    color: '#8E8E93',
-  },
-  switch: {
-    marginLeft: 8,
-  },
-  buttonContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#666666',
-    textAlign: 'center',
-    paddingHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 30,
-  },
-  darkFooterText: {
-    color: '#8E8E93',
-  },
-  button: {
+  testButton: {
     backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 8,
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
-    width: '100%',
-    shadowColor: '#000000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginTop: 24,
   },
-  buttonDisabled: {
+  darkButton: {
+    backgroundColor: '#0A84FF',
+  },
+  disabledButton: {
     opacity: 0.7,
   },
-  buttonText: {
+  testButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-    textAlign: 'center',
   },
-  separator: {
-    height: 12,
-  }
+  description: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
+    marginTop: 12,
+  },
 });
 
 export default NotificationsPage;

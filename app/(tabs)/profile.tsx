@@ -77,10 +77,7 @@ export default function ProfileScreen() {
         .then(async (uid) => {
           try {
             const userData = await getUserByUID(uid);
-            await changeStateLocked({
-              userId: uid,
-              isLocked: "false"
-            });
+            await changeStateLocked;
           } catch (error) {
             console.error('Error updating user data:', error);
           }

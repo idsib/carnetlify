@@ -91,7 +91,6 @@ app.post('/users/info', verifyToken, async (req, res) => {
 // Ruta para desbloquear un usuario en MongoDB
 app.post('/users/block', verifyToken, async (req, res) => {
   const userId = req.user.uid;
-  const userData = req.body;
   const existingUser = await usersCollection.findOne({ userId });
   if (existingUser) {
     // Si el usuario existe, actualizamos su estado de bloqueo.
@@ -100,7 +99,7 @@ app.post('/users/block', verifyToken, async (req, res) => {
   } else {
     console.log("No se ha encontrado el usuario");
   }
-  res.status(201).send('Usuario actualizado en Mongo = ' + userData);
+  res.status(201).send('Estado del usuario actualizado');
 });
 // Ruta para actualizar nombre usuarios en MongoDB
 app.post('/updateNameUser', verifyToken, async (req, res) => {
@@ -340,27 +339,6 @@ app.post('/updateProfileImage', verifyToken, async (req, res) => {
     console.error('Error al actualizar la imagen de perfil:', error);
     res.status(500).send({ error: 'Error interno del servidor.' });
   }
-});
-
-// Middleware para verificar el token de Firebase
-async function verifyTokenInPage(req, res, next) {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res.status(401).send('Acceso denegado. No se proporcionó token.');
-  }
-
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken; // Adjunta la información del usuario al objeto req
-    next(); 
-  } catch (error) {
-    return res.status(403).send('Token no válido.');
-  }
-}
-// Ruta protegida (requiere autenticación)
-app.get('../app/(tabs)', verifyToken, (req, res) => {
-  res.send('Este archivo está protegido y solo es accesible con una sesión válida.');
 });
 
 // Iniciar el servidor

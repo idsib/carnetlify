@@ -63,18 +63,16 @@ export const getUserByUID = async (userId) => {
   }
 };
 // Función para actualizar el estado isLocked del usuario en el backend.
-export const changeStateLocked = async (state) => {
+export const changeStateLocked = async () => {
   const token = await auth.currentUser.getIdToken();
   await fetch('http://localhost:3000/users/block', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': token,
-    },
-    body: JSON.stringify(state),
+    }
   });
 };
-
 // Función para actualizar nombre en el backend.
 export const updateNameUserInBackend = async (userName) => {
   const token = await auth.currentUser.getIdToken();

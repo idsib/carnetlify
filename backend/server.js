@@ -12,7 +12,7 @@ const cors = require('cors');
 const path = require('path');
 // Importamos dotenvm, que carga mi .env contenedor de información sensible del proyecto, 
 // si fuera un proyecto real, ocultaria url.env en un git ignore.
-require('dotenv').config({ path: './url.env' });
+  require('dotenv').config({ path: './url.env' });
 // Inicializamos Firebase Admin con nuestra configuracion, que tambien deberia ser protegida en un proyecto serio.
 admin.initializeApp({
   credential: admin.credential.cert(require('./firebase/firebaseServiceAccountKey.json'))
@@ -27,13 +27,15 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Indicamos la configuración de mi cluster en MongoDB con el parametro almacenado en el .env.
 const client = new MongoClient(process.env.MONGO_URL);
-// Declaramos una variable vacia y conectamos el Mongo, especificamos la colección y la 
-// almacenamos en un variable que manipularemos en nuestras funciones.
+// Declaramos una variable vacia y conectamos el Mongo, especificamos las colecciones y las
+// almacenamos en variables que manipularemos en nuestras funciones.
 let usersCollection;
+let lessonsCollections;
 async function connectDB() {
   await client.connect();
   const db = client.db('Carnetlify');
   usersCollection = db.collection('users');
+  lessonsCollections = db.collection('lessons');
   console.log('Conectado a MongoDB');
 }
 // Cazamos possibles errores.
@@ -59,9 +61,22 @@ app.post('/register', verifyToken, async (req, res) => {
   const userData = req.body;
   // Verificamos si el usuario ya existe en la base de datos.
   const existingUser = await usersCollection.findOne({ userId });
+  // Creamos un objeto que contendra la lista de lecciones de ese usuario para manipulacion posterior.
+  const lessonsUser = {
+    stateLesson11: "false",
+    stateLesson12: "false",
+    stateLesson13: "false",
+    stateLesson14: "false",
+    stateLesson21: "false",
+    stateLesson22: "false",
+    stateLesson23: "false",
+    stateLesson24: "false",
+  };
   // Si el usuario no existe, lo creamos.
   if (!existingUser) {
     await usersCollection.insertOne({ userId, ...userData });
+    // Le asignamos un registro en la colección lessons.
+    await lessonsCollections.insertOne({ userId, ...lessonsUser });
   } else if (existingUser) {
     // Si existe lo notificamos.
     console.log("Ya existes en MongoDB")
@@ -71,6 +86,7 @@ app.post('/register', verifyToken, async (req, res) => {
 // Ruta para sacar el nombre de usuario en MongoDB
 app.post('/users/info', verifyToken, async (req, res) => {
   // Guardamos el valor de UserId proporcionado en el cuerpo de la solicitud.
+  // Diferencia hay entre const { userId } = req.body; y const userId = req.body;?
   const { userId } = req.body;
   // Comprovación previa.
   if (!userId) {
@@ -87,6 +103,20 @@ app.post('/users/info', verifyToken, async (req, res) => {
     console.error('Error al buscar el usuario:', error);
     res.status(500).send({ error: 'Error interno del servidor.' });
   }
+});
+// Ruta para cambiar el estado de una lección en MongoDB
+app.post('/changeStateLesson', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const { numberLesson } = req.body;
+  const existingRegister = await lessonsCollections.findOne({ userId });
+  if (existingRegister) {
+    // Si el registro existe, actualizamos el estado de la lección superada.
+    await lessonsCollections.updateOne({ userId }, { $set: { [`${numberLesson}`]: "true" } }, { $unset: { [`${numberLesson}`]: "false" } });
+    console.log("Si se ha encontrado el usuario");
+  } else {
+    console.log("No se ha encontrado el usuario");
+  }
+  res.status(200).send('Estado de la lección actualizada');
 });
 // Ruta para desbloquear un usuario en MongoDB
 app.post('/users/block', verifyToken, async (req, res) => {

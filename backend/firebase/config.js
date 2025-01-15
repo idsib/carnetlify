@@ -73,6 +73,19 @@ export const changeStateLocked = async () => {
     }
   });
 };
+// Función para cambiar el estado de una lección.
+export const changeStateLesson = async (numberLesson) => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/changeStateLesson', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+    // Enviamos el numero de la lección a cambiar el estado en formato JSON.
+    body: JSON.stringify(numberLesson),
+  });
+};
 // Función para actualizar nombre en el backend.
 export const updateNameUserInBackend = async (userName) => {
   const token = await auth.currentUser.getIdToken();

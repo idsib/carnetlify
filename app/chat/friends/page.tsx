@@ -14,7 +14,7 @@ const FriendsPage = () => {
 
   return (
     <>
-      <ItemList title="Friends" action={<AddFriendDialog />}>
+      <ItemList title="Amigos" action={<AddFriendDialog />}>
         {requests ? (
           requests.length === 0 ? (
             <p className="w-full h-full flex items-center justify-center">

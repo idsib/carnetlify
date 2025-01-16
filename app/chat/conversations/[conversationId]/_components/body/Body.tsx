@@ -22,12 +22,12 @@ type Props = {
     username?: string;
     [key: string]: any;
   }[];
-  callType: "audio" | "video" | null;
-  setCallType: Dispatch<SetStateAction<"audio" | "video" | null>>;
+  callType: "audio" | "video" | null; // Tipo de llamada (audio o video)
+  setCallType: Dispatch<SetStateAction<"audio" | "video" | null>>; // Función para actualizar el tipo de llamada
 };
 
 const Body = ({ members, callType, setCallType }: Props) => {
-  const { conversationId } = useConversation();
+  const { conversationId } = useConversation(); // Obtener el ID de la conversación actual
 
   const messages = useQuery(api.messages.get, {
     id: conversationId as Id<"conversations">,
@@ -39,7 +39,7 @@ const Body = ({ members, callType, setCallType }: Props) => {
     if (messages && messages.length > 0) {
       markRead({
         conversationId,
-        messageId: messages[0].message._id,
+        messageId: messages[0].message._id, // Marcar el primer mensaje como leído
       });
     }
   }, [messages?.length, conversationId, markRead]);
@@ -48,25 +48,25 @@ const Body = ({ members, callType, setCallType }: Props) => {
     switch (names.length) {
       case 1:
         return (
-          <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]}`}</p>
+          <p className="text-muted-foreground text-sm text-right">{`Visto por ${names[0]}`}</p>
         );
       case 2:
         return (
-          <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]} and ${names[1]}`}</p>
+          <p className="text-muted-foreground text-sm text-right">{`Visto por ${names[0]} y ${names[1]}`}</p>
         );
       default:
         return (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <p className="text-muted-foreground text-sm text-right">{`Seen by ${
+                <p className="text-muted-foreground text-sm text-right">{`Visto por ${
                   names[0]
-                }, ${names[1]}, and ${names.length - 2} more`}</p>
+                }, ${names[1]} y ${names.length - 2} más`}</p>
               </TooltipTrigger>
               <TooltipContent>
                 <ul>
                   {names.map((name, index) => {
-                    return <li key={index}>{name}</li>;
+                    return <li key={index}>{name}</li>; // Lista de usuarios que han visto el mensaje
                   })}
                 </ul>
               </TooltipContent>
@@ -82,7 +82,7 @@ const Body = ({ members, callType, setCallType }: Props) => {
         (member) =>
           member.lastSeenMessageId === messageId && member._id !== senderId
       )
-      .map((user) => user.username!.split(" ")[0]);
+      .map((user) => user.username!.split(" ")[0]); // Obtener los nombres de los usuarios que han visto el mensaje
 
     if (seenUsers.length === 0) return undefined;
 
@@ -91,35 +91,35 @@ const Body = ({ members, callType, setCallType }: Props) => {
 
   return (
     <div className="flex-1 w-full flex overflow-y-scroll flex-col-reverse gap-2 p-3 no-scrollbar">
-      {!callType ? (
+      {!callType ? ( // Si no hay llamada activa
         messages?.map(
           ({ message, senderImage, senderName, isCurrentUser }, index) => {
             const lastByUser =
               messages[index - 1]?.message.senderId ===
-              messages[index].message.senderId;
+              messages[index].message.senderId; // Verificar si el mensaje anterior es del mismo usuario
 
-            const seenMessage = getSeenMessage(message._id, message.senderId);
+            const seenMessage = getSeenMessage(message._id, message.senderId); // Verificar quién ha visto el mensaje
 
             return (
               <Message
                 key={message._id}
-                fromCurrentUser={isCurrentUser}
-                senderImage={senderImage}
-                senderName={senderName}
-                lastByUser={lastByUser}
-                content={message.content}
-                createdAt={message._creationTime}
-                seen={seenMessage}
-                type={message.type}
+                fromCurrentUser={isCurrentUser} // Indica si el mensaje es del usuario actual
+                senderImage={senderImage} // Imagen del remitente
+                senderName={senderName} // Nombre del remitente
+                lastByUser={lastByUser} // Indica si es el último mensaje del remitente
+                content={message.content} // Contenido del mensaje
+                createdAt={message._creationTime} // Fecha de creación
+                seen={seenMessage} // Información sobre quién lo ha visto
+                type={message.type} // Tipo de mensaje
               />
             );
           }
         )
       ) : (
         <CallRoom
-          audio={callType === "audio" || callType === "video"}
-          video={callType === "video"}
-          handleDisconnect={() => setCallType(null)}
+          audio={callType === "audio" || callType === "video"} // Habilitar audio
+          video={callType === "video"} // Habilitar video
+          handleDisconnect={() => setCallType(null)} // Manejar la desconexión de la llamada
         />
       )}
     </div>

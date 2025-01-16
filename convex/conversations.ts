@@ -9,7 +9,7 @@ export const get = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Unauthorized");
+      throw new Error("No autorizado");
     }
 
     const currentUser = await getUserByClerkId({
@@ -18,7 +18,7 @@ export const get = query({
     });
 
     if (!currentUser) {
-      throw new ConvexError("User not found");
+      throw new ConvexError("Usuario no encontrado");
     }
 
     const conversationMemberships = await ctx.db
@@ -31,7 +31,7 @@ export const get = query({
         const conversation = await ctx.db.get(membership.conversationId);
 
         if (!conversation) {
-          throw new ConvexError("Conversation could not be found");
+          throw new ConvexError("Conversación no encontrada");
         }
 
         return conversation;

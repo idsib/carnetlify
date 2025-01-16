@@ -14,6 +14,7 @@ import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '@/context/UserContext';
 
 const PaymentMethodsPage = () => {
   const isDark = useColorScheme() === 'dark';
@@ -23,6 +24,7 @@ const PaymentMethodsPage = () => {
   const { height, width } = useWindowDimensions();
   const isSmallDevice = height < 700;
   const isLargeScreen = width > 768;
+  const { updateUserInfo } = useUser();
 
   const savedPaymentMethods = [
     { type: 'visa', lastDigits: '0789', icon: 'cc-visa' as const, iconFamily: 'FontAwesome5' as const },
@@ -107,15 +109,16 @@ const PaymentMethodsPage = () => {
       // Show success popup
       setShowSuccessPopup(true);
       
-      // Update storage
+      // Update storage and user context
       await AsyncStorage.setItem('isLocked', 'false');
+      updateUserInfo({ isLocked: "false" });
       
       // Wait for 2 seconds to show the message
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Redirect to profile with unlocked parameter
-      router.push({
-        pathname: '/profile',
+      router.replace({
+        pathname: '/(tabs)/profile',
         params: { unlocked: 'true' }
       });
     } catch (error) {

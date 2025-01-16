@@ -6,6 +6,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TabBar from '../../components/TabBar';
 import LogoutPopup from '../../components/LogoutPopup';
+import DeleteAccountPopup from '../../components/DeleteAccountPopup';
 
 //backend
 import {logOutFirebase} from '@/backend/firebase/logOut';
@@ -69,7 +70,8 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { unlocked } = useLocalSearchParams();
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-  const { userInfo } = useUser();
+  const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
+  const { userInfo, updateUserInfo } = useUser();
 
   useEffect(() => {
     if (unlocked === 'true') {
@@ -77,7 +79,8 @@ export default function ProfileScreen() {
         .then(async (uid) => {
           try {
             const userData = await getUserByUID(uid);
-            await changeStateLocked;
+            await changeStateLocked();
+            updateUserInfo({ isLocked: "false" });
           } catch (error) {
             console.error('Error updating user data:', error);
           }
@@ -148,16 +151,10 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <SectionTitle title="Ajustes" />
           <MenuItem
-            icon="person-circle"
-            title="Información personal"
-            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/personalInfo')}
-            isLocked={userInfo.isLocked === "true"}
-          />
-          <MenuItem
             icon="card"
             title="Método de pago"
-            onPress={() => router.push('/sections/paymethod')}
-            isLocked={userInfo.isLocked === "false"}
+            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/paymethod')}
+            isLocked={userInfo.isLocked === "true"}
           />
           <MenuItem
             icon="notifications"
@@ -183,7 +180,7 @@ export default function ProfileScreen() {
             icon="pricetag"
             title="Escoge tu plan"
             onPress={() => router.push('/sections/subscriptionPlan')}
-            isLocked={userInfo.isLocked === "false"}
+            alwaysAccessible={true}
           />
         </View>
 
@@ -202,11 +199,20 @@ export default function ProfileScreen() {
             alwaysAccessible={true}
           />
         </View>
-        
+
+        <View style={styles.section}>
+          <MenuItem
+            icon="trash-outline"
+            title="Eliminar cuenta"
+            onPress={() => setShowDeleteAccountPopup(true)}
+            alwaysAccessible={true}
+          />
+        </View>
+
         <View style={styles.section}>
           <MenuItem
             icon="log-out"
-            title="Cerrar Sesión"
+            title="Cerrar sesión"
             onPress={() => setShowLogoutPopup(true)}
             alwaysAccessible={true}
           />
@@ -215,8 +221,16 @@ export default function ProfileScreen() {
 
       <LogoutPopup
         visible={showLogoutPopup}
-        onLogout={handleLogout}
+        onLogout={() => {
+          setShowLogoutPopup(false);
+          handleLogout();
+        }}
         onCancel={() => setShowLogoutPopup(false)}
+      />
+
+      <DeleteAccountPopup
+        visible={showDeleteAccountPopup}
+        onClose={() => setShowDeleteAccountPopup(false)}
       />
 
       <TabBar />

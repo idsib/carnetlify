@@ -98,32 +98,44 @@ const PersonalInfoPage = () => {
     let isValid = true;
     const newErrors = { ...errors };
 
-    // Validación del nombre (opcional)
-    if (formData.nombre.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.nombre)) {
+    // Validación del nombre (requerido)
+    if (!formData.nombre.trim()) {
+      newErrors.nombre = 'El nombre es requerido';
+      isValid = false;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.nombre)) {
       newErrors.nombre = 'El nombre debe contener solo letras y tener entre 2 y 50 caracteres';
       isValid = false;
     } else {
       newErrors.nombre = '';
     }
 
-    // Validación de apellidos (opcional)
-    if (formData.apellidos.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.apellidos)) {
+    // Validación de apellidos (requerido)
+    if (!formData.apellidos.trim()) {
+      newErrors.apellidos = 'Los apellidos son requeridos';
+      isValid = false;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.apellidos)) {
       newErrors.apellidos = 'Los apellidos deben contener solo letras y tener entre 2 y 50 caracteres';
       isValid = false;
     } else {
       newErrors.apellidos = '';
     }
 
-    // Validación del documento (opcional)
-    if (formData.documento.trim() && !/^[A-Z0-9]{8,9}$/.test(formData.documento.toUpperCase())) {
+    // Validación del documento (requerido)
+    if (!formData.documento.trim()) {
+      newErrors.documento = 'El documento es requerido';
+      isValid = false;
+    } else if (!/^[A-Z0-9]{8,9}$/.test(formData.documento.toUpperCase())) {
       newErrors.documento = 'Formato de documento inválido (DNI: 8 números o NIE: 1 letra + 7 números)';
       isValid = false;
     } else {
       newErrors.documento = '';
     }
 
-    // Validación de la edad (opcional)
-    if (formData.edad.trim()) {
+    // Validación de la edad (requerido)
+    if (!formData.edad.trim()) {
+      newErrors.edad = 'La edad es requerida';
+      isValid = false;
+    } else {
       const edad = parseInt(formData.edad);
       if (isNaN(edad) || edad < 18 || edad > 100) {
         newErrors.edad = 'La edad debe estar entre 18 y 100 años';
@@ -131,52 +143,68 @@ const PersonalInfoPage = () => {
       } else {
         newErrors.edad = '';
       }
-    } else {
-      newErrors.edad = '';
     }
 
-    // Validación del país (opcional)
-    if (formData.pais.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.pais)) {
+    // Validación del país (requerido)
+    if (!formData.pais.trim()) {
+      newErrors.pais = 'El país es requerido';
+      isValid = false;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.pais)) {
       newErrors.pais = 'País inválido';
       isValid = false;
     } else {
       newErrors.pais = '';
     }
 
-    // Validación de la provincia (opcional)
-    if (formData.provincia.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.provincia)) {
+    // Validación de la provincia (requerido)
+    if (!formData.provincia.trim()) {
+      newErrors.provincia = 'La provincia es requerida';
+      isValid = false;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.provincia)) {
       newErrors.provincia = 'Provincia inválida';
       isValid = false;
     } else {
       newErrors.provincia = '';
     }
 
-    // Validación de la ciudad (opcional)
-    if (formData.ciudad.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.ciudad)) {
+    // Validación de la ciudad (requerido)
+    if (!formData.ciudad.trim()) {
+      newErrors.ciudad = 'La ciudad es requerida';
+      isValid = false;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.ciudad)) {
       newErrors.ciudad = 'Ciudad inválida';
       isValid = false;
     } else {
       newErrors.ciudad = '';
     }
 
-    // Validación del código postal (opcional)
-    if (formData.codigoPostal.trim() && !/^\d{5}$/.test(formData.codigoPostal)) {
+    // Validación del código postal (requerido)
+    if (!formData.codigoPostal.trim()) {
+      newErrors.codigoPostal = 'El código postal es requerido';
+      isValid = false;
+    } else if (!/^\d{5}$/.test(formData.codigoPostal)) {
       newErrors.codigoPostal = 'El código postal debe tener 5 dígitos';
       isValid = false;
     } else {
       newErrors.codigoPostal = '';
     }
 
-    // Validación del domicilio (opcional)
-    if (formData.domicilio.trim() && (formData.domicilio.length < 5 || formData.domicilio.length > 100)) {
+    // Validación del domicilio (requerido)
+    if (!formData.domicilio.trim()) {
+      newErrors.domicilio = 'El domicilio es requerido';
+      isValid = false;
+    } else if (formData.domicilio.length < 5 || formData.domicilio.length > 100) {
       newErrors.domicilio = 'El domicilio debe tener entre 5 y 100 caracteres';
       isValid = false;
     } else {
       newErrors.domicilio = '';
     }
 
-    // Validación del teléfono (opcional)
-    if (formData.telefono.trim() && !/^\d{9}$/.test(formData.telefono)) {
+    // Validación del teléfono (requerido)
+    if (!formData.telefono.trim()) {
+      newErrors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d{9}$/.test(formData.telefono)) {
       newErrors.telefono = 'El teléfono debe tener 9 dígitos';
       isValid = false;
     } else {
@@ -221,7 +249,7 @@ const PersonalInfoPage = () => {
       });
       
       Alert.alert('Éxito', 'Datos actualizados correctamente');
-      router.replace('/(tabs)/profile');
+      router.replace('/sections/paymethod');
     } catch (error) {
       console.error('Error saving user data:', error);
       Alert.alert('Error', 'No se pudieron guardar los cambios');

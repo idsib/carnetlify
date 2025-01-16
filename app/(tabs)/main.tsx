@@ -9,6 +9,7 @@ import Sidebar from '../../components/SideBar';
 import TabBar from '../../components/TabBar';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CalendarWidget from '../../components/CalendarWidget';
+import { useUser } from '@/context/UserContext';
 
 const auth = getAuth();
 const HEADER_HEIGHT = Platform.OS === 'ios' ? 80 : 70;
@@ -20,6 +21,7 @@ interface LessonCardProps {
   title: string;
   duration: string;
   onPress?: () => void;
+  isLocked?: boolean;
 }
 
 const LessonCard: React.FC<LessonCardProps> = ({ 
@@ -27,13 +29,15 @@ const LessonCard: React.FC<LessonCardProps> = ({
   block, 
   title, 
   duration, 
-  onPress 
+  onPress,
+  isLocked 
 }) => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
+    if (isLocked) return;
     Animated.spring(scaleAnim, {
       toValue: 0.95,
       useNativeDriver: true,
@@ -43,6 +47,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
   };
 
   const handlePressOut = () => {
+    if (isLocked) return;
     Animated.spring(scaleAnim, {
       toValue: 1,
       useNativeDriver: true,
@@ -53,8 +58,8 @@ const LessonCard: React.FC<LessonCardProps> = ({
 
   return (
     <TouchableOpacity 
-      onPress={onPress}
-      activeOpacity={0.8}
+      onPress={isLocked ? undefined : onPress}
+      activeOpacity={isLocked ? 1 : 0.8}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
@@ -84,14 +89,16 @@ const LessonCard: React.FC<LessonCardProps> = ({
             <View style={styles.lessonInfo}>
               <Text style={[
                 styles.lessonBlock, 
-                isDarkMode ? styles.darkText : styles.lightText
+                isDarkMode ? styles.darkText : styles.lightText,
+                isLocked && styles.lockedText
               ]}>
                 {block}
               </Text>
               <Text 
                 style={[
                   styles.lessonTitleHeader, 
-                  isDarkMode ? styles.darkText : styles.lightText
+                  isDarkMode ? styles.darkText : styles.lightText,
+                  isLocked && styles.lockedText
                 ]}
                 numberOfLines={2}
               >
@@ -100,17 +107,27 @@ const LessonCard: React.FC<LessonCardProps> = ({
               <View style={styles.lessonDuration}>
                 <Ionicons 
                   name="time-outline" 
-                  size={16} 
-                  color={isDarkMode ? "#8E8E93" : "#6E6E73"} 
+                  size={14} 
+                  color={isLocked ? (isDarkMode ? '#666666' : '#999999') : (isDarkMode ? '#FFFFFF' : '#000000')} 
                 />
                 <Text style={[
-                  styles.lessonDurationText, 
-                  isDarkMode ? styles.darkSubText : styles.lightSubText
+                  styles.durationText,
+                  isDarkMode ? styles.darkText : styles.lightText,
+                  isLocked && styles.lockedText
                 ]}>
                   {duration}
                 </Text>
               </View>
             </View>
+            {isLocked && (
+              <View style={styles.lockIconContainer}>
+                <Ionicons 
+                  name="lock-closed" 
+                  size={24} 
+                  color={isDarkMode ? '#666666' : '#999999'} 
+                />
+              </View>
+            )}
           </View>
         </LinearGradient>
       </Animated.View>
@@ -139,10 +156,7 @@ const StreakWidget: React.FC<StreakWidgetProps> = ({ isDarkMode }) => {
         ? ['#1C1C1E', '#2C2C2E'] 
         : ['#FFFFFF', '#F5F5F5']
       }
-      style={[
-        styles.streakCard, 
-        isDarkMode ? styles.darkStreakCard : styles.lightStreakCard
-      ]}
+      style={[styles.streakCard, isDarkMode ? styles.darkStreakCard : styles.lightStreakCard]}
     >
       <View style={styles.streakHeader}>
         <Text style={[styles.todayText, isDarkMode ? styles.darkText : styles.lightText]}>
@@ -197,6 +211,11 @@ export default function MainScreen() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const isWeb = Platform.OS === 'web';
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { userInfo } = useUser();
+
+  const handleLockedFeature = () => {
+    router.push('/sections/subscriptionPlan');
+  };
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT - HEADER_MIN_HEIGHT],
@@ -337,28 +356,32 @@ export default function MainScreen() {
               block="Bloque 1"
               title="Lección 01 - Definiciones Relacionadas con Factores Humanos"
               duration="10 min"
-              onPress={() => router.push('/lessons/sub1/Block')}
+              onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/lessons/sub1/Block')}
+              isLocked={userInfo.isLocked === "true"}
             />
             <LessonCard
               icon={renderIcons('car-outline')}
               block="Bloque 2"
               title="Lección 02 - Definiciones de Factores Vehiculares"
               duration="15 min"
-              onPress={() => router.push('/lessons/sub1/Block')}
+              onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/lessons/sub1/Block')}
+              isLocked={userInfo.isLocked === "true"}
             />
             <LessonCard
               icon={renderIcons('bicycle-outline')}
               block="Bloque 3"
               title="Lección 03 - Definiciones de Factores Viales"
               duration="10 min"
-              onPress={() => router.push('/lessons/sub1/Block')}
+              onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/lessons/sub1/Block')}
+              isLocked={userInfo.isLocked === "true"}
             />
             <LessonCard
               icon={renderIcons('flashlight-outline')}
               block="Bloque 4"
               title="Lección 04 - Visibilidad e Iluminación"
               duration="15 min"
-              onPress={() => router.push('/lessons/sub1/Block')}
+              onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/lessons/sub1/Block')}
+              isLocked={userInfo.isLocked === "true"}
             />
           </Animated.ScrollView>
         </View>
@@ -487,7 +510,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  lessonDurationText: {
+  durationText: {
     fontSize: 14,
     marginLeft: 4,
   },
@@ -579,5 +602,14 @@ const styles = StyleSheet.create({
     right: 0,
     height: 2,
     backgroundColor: '#0A84FF',
+  },
+  lockIconContainer: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    transform: [{ translateY: -12 }],
+  },
+  lockedText: {
+    opacity: 0.5,
   },
 });

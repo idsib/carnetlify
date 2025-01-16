@@ -265,7 +265,7 @@ const SubscriptionPlanPage = () => {
   const handlePlanSelect = (planId: string) => {
     setSelectedPlanId(planId);
     router.push({
-      pathname: '/sections/paymethod',
+      pathname: '/sections/personalInfo',
       params: { 
         planId,
         planName: plans.find(p => p.id === planId)?.name || '',

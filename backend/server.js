@@ -371,6 +371,28 @@ app.post('/updateProfileImage', verifyToken, async (req, res) => {
   }
 });
 
+// Ruta para eliminar la cuenta del usuario
+app.delete('/deleteAccount', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  
+  try {
+    // Eliminar usuario de MongoDB
+    const result = await usersCollection.deleteOne({ userId });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Eliminar usuario de Firebase
+    await admin.auth().deleteUser(userId);
+    
+    res.json({ message: 'Cuenta eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar la cuenta:', error);
+    res.status(500).json({ error: 'Error al eliminar la cuenta' });
+  }
+});
+
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -15,7 +15,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.9.10",
+    "@clerk/nextjs": "^6.9.11",
     "@expo/vector-icons": "^14.0.2",
     "@hookform/resolvers": "^3.10.0",
     "@livekit/components-react": "^2.7.0",
@@ -56,6 +56,7 @@
     "express": "^4.21.1",
     "firebase": "^10.14.1",
     "firebase-admin": "^12.7.0",
+    "livekit-server-sdk": "^2.9.7",
     "lucide-react": "^0.456.0",
     "lucide-react-native": "^0.460.0",
     "mongodb": "^6.10.0",

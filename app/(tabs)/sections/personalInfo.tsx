@@ -38,7 +38,6 @@ const PersonalInfoPage = () => {
 
   const [formData, setFormData] = useState({
     nombre: '',
-    apellidos: '',
     documento: '',
     edad: '',
     pais: '',
@@ -51,7 +50,6 @@ const PersonalInfoPage = () => {
 
   const [errors, setErrors] = useState({
     nombre: '',
-    apellidos: '',
     documento: '',
     edad: '',
     pais: '',
@@ -76,7 +74,6 @@ const PersonalInfoPage = () => {
         if (userData) {
           setFormData({
             nombre: userData.fullName || '',
-            apellidos: userData.lastName || '',
             documento: userData.dni || '',
             edad: userData.age ? userData.age.toString() : '',
             pais: userData.country || '',
@@ -107,17 +104,6 @@ const PersonalInfoPage = () => {
       isValid = false;
     } else {
       newErrors.nombre = '';
-    }
-
-    // Validación de apellidos (requerido)
-    if (!formData.apellidos.trim()) {
-      newErrors.apellidos = 'Los apellidos son requeridos';
-      isValid = false;
-    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.apellidos)) {
-      newErrors.apellidos = 'Los apellidos deben contener solo letras y tener entre 2 y 50 caracteres';
-      isValid = false;
-    } else {
-      newErrors.apellidos = '';
     }
 
     // Validación del documento (requerido)
@@ -249,7 +235,13 @@ const PersonalInfoPage = () => {
       });
       
       Alert.alert('Éxito', 'Datos actualizados correctamente');
-      router.replace('/sections/paymethod');
+      // Si el usuario ya está desbloqueado, volver al perfil
+      // Si no, continuar con el flujo de desbloqueo
+      if (userInfo.isLocked === "false") {
+        router.replace('/(tabs)/profile');
+      } else {
+        router.replace('/sections/paymethod');
+      }
     } catch (error) {
       console.error('Error saving user data:', error);
       Alert.alert('Error', 'No se pudieron guardar los cambios');
@@ -403,7 +395,6 @@ const PersonalInfoPage = () => {
           keyboardShouldPersistTaps="handled"
         >
           {renderInput('Nombre', 'nombre')}
-          {renderInput('Apellidos', 'apellidos')}
           {renderInput('Documento de Identificación', 'documento')}
           {renderInput('Edad', 'edad', 'numeric')}
           {renderInput('País', 'pais')}

@@ -246,8 +246,6 @@ export default function MainScreen() {
       if (user) {
         console.log('User logged in:', user.uid);
       } else {
-        // Uncomment to redirect to login if not authenticated
-        // router.push('../(auth)/login');
       }
     });
 

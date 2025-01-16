@@ -131,6 +131,29 @@ app.post('/users/block', verifyToken, async (req, res) => {
   }
   res.status(201).send('Estado del usuario actualizado');
 });
+// Ruta para eliminar la cuenta del usuario
+app.post('/users/delete', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+
+  try {
+    const existingUser = await usersCollection.findOne({ userId });
+    if (existingUser) {
+      // Borrar el usuario con el userId coincidente.
+      await usersCollection.deleteOne({ userId });
+      // Borrar el registro que tiene unido el usuario.
+      await lessonsCollections.deleteOne({ userId });
+      console.log("Usuario encontrado y borrado.");
+      res.status(200).send(`Usuario borrado`);
+    } else {
+      console.log("No se ha encontrado el usuario.");
+      res.status(404).send("Usuario no encontrado.");
+    }
+  } catch (error) {
+    console.error("Error al borrar el usuario:", error);
+    res.status(500).send("Error interno del servidor.");
+  }
+
+});
 // Ruta para actualizar nombre usuarios en MongoDB
 app.post('/updateNameUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -140,8 +163,7 @@ app.post('/updateNameUser', verifyToken, async (req, res) => {
     const existingUser = await usersCollection.findOne({ userId });
     if (existingUser) {
       // Actualizar el campo fullName.
-      await usersCollection.updateOne({ userId }, { $set: { fullName } }
-      );
+      await usersCollection.updateOne({ userId }, { $set: { fullName } });
       console.log("Usuario encontrado y actualizado.");
       res.status(200).send(`Usuario actualizado en Mongo con fullName = ${fullName}`);
     } else {
@@ -368,28 +390,6 @@ app.post('/updateProfileImage', verifyToken, async (req, res) => {
   } catch (error) {
     console.error('Error al actualizar la imagen de perfil:', error);
     res.status(500).send({ error: 'Error interno del servidor.' });
-  }
-});
-
-// Ruta para eliminar la cuenta del usuario
-app.delete('/deleteAccount', verifyToken, async (req, res) => {
-  const userId = req.user.uid;
-  
-  try {
-    // Eliminar usuario de MongoDB
-    const result = await usersCollection.deleteOne({ userId });
-    
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    // Eliminar usuario de Firebase
-    await admin.auth().deleteUser(userId);
-    
-    res.json({ message: 'Cuenta eliminada correctamente' });
-  } catch (error) {
-    console.error('Error al eliminar la cuenta:', error);
-    res.status(500).json({ error: 'Error al eliminar la cuenta' });
   }
 });
 

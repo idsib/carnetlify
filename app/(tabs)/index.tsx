@@ -151,7 +151,7 @@ const MainMenu = () => {
         >
           <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
             <Text style={[styles.loginText, isDarkMode ? styles.darkText : styles.lightText]}>
-              ¿Ya tienes una cuenta? <Text style={styles.linkText}>Inicia sesión</Text>
+              ¿Ya tienes una cuenta? <Text style={styles.linkText}>Iniciar sesión</Text>
             </Text>
           </TouchableOpacity>
         </MotiView>

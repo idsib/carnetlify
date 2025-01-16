@@ -77,7 +77,7 @@ const Login = () => {
                 resizeMode="contain"
               />
               <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
-                Inicia sesión
+                Iniciar sesión
               </Text>
             </View>
             <View style={styles.content}>

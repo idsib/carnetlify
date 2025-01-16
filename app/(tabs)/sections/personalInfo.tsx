@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -10,13 +10,15 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { getAuth } from "firebase/auth";
+import { getUserByUID } from '@/backend/firebase/config';
 
 const { height, width } = Dimensions.get('window');
 const isSmallDevice = height < 700;
@@ -30,6 +32,7 @@ const PersonalInfoPage = () => {
   const isDark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const auth = getAuth();
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -43,6 +46,194 @@ const PersonalInfoPage = () => {
     domicilio: '',
     telefono: ''
   });
+
+  const [errors, setErrors] = useState({
+    nombre: '',
+    apellidos: '',
+    documento: '',
+    edad: '',
+    pais: '',
+    provincia: '',
+    ciudad: '',
+    codigoPostal: '',
+    domicilio: '',
+    telefono: ''
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const uid = auth.currentUser?.uid;
+      if (uid) {
+        const userData = await getUserByUID(uid);
+        if (userData) {
+          setFormData({
+            nombre: userData.fullName || '',
+            apellidos: userData.lastName || '',
+            documento: userData.dni || '',
+            edad: userData.age ? userData.age.toString() : '',
+            pais: userData.country || '',
+            provincia: userData.province || '',
+            ciudad: userData.city || '',
+            codigoPostal: userData.postalCode || '',
+            domicilio: userData.home || '',
+            telefono: userData.phone || ''
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      Alert.alert('Error', 'No se pudieron cargar los datos del usuario');
+    }
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { ...errors };
+
+    // Validación del nombre (opcional)
+    if (formData.nombre.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.nombre)) {
+      newErrors.nombre = 'El nombre debe contener solo letras y tener entre 2 y 50 caracteres';
+      isValid = false;
+    } else {
+      newErrors.nombre = '';
+    }
+
+    // Validación de apellidos (opcional)
+    if (formData.apellidos.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.apellidos)) {
+      newErrors.apellidos = 'Los apellidos deben contener solo letras y tener entre 2 y 50 caracteres';
+      isValid = false;
+    } else {
+      newErrors.apellidos = '';
+    }
+
+    // Validación del documento (opcional)
+    if (formData.documento.trim() && !/^[A-Z0-9]{8,9}$/.test(formData.documento.toUpperCase())) {
+      newErrors.documento = 'Formato de documento inválido (DNI: 8 números o NIE: 1 letra + 7 números)';
+      isValid = false;
+    } else {
+      newErrors.documento = '';
+    }
+
+    // Validación de la edad (opcional)
+    if (formData.edad.trim()) {
+      const edad = parseInt(formData.edad);
+      if (isNaN(edad) || edad < 18 || edad > 120) {
+        newErrors.edad = 'La edad debe estar entre 18 y 120 años';
+        isValid = false;
+      } else {
+        newErrors.edad = '';
+      }
+    } else {
+      newErrors.edad = '';
+    }
+
+    // Validación del país (opcional)
+    if (formData.pais.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.pais)) {
+      newErrors.pais = 'País inválido';
+      isValid = false;
+    } else {
+      newErrors.pais = '';
+    }
+
+    // Validación de la provincia (opcional)
+    if (formData.provincia.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.provincia)) {
+      newErrors.provincia = 'Provincia inválida';
+      isValid = false;
+    } else {
+      newErrors.provincia = '';
+    }
+
+    // Validación de la ciudad (opcional)
+    if (formData.ciudad.trim() && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(formData.ciudad)) {
+      newErrors.ciudad = 'Ciudad inválida';
+      isValid = false;
+    } else {
+      newErrors.ciudad = '';
+    }
+
+    // Validación del código postal (opcional)
+    if (formData.codigoPostal.trim() && !/^\d{5}$/.test(formData.codigoPostal)) {
+      newErrors.codigoPostal = 'El código postal debe tener 5 dígitos';
+      isValid = false;
+    } else {
+      newErrors.codigoPostal = '';
+    }
+
+    // Validación del domicilio (opcional)
+    if (formData.domicilio.trim() && (formData.domicilio.length < 5 || formData.domicilio.length > 100)) {
+      newErrors.domicilio = 'El domicilio debe tener entre 5 y 100 caracteres';
+      isValid = false;
+    } else {
+      newErrors.domicilio = '';
+    }
+
+    // Validación del teléfono (opcional)
+    if (formData.telefono.trim() && !/^\d{9}$/.test(formData.telefono)) {
+      newErrors.telefono = 'El teléfono debe tener 9 dígitos';
+      isValid = false;
+    } else {
+      newErrors.telefono = '';
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) {
+      Alert.alert('Error', 'Por favor, corrija los errores en el formulario');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await updateUserProfile(
+        formData.nombre,
+        formData.documento,
+        formData.edad,
+        formData.pais,
+        formData.provincia,
+        formData.ciudad,
+        formData.codigoPostal,
+        formData.domicilio,
+        formData.telefono
+      );
+      Alert.alert('Éxito', 'Datos actualizados correctamente');
+      router.replace('/(tabs)/profile');
+    } catch (error) {
+      console.error('Error saving user data:', error);
+      Alert.alert('Error', 'No se pudieron guardar los cambios');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderInput = (label: string, key: keyof typeof formData, keyboardType: 'default' | 'numeric' | 'phone-pad' = 'default') => (
+    <View style={styles.inputContainer}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={[styles.input, errors[key] ? styles.inputError : null]}
+        value={formData[key]}
+        onChangeText={(text) => {
+          setFormData(prev => ({ ...prev, [key]: text }));
+          if (errors[key]) {
+            setErrors(prev => ({ ...prev, [key]: '' }));
+          }
+        }}
+        placeholderTextColor={isDark ? '#666666' : '#999999'}
+        keyboardType={keyboardType}
+      />
+      {errors[key] ? (
+        <Text style={styles.errorText}>{errors[key]}</Text>
+      ) : null}
+    </View>
+  );
 
   const styles = StyleSheet.create({
     container: {
@@ -97,6 +288,8 @@ const PersonalInfoPage = () => {
         android: isSmallDevice ? 38 : 46,
         default: 48,
       }),
+      borderWidth: 1,
+      borderColor: 'transparent',
       ...Platform.select({
         ios: {
           shadowColor: '#000',
@@ -109,6 +302,15 @@ const PersonalInfoPage = () => {
         },
       }),
     },
+    inputError: {
+      borderColor: '#FF3B30',
+    },
+    errorText: {
+      color: '#FF3B30',
+      fontSize: 12,
+      marginTop: 4,
+      paddingLeft: 4,
+    },
     saveButton: {
       backgroundColor: '#007AFF',
       borderRadius: 12,
@@ -116,6 +318,9 @@ const PersonalInfoPage = () => {
       alignItems: 'center',
       marginTop: 24,
       marginBottom: insets.bottom + (isSmallDevice ? 12 : 16),
+    },
+    saveButtonDisabled: {
+      backgroundColor: '#999999',
     },
     saveButtonText: {
       color: '#FFFFFF',
@@ -128,19 +333,6 @@ const PersonalInfoPage = () => {
     },
   });
 
-  const renderInput = (label: string, key: keyof typeof formData, keyboardType: 'default' | 'numeric' | 'phone-pad' = 'default') => (
-    <View style={styles.inputContainer}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={styles.input}
-        value={formData[key]}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, [key]: text }))}
-        placeholderTextColor={isDark ? '#666666' : '#999999'}
-        keyboardType={keyboardType}
-      />
-    </View>
-  );
-
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView 
@@ -148,7 +340,7 @@ const PersonalInfoPage = () => {
         style={styles.container}
       >
         <View style={styles.header}>
-          <Link href="../profile" asChild>
+          <Link href="/(tabs)/profile" asChild>
             <TouchableOpacity style={styles.backButton}>
               <Ionicons 
                 name="chevron-back" 
@@ -175,16 +367,16 @@ const PersonalInfoPage = () => {
           {renderInput('Ciudad', 'ciudad')}
           {renderInput('Código Postal', 'codigoPostal', 'numeric')}
           {renderInput('Domicilio', 'domicilio')}
-          {renderInput('Teléfono', 'telefono', 'numeric')}
+          {renderInput('Teléfono', 'telefono', 'phone-pad')}
 
           <TouchableOpacity 
-            style={styles.saveButton}
-            onPress={() => {
-              updateUserProfile(formData.nombre, formData.documento, formData.edad, formData.pais, formData.provincia, formData.ciudad, formData.codigoPostal, formData.domicilio, formData.telefono)/* ,
-              window.location.replace(''); */
-            }}
+            style={[styles.saveButton, loading && styles.saveButtonDisabled]}
+            onPress={handleSave}
+            disabled={loading}
           >
-            <Text style={styles.saveButtonText}>Guardar Cambios</Text>
+            <Text style={styles.saveButtonText}>
+              {loading ? 'Guardando...' : 'Guardar Cambios'}
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -1,4 +1,4 @@
-import React = require('react');
+import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions, useColorScheme, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useRouter, usePathname } from 'expo-router';

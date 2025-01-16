@@ -5,8 +5,8 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV !== "development",
   },
-  reactStrictMode: true, // Better error handling
-  swcMinify: true, // Better performance
+  reactStrictMode: true, 
+  swcMinify: true,
   images: {
     domains: ["img.clerk.com", "utfs.io"],
   },

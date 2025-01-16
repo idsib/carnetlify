@@ -12,7 +12,6 @@ import {
 import { useNavigation } from "@/hooks/useNavigation";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
-import React = require("react");
 
 const DesktopNav = () => {
   const paths = useNavigation();

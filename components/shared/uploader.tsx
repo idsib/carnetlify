@@ -1,4 +1,4 @@
-import React = require("react");
+import React from "react";
 
 import { UploadDropzone } from "@/lib/uploadthing";
 import { UploadThingError } from "uploadthing/server";
@@ -14,7 +14,7 @@ const Uploader = ({ type, onChange }: Props) => {
   return (
     <UploadDropzone
       endpoint={type}
-      onClientUploadComplete={(res: { url: any; }[]) => onChange(res.map((item: { url: any; }) => item.url))}
+      onClientUploadComplete={(res) => onChange(res.map((item) => item.url))}
       onUploadError={(error: UploadThingError<Json>) => {
         toast.error(error.message);
       }}

@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { MessageSquare, Users } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import React = require("react");
 
 export const useNavigation = () => {
   const pathname = usePathname();
@@ -12,7 +11,7 @@ export const useNavigation = () => {
   const conversations = useQuery(api.conversations.get);
 
   const unseenMessagesCount = useMemo(() => {
-    return conversations?.reduce((acc: any, curr: { unseenCount: any; }) => {
+    return conversations?.reduce((acc, curr) => {
       return acc + curr.unseenCount;
     }, 0);
   }, [conversations]);
@@ -39,4 +38,3 @@ export const useNavigation = () => {
 
   return paths;
 };
-

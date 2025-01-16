@@ -13,7 +13,6 @@ import { useConversation } from "@/hooks/useConversation";
 import { useNavigation } from "@/hooks/useNavigation";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
-import React = require("react");
 
 const MobileNav = () => {
   const paths = useNavigation();

@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 
 import { useConversation } from "@/hooks/useConversation";
 import { Card } from "@/components/ui/card";
-import React from "react";
 
 type Props = React.PropsWithChildren<{
   title: string;

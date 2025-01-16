@@ -86,6 +86,17 @@ export const changeStateLesson = async (numberLesson) => {
     body: JSON.stringify(numberLesson),
   });
 };
+// Función para borrar usuarios en el backend.
+export const deleteUserMongo = async () => {
+  const token = await auth.currentUser.getIdToken();
+  await fetch('http://localhost:3000/users/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    }
+  });
+};
 // Función para actualizar nombre en el backend.
 export const updateNameUserInBackend = async (userName) => {
   const token = await auth.currentUser.getIdToken();

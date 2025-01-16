@@ -8,13 +8,17 @@ const PrivacyPolicy = () => {
   const isDark = useColorScheme() === 'dark';
   const router = useRouter();
 
+  const handleBack = () => {
+    router.push('/');
+  };
+
   return (
     <SafeAreaView style={[styles.container, isDark && styles.darkContainer]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <View style={[styles.header, isDark && styles.darkHeader]}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={handleBack}
         >
           <Ionicons
             name="chevron-back"

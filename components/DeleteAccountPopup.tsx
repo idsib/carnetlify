@@ -10,58 +10,33 @@ import {
   Alert
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAuth } from "firebase/auth";
 import { useUser } from '@/context/UserContext';
-import { UserInfo } from '@/backend/interficie/UserInfoInterficie';
+import { deleteAccount } from '@/backend/firebase/deleteAccount';
 
 interface DeleteAccountPopupProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const defaultUserInfo: Partial<UserInfo> = {
-  email: "null",
-  fullName: "User Not Registered",
-  userId: "null",
-  plan: "null",
-  isLocked: "true",
-  profile_img: "https://drive.google.com/file/d/1ghxS5ymI1Je8SHSztVtkCxnKFbUQDqim/view?usp=drive_link"
-};
-
 const DeleteAccountPopup = ({ visible, onClose }: DeleteAccountPopupProps) => {
   const isDark = useColorScheme() === 'dark';
   const router = useRouter();
-  const auth = getAuth();
   const { updateUserInfo } = useUser();
   const [loading, setLoading] = useState(false);
 
   const handleDeleteAccount = async () => {
     try {
       setLoading(true);
-      const currentUser = auth.currentUser;
+      await deleteAccount();
       
-      if (!currentUser) {
-        throw new Error('No hay usuario autenticado');
-      }
-
-      // Eliminar la cuenta de Firebase
-      await currentUser.delete();
-      
-      // Limpiar AsyncStorage
-      await AsyncStorage.clear();
-      
-      // Actualizar el contexto con la información por defecto
-      updateUserInfo(defaultUserInfo);
-      
-      // Cerrar el popup y navegar al login
+      // Cerrar el popup y navegar al inicio
       onClose();
-      router.replace('/login');
+      router.replace('/');
     } catch (error) {
       console.error('Error al eliminar la cuenta:', error);
       Alert.alert(
         'Error',
-        'No se pudo eliminar la cuenta. Por favor, vuelve a iniciar sesión e inténtalo de nuevo.'
+        'No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo más tarde.'
       );
     } finally {
       setLoading(false);

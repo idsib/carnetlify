@@ -19,6 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getAuth } from "firebase/auth";
 import { getUserByUID } from '@/backend/firebase/config';
+import { useUser } from '@/context/UserContext';
 
 const { height, width } = Dimensions.get('window');
 const isSmallDevice = height < 700;
@@ -33,6 +34,7 @@ const PersonalInfoPage = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const auth = getAuth();
+  const { userInfo, updateUserInfo } = useUser();
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -123,8 +125,8 @@ const PersonalInfoPage = () => {
     // Validación de la edad (opcional)
     if (formData.edad.trim()) {
       const edad = parseInt(formData.edad);
-      if (isNaN(edad) || edad < 18 || edad > 120) {
-        newErrors.edad = 'La edad debe estar entre 18 y 120 años';
+      if (isNaN(edad) || edad < 18 || edad > 100) {
+        newErrors.edad = 'La edad debe estar entre 18 y 100 años';
         isValid = false;
       } else {
         newErrors.edad = '';
@@ -185,7 +187,7 @@ const PersonalInfoPage = () => {
     return isValid;
   };
 
-  const handleSave = async () => {
+  const handleSubmit = async () => {
     if (!validateForm()) {
       Alert.alert('Error', 'Por favor, corrija los errores en el formulario');
       return;
@@ -204,6 +206,20 @@ const PersonalInfoPage = () => {
         formData.domicilio,
         formData.telefono
       );
+
+      // Update the user context
+      updateUserInfo({
+        fullName: formData.nombre,
+        dni: formData.documento,
+        age: formData.edad,
+        country: formData.pais,
+        province: formData.provincia,
+        city: formData.ciudad,
+        postalCode: formData.codigoPostal,
+        home: formData.domicilio,
+        phone: formData.telefono
+      });
+      
       Alert.alert('Éxito', 'Datos actualizados correctamente');
       router.replace('/(tabs)/profile');
     } catch (error) {
@@ -371,7 +387,7 @@ const PersonalInfoPage = () => {
 
           <TouchableOpacity 
             style={[styles.saveButton, loading && styles.saveButtonDisabled]}
-            onPress={handleSave}
+            onPress={handleSubmit}
             disabled={loading}
           >
             <Text style={styles.saveButtonText}>

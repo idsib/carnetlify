@@ -288,15 +288,15 @@ const ProfileSettingsPage = () => {
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>EDAD</Text>
-            <Text style={styles.statValue}>19 años</Text>
+            <Text style={styles.statValue}>{userInfo?.age ? `${userInfo.age} años` : 'No especificada'}</Text>
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>PAÍS</Text>
-            <Text style={styles.statValue}>España</Text>
+            <Text style={styles.statValue}>{userInfo?.country || 'No especificado'}</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statLabel}>PRÁCTICAS</Text>
-            <Text style={styles.statValue}>18</Text>
+            <Text style={styles.statLabel}>DNI</Text>
+            <Text style={styles.statValue}>{userInfo?.dni || 'No especificado'}</Text>
           </View>
         </View>
 

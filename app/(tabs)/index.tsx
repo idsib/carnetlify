@@ -119,8 +119,28 @@ const MainMenu = () => {
           animate={{ opacity: 1 }}
           transition={{ type: 'timing', delay: 1000, duration: 500 }}
         >
-          <Text style={[styles.termsText, isDarkMode ? styles.darkText : styles.lightText]}>
-            Al registrarte, aceptas los <Text style={styles.linkText}>Términos de servicio</Text> y la <Text style={styles.linkText}>Política de privacidad</Text>, incluida la política de <Text style={styles.linkText}>Uso de Cookies</Text>.
+          <Text style={[styles.infoText, isDarkMode ? styles.darkText : styles.lightText]}>
+            Al registrarte, aceptas los{' '}
+            <Text 
+              style={[styles.linkText]} 
+              onPress={() => router.push('/policies/terms-of-service')}
+            >
+              Términos de servicio
+            </Text>{' '}
+            y la{' '}
+            <Text 
+              style={[styles.linkText]}
+              onPress={() => router.push('/policies/privacy-policy')}
+            >
+              Política de privacidad
+            </Text>
+            , incluida la{' '}
+            <Text 
+              style={[styles.linkText]}
+              onPress={() => router.push('/policies/cookie-policy')}
+            >
+              política de Uso de Cookies
+            </Text>
           </Text>
         </MotiView>
         
@@ -232,13 +252,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  termsText: {
+  infoText: {
     fontSize: 12,
     textAlign: 'center',
     marginTop: 20,
   },
   linkText: {
-    color: '#1DA1F2',
+    textDecorationLine: 'underline',
+    color: '#007AFF',
+    fontWeight: 'bold',
   },
   loginText: {
     fontSize: 14,

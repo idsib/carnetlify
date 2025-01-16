@@ -29,13 +29,13 @@ const RemoveFriendDialog = ({ conversationId, open, setOpen }: Props) => {
   const handleRemoveFriend = async () => {
     removeFriend({ conversationId })
       .then(() => {
-        toast.success("Removed friend");
+        toast.success("Amigo eliminado");
       })
       .catch((error) => {
         toast.error(
           error instanceof ConvexError
             ? error.data
-            : "Unexpected error occurred"
+            : "Ocurrió un error inesperado"
         );
       });
   };

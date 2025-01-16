@@ -88,8 +88,8 @@ const UploadFileDialog = ({ open, toggle, type }: Props) => {
           <DialogTitle>Subir archivos</DialogTitle>
           <DialogDescription>
             {type === "image"
-              ? "¡Sube imágenes y videos!"
-              : "¡Sube imágenes, videos, audios y PDFs!"}
+              ? "Sube imágenes y videos"
+              : "Sube imágenes, videos, audios y PDFs"}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

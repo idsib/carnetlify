@@ -3,7 +3,7 @@
 // Tenemos updateProfile para el nombre y la url de la imagen de perfil => https://firebase.google.com/docs/reference/node/firebase.User#updateprofile
 // Tenemos updateEmail para el correo electrónico => https://firebase.google.com/docs/reference/node/firebase.User#updateemail
 // Tenemos updatePassword para la contraseña => https://firebase.google.com/docs/reference/node/firebase.User#updatepassword
-import { updateProfile, updateEmail, updatePassword} from "firebase/auth";
+import { updateProfile} from "firebase/auth";
 // Importamos el auth con la configuración del proyecto.
 import { auth } from '@/backend/firebase/config';
 // Importamos las funciones para operar en MongoDB, cada una para un dato distinto del usuario.

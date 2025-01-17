@@ -153,9 +153,28 @@ app.post('/users/delete', verifyToken, async (req, res) => {
     console.error("Error al borrar el usuario:", error);
     res.status(500).send("Error interno del servidor.");
   }
-
 });
-// Ruta para actualizar nombre usuarios en MongoDB
+// Ruta para sacar el progreso del usuario en MongoDB.
+app.post('/users/progress', verifyToken, async (req, res) => {
+  // Guardamos el valor de UserId proporcionado en el cuerpo de la solicitud.
+  const { userId } = req.body;
+  // Comprovación previa.
+  if (!userId) {
+    return res.status(400).send({ error: 'El userId es requerido.' });
+  }
+  // Buscamos y guardamos el registro de lecciones del usuario almacenado en Mongo.
+  try {
+    const record = await lessonsCollections.findOne({ userId });
+    if (!record) {
+      return res.status(404).send({ error: 'Registro no encontrado.' });
+    }
+    res.status(200).send(record);
+  } catch (error) {
+    console.error('Error al buscar el registro:', error);
+    res.status(500).send({ error: 'Error interno del servidor.' });
+  }
+});
+// Ruta para actualizar nombre usuarios en MongoDB.
 app.post('/updateNameUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   // Agarramos el valor de fullName del cuerpo de la solicitud.

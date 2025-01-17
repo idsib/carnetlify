@@ -50,7 +50,7 @@ export const getUserByUID = async (userId) => {
       // Enviamos el UID del usuario en formato JSON.
       body: JSON.stringify({ userId: userId }),
     });
-    // Mensaje de error en casuistica negativa
+    // Mensaje de error en casuistica negativa.
     if (!response.ok) {
       console.log("No se pudo obtener el usuario")
     };
@@ -96,6 +96,30 @@ export const deleteUserMongo = async () => {
       'Authorization': token,
     }
   });
+};
+// Función para mostrar progreso del usuario en el backend.
+export const showProgressMongo = async () => {
+  try {
+    const token = await auth.currentUser.getIdToken();
+    // En este caso guardamos el resultado del fetch para luego enviarlo.
+    const response = await fetch('http://localhost:3000/users/progress', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      }
+    });
+    // Mensaje de error en casuistica negativa.
+    if (!response.ok) {
+      console.log("No se pudo obtener el registro")
+    };
+    // Almacenamos el registro en un objeto y lo enviamos.
+    const record = await response.json();
+    return record;
+  } catch (error) {
+    console.log("Error", error);
+    throw error;
+  }
 };
 // Función para actualizar nombre en el backend.
 export const updateNameUserInBackend = async (userName) => {

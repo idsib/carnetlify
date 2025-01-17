@@ -26,23 +26,6 @@ export async function updateUserProfile(newDisplayName, newDni, newAge, newContr
         // Actualizamos el nombre en MongoDB.
         await updateNameUserInBackend(userName)
     }
-    /*
-    // De momento comento esta parte porque se hace localmente lo de la foto de perfil, quizas lo incluyamos mas tarde.
-    // Condicional para actualizar el la imagen de perfil.
-    if (newPhotoURL) {
-        updateProfile(auth.currentUser, {
-            photoURL: newPhotoURL
-
-        }).then(() => {
-            console.log("Usuario actualizado con los datos => photoURL: " + newPhotoURL)
-        }).catch((error) => {
-            console.log("Error con actualizacion con nombre y foto: " + error)
-        });
-        const userPhotoURL = {
-            profile_img: newPhotoURL
-        };
-        await updateDniUserInBackend(userPhotoURL)
-    }*/
     // Condicional para actualizar el dni.
     if (newDni) {
         const userDni = {

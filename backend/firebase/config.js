@@ -1,7 +1,8 @@
+// Importamos tanto initializeApp, getAuth, para la configuración correcta del backend.
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
-// Configuración de mi proyecto Firebase.
+// Configuración de mi proyecto Firebase, podriamos ponerlo por separado para mayor seguridad como hice con los .env y el server.
 const firebaseConfig = {
   apiKey: "AIzaSyAPhBwWUdT-gTgh29fOQoDUge4urbIV5Xc",
   authDomain: "carnetlify-c37c7.firebaseapp.com",
@@ -62,6 +63,7 @@ export const getUserByUID = async (userId) => {
     throw error;
   }
 };
+
 // Función para actualizar el estado isLocked del usuario en el backend.
 export const changeStateLocked = async () => {
   const token = await auth.currentUser.getIdToken();
@@ -73,6 +75,7 @@ export const changeStateLocked = async () => {
     }
   });
 };
+
 // Función para cambiar el estado de una lección.
 export const changeStateLesson = async (numberLesson) => {
   const token = await auth.currentUser.getIdToken();
@@ -86,6 +89,7 @@ export const changeStateLesson = async (numberLesson) => {
     body: JSON.stringify(numberLesson),
   });
 };
+
 // Función para borrar usuarios en el backend.
 export const deleteUserMongo = async () => {
   const token = await auth.currentUser.getIdToken();
@@ -97,6 +101,7 @@ export const deleteUserMongo = async () => {
     }
   });
 };
+
 // Función para mostrar progreso del usuario en el backend.
 export const showProgressMongo = async () => {
   try {
@@ -121,6 +126,7 @@ export const showProgressMongo = async () => {
     throw error;
   }
 };
+
 // Función para actualizar nombre en el backend.
 export const updateNameUserInBackend = async (userName) => {
   const token = await auth.currentUser.getIdToken();
@@ -134,6 +140,7 @@ export const updateNameUserInBackend = async (userName) => {
     body: JSON.stringify(userName),
   });
 };
+
 // Función para actualizar email en el backend.
 export const updateEmailUserInBackend = async (userEmail) => {
   const token = await auth.currentUser.getIdToken();
@@ -147,6 +154,7 @@ export const updateEmailUserInBackend = async (userEmail) => {
     body: JSON.stringify(userEmail),
   });
 };
+
 // Función para actualizar url de la imagen de perfil en el backend.
 export const updatePhotoURLUserInBackend = async (PhotoURL) => {
   const token = await auth.currentUser.getIdToken();
@@ -160,6 +168,7 @@ export const updatePhotoURLUserInBackend = async (PhotoURL) => {
     body: JSON.stringify(PhotoURL),
   });
 };
+
 // Función para actualizar dni en el backend.
 export const updateDniUserInBackend = async (userDni) => {
   const token = await auth.currentUser.getIdToken();
@@ -173,6 +182,7 @@ export const updateDniUserInBackend = async (userDni) => {
     body: JSON.stringify(userDni),
   });
 };
+
 // Función para actualizar edad en el backend.
 export const updateAgeUserInBackend = async (userAge) => {
   const token = await auth.currentUser.getIdToken();
@@ -186,6 +196,7 @@ export const updateAgeUserInBackend = async (userAge) => {
     body: JSON.stringify(userAge),
   });
 };
+
 // Función para actualizar país en el backend.
 export const updateCountryUserInBackend = async (userCountry) => {
   const token = await auth.currentUser.getIdToken();
@@ -199,6 +210,7 @@ export const updateCountryUserInBackend = async (userCountry) => {
     body: JSON.stringify(userCountry),
   });
 };
+
 // Función para actualizar provincia en el backend.
 export const updateProvinceUserInBackend = async (userProvince) => {
   const token = await auth.currentUser.getIdToken();
@@ -212,6 +224,7 @@ export const updateProvinceUserInBackend = async (userProvince) => {
     body: JSON.stringify(userProvince),
   });
 };
+
 // Función para actualizar ciudad en el backend.
 export const updateCityUserInBackend = async (userCity) => {
   const token = await auth.currentUser.getIdToken();
@@ -225,6 +238,7 @@ export const updateCityUserInBackend = async (userCity) => {
     body: JSON.stringify(userCity),
   });
 };
+
 // Función para actualizar codigo postal en el backend.
 export const updatePostalCodeUserInBackend = async (userPostalCode) => {
   const token = await auth.currentUser.getIdToken();
@@ -238,6 +252,7 @@ export const updatePostalCodeUserInBackend = async (userPostalCode) => {
     body: JSON.stringify(userPostalCode),
   });
 };
+
 // Función para actualizar casa en el backend.
 export const updateHomeUserInBackend = async (userHome) => {
   const token = await auth.currentUser.getIdToken();
@@ -251,6 +266,7 @@ export const updateHomeUserInBackend = async (userHome) => {
     body: JSON.stringify(userHome),
   });
 };
+
 // Función para actualizar teléfono en el backend.
 export const updatePhoneUserInBackend = async (userPhone) => {
   const token = await auth.currentUser.getIdToken();

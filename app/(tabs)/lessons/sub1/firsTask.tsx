@@ -272,31 +272,6 @@ export default function Lesson1() {
               </View>
             </View>
             
-            <View style={styles.progressBarContainer}>
-              <ProgressBar 
-                progress={progress} 
-                currentBlock={1} 
-                currentLesson={1} 
-                totalTasks={3}
-              />
-            </View>
-
-            {showFeedback && (
-              <Animated.View style={[
-                styles.feedbackContainer,
-                feedbackStyle,
-              ]}>
-                <View style={[
-                  styles.feedbackContent,
-                  isCorrect ? styles.successFeedback : styles.errorFeedback
-                ]}>
-                  <Text style={styles.feedbackText}>
-                    {isCorrect ? '¡Correcto!' : 'Inténtalo de nuevo'}
-                  </Text>
-                </View>
-              </Animated.View>
-            )}
-
             <View style={styles.dropZonesContainer}>
               <View style={[styles.dropZone, isDark && styles.dropZoneDark]}>
                 <Text style={[styles.dropZoneTitle, isDark && styles.textDark]}>Prohibidas ({categories.prohibidas.length}/4)</Text>
@@ -384,11 +359,6 @@ const styles = StyleSheet.create({
   },
   titleDark: {
     color: '#FFFFFF',
-  },
-  progressBarContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 20,
-    width: '100%',
   },
   dropZonesContainer: {
     flexDirection: 'row',

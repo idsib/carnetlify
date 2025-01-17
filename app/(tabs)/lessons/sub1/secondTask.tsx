@@ -180,10 +180,10 @@ export default function Lesson2() {
 
     if (isCorrectRoles) {
       try {
-        const numberLesson = {
-          numberLesson: "numberLesson12"
+        const stateLesson = {
+          stateLesson: "stateLesson12"
         };
-        await changeStateLesson(numberLesson);
+        await changeStateLesson(stateLesson);
         setTaskCompleted(true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);

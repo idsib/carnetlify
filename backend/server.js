@@ -124,14 +124,14 @@ app.post('/users/info', verifyToken, async (req, res) => {
 // Ruta para cambiar el estado de una lección en MongoDB
 app.post('/changeStateLesson', verifyToken, async (req, res) => {
   const userId = req.user.uid;
-  const { numberLesson } = req.body;
+  const { stateLesson } = req.body;
   const existingRegister = await lessonsCollections.findOne({ userId });
   if (existingRegister) {
-    // Comprovación de que numberLesson sea false, para evitar duplicar lecciones.
-    const check = await lessonsCollections.findOne({ userId, [`${numberLesson}`]: "false" });
+    // Comprovación de que stateLesson sea false, para evitar duplicar lecciones.
+    const check = await lessonsCollections.findOne({ userId, [`${stateLesson}`]: "false" });
     if (check) {
-      // Si el registro existe y el valor de numberLesson es false, actualizamos el estado de la lección superada.
-      await lessonsCollections.updateOne({ userId }, { $set: { [`${numberLesson}`]: "true" } }, { $unset: { [`${numberLesson}`]: "false" } });
+      // Si el registro existe y el valor de stateLesson es false, actualizamos el estado de la lección superada.
+      await lessonsCollections.updateOne({ userId }, { $set: { [`${stateLesson}`]: "true" } }, { $unset: { [`${stateLesson}`]: "false" } });
       console.log("Si se ha encontrado el registro y sea actualizado"); 
     }
   } else {

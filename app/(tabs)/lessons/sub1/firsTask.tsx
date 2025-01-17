@@ -200,10 +200,10 @@ export default function Lesson1() {
 
     if (allCorrect) {
       try {
-        const numberLesson = {
-          numberLesson: "numberLesson11"
+        const stateLesson = {
+          stateLesson: "stateLesson11"
         };
-        await changeStateLesson(numberLesson);
+        await changeStateLesson(stateLesson);
         setTaskCompleted(true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);

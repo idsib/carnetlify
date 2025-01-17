@@ -65,10 +65,10 @@ export default function Lesson3() {
   const handleConfirm = async () => {
     if (selectedAnswer === false) {
       try {
-        const numberLesson = {
-          numberLesson: "numberLesson13"
+        const stateLesson = {
+          stateLesson: "stateLesson13"
         };
-        await changeStateLesson(numberLesson);
+        await changeStateLesson(stateLesson);
         await updateLessonProgress('lesson3', true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);

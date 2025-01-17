@@ -92,7 +92,7 @@ export default function Block() {
         const progress = await showProgressMongo();
         const completed: { [key: string]: boolean } = {};
         for (let i = 1; i <= 3; i++) {
-          const lessonKey = `numberLesson1${i}`;
+          const lessonKey = `stateLesson1${i}`;
           completed[i.toString()] = progress?.[lessonKey] || false;
         }
         setCompletedLessons(completed);

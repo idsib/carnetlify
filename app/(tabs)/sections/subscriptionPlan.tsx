@@ -135,97 +135,85 @@ const SubscriptionPlanPage = () => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+      paddingVertical: 16,
     },
     planContainer: {
       width: '90%',
-      marginBottom: 16,
+      marginVertical: 8,
       backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
       borderRadius: 16,
-      padding: 16,
+      padding: 20,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 3,
-    },
-    selectedCard: {
-      backgroundColor: '#1A1A1A',
-      transform: [{ scale: 1.02 }],
-      elevation: 5,
+      minHeight: 520, 
     },
     planTitle: {
-      fontSize: 24,
+      fontSize: 28,
       fontWeight: 'bold',
       color: isDark ? '#FFFFFF' : '#000000',
       textAlign: 'center',
-      marginBottom: 8,
+      marginBottom: 16,
+      letterSpacing: 1,
     },
     featureItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 12,
-      paddingHorizontal: 4,
+      marginBottom: 16,
+      paddingHorizontal: 8,
+      height: 60, 
     },
     featureIcon: {
-      width: 32,
+      width: 40,
+      height: 40,
       alignItems: 'center',
       justifyContent: 'center',
+      backgroundColor: isDark ? '#2C2C2E' : '#F8F8F8',
+      borderRadius: 20,
     },
     featureContent: {
       flex: 1,
-      marginLeft: 8,
-      marginRight: 4,
+      marginLeft: 12,
+      marginRight: 8,
     },
     featureTitle: {
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: '600',
-      color: '#FFFFFF',
+      color: isDark ? '#FFFFFF' : '#000000',
       marginBottom: 4,
     },
     featureDescription: {
-      fontSize: 12,
-      color: '#8E8E93',
-      lineHeight: 16,
+      fontSize: 13,
+      color: isDark ? '#8E8E93' : '#666666',
+      lineHeight: 18,
     },
     sectionContainer: {
       width: '100%',
-      marginTop: 16,
-      paddingHorizontal: 16,
+      marginTop: 24,
+      paddingHorizontal: 8,
     },
     sectionTitle: {
-      fontSize: 18,
+      fontSize: 20,
       fontWeight: 'bold',
-      color: '#FFFFFF',
-      marginBottom: 12,
-    },
-    subscribeButton: {
-      backgroundColor: '#007AFF',
-      borderRadius: 25,
-      padding: 14,
-      alignItems: 'center',
-      marginHorizontal: 16,
-      marginVertical: 16,
-    },
-    subscribeText: {
-      color: '#FFFFFF',
-      fontSize: 14,
-      fontWeight: 'bold',
+      color: isDark ? '#FFFFFF' : '#000000',
+      marginBottom: 16,
+      textAlign: 'center',
     },
     price: {
-      fontSize: 32,
+      fontSize: 36,
       fontWeight: 'bold',
-      color: '#FFFFFF',
+      color: isDark ? '#FFFFFF' : '#000000',
       textAlign: 'center',
       marginVertical: 16,
     },
     priceNote: {
-      fontSize: 12,
-      color: '#8E8E93',
+      fontSize: 13,
+      color: isDark ? '#8E8E93' : '#666666',
       textAlign: 'center',
-      marginBottom: 16,
-      paddingHorizontal: 12,
-      paddingTop: isExtraSmallDevice ? 8 : 0,
-      paddingBottom: 8,
+      marginBottom: 24,
+      paddingHorizontal: 16,
     },
   });
 
@@ -298,10 +286,7 @@ const SubscriptionPlanPage = () => {
           <TouchableOpacity 
             key={plan.id} 
             onPress={() => handlePlanSelect(plan.id)}
-            style={[
-              styles.planContainer,
-              plan.id === selectedPlanId && styles.selectedCard
-            ]}
+            style={styles.planContainer}
           >
             {renderPlan(plan, index)}
           </TouchableOpacity>

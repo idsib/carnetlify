@@ -119,6 +119,11 @@ export default function ProfileScreen() {
     router.push('/sections/subscriptionPlan');
   };
 
+  const isAlwaysLocked = (section: string) => {
+    const alwaysLockedSections = ['paymethod', 'notifications'];
+    return alwaysLockedSections.includes(section);
+  };
+
   return (
     <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
       <ScrollView 
@@ -151,16 +156,22 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <SectionTitle title="Ajustes" />
           <MenuItem
+            icon="person"
+            title="Información personal"
+            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/personalInfo')}
+            isLocked={userInfo.isLocked === "true"}
+          />
+          <MenuItem
             icon="card"
             title="Método de pago"
-            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/paymethod')}
-            isLocked={userInfo.isLocked === "true"}
+            onPress={isAlwaysLocked('paymethod') ? handleLockedFeature : () => router.push('/sections/paymethod')}
+            isLocked={true}
           />
           <MenuItem
             icon="notifications"
             title="Notificaciones"
-            onPress={userInfo.isLocked === "true" ? handleLockedFeature : () => router.push('/sections/notifications')}
-            isLocked={userInfo.isLocked === "true"}
+            onPress={isAlwaysLocked('notifications') ? handleLockedFeature : () => router.push('/sections/notifications')}
+            isLocked={true}
           />
         </View>
 
@@ -179,8 +190,9 @@ export default function ProfileScreen() {
           <MenuItem
             icon="pricetag"
             title="Escoge tu plan"
-            onPress={() => router.push('/sections/subscriptionPlan')}
-            alwaysAccessible={true}
+            onPress={userInfo.isLocked === "true" ? () => router.push('/sections/subscriptionPlan') : handleLockedFeature}
+            isLocked={userInfo.isLocked === "false"}
+            alwaysAccessible={userInfo.isLocked === "true"}
           />
         </View>
 

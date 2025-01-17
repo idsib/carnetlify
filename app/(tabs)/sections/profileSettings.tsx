@@ -282,7 +282,11 @@ const ProfileSettingsPage = () => {
             </View>
           </TouchableOpacity>
           <Text style={styles.userName}>{userInfo.fullName}</Text>
-          <Text style={styles.location}>Badalona, Cataluña</Text>
+          <Text style={styles.location}>
+            {userInfo?.city && userInfo?.province 
+              ? `${userInfo.city}, ${userInfo.province}`
+              : 'Ubicación no especificada'}
+          </Text>
         </View>
 
         <View style={styles.statsContainer}>

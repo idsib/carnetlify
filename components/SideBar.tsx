@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     borderRightColor: '#E0E0E0',
   },
   containerDark: {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#000',
     borderRightColor: '#2F2F2F',
   },
   scrollView: {

@@ -16,6 +16,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import ProgressBar from '@/components/ProgressBar';
 import { updateLessonProgress, calculateTotalProgress } from '@/utils/progress';
+import { changeStateLesson } from '@/backend/firebase/config';
 
 const allRoles = ['Conductor', 'Peatón', 'Pasajero', 'Ciclista'];
 
@@ -166,16 +167,16 @@ export default function Lesson2() {
     );
   };
 
-  const handleConfirm = async () => {
-    if (isCorrect) {
-      router.push('/lessons/sub1/thirdTask');
-      return;
-    }
+  const handleVerify = async () => {
+    const isCorrectRoles = categories.roles.every(item => correctAnswers.roles.includes(item)) && 
+                          correctAnswers.roles.every(item => categories.roles.includes(item));
 
-    const isAnswerCorrect = JSON.stringify(categories.roles.sort()) === JSON.stringify(correctAnswers.roles.sort());
-    
-    if (isAnswerCorrect) {
+    if (isCorrectRoles) {
       try {
+        const numberLesson = {
+          numberLesson: "numberLesson12"
+        };
+        await changeStateLesson(numberLesson);
         await updateLessonProgress('lesson2', true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);
@@ -217,7 +218,11 @@ export default function Lesson2() {
           </View>
 
           <View style={styles.progressBarContainer}>
-            <ProgressBar progress={progress} />
+            <ProgressBar 
+              progress={progress}
+              currentBlock={1}  
+              currentLesson={2}
+            />
           </View>
 
           {showFeedback && (
@@ -257,7 +262,7 @@ export default function Lesson2() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity 
               style={[styles.button, isDark && styles.buttonDark]} 
-              onPress={handleConfirm}
+              onPress={handleVerify}
             >
               <Text style={[styles.buttonText, isDark && styles.textDark]}>
                 {buttonText}

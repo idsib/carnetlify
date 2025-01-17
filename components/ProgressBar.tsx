@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Platform, useColorScheme } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -6,20 +6,39 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { changeStateLesson, showProgressMongo } from '../backend/firebase/config';
 
 interface ProgressBarProps {
-  progress: number; // valor entre 0 y 1
+  progress: number;
   color?: string;
   height?: number;
+  currentBlock: number;
+  currentLesson: number;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
   progress,
   color = '#2B9FDC',
   height = 8,
+  currentBlock,
+  currentLesson,
 }) => {
   const isDark = useColorScheme() === 'dark';
   const progressWidth = useSharedValue(0);
+  const [userProgress, setUserProgress] = useState(null);
+
+  useEffect(() => {
+    // Obtener el progreso del usuario cuando el componente se monta
+    const fetchProgress = async () => {
+      try {
+        const progress = await showProgressMongo();
+        setUserProgress(progress);
+      } catch (error) {
+        console.error('Error fetching progress:', error);
+      }
+    };
+    fetchProgress();
+  }, []);
 
   useEffect(() => {
     progressWidth.value = withSpring(progress, {
@@ -27,6 +46,20 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       stiffness: 100,
     });
   }, [progress]);
+
+  const handleLessonComplete = async () => {
+    try {
+      const numberLesson = {
+        numberLesson: `numberLesson${currentBlock}${currentLesson}`
+      };
+      await changeStateLesson(numberLesson);
+      // Actualizar el progreso después de cambiar el estado de la lección
+      const updatedProgress = await showProgressMongo();
+      setUserProgress(updatedProgress);
+    } catch (error) {
+      console.error('Error updating lesson state:', error);
+    }
+  };
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progressWidth.value * 100}%`,

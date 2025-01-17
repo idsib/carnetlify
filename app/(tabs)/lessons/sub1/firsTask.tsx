@@ -16,6 +16,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import ProgressBar from '@/components/ProgressBar';
 import { updateLessonProgress, calculateTotalProgress } from '@/utils/progress';
+import { changeStateLesson } from '@/backend/firebase/config';
 
 const allConcepts = ['Ráfagas', 'Vía urbana', 'Deslumbramiento', 'Vía interurbana', 'Inmovilizado', 'Travesía'];
 
@@ -182,18 +183,20 @@ export default function Lesson1() {
     );
   };
 
-  const handleConfirm = async () => {
-    if (isCorrect) {
-      router.push('/lessons/sub1/secondTask');
-      return;
-    }
+  const handleVerify = async () => {
+    const isCorrectProhibidas = categories.prohibidas.every(item => correctAnswers.prohibidas.includes(item)) && 
+                               correctAnswers.prohibidas.every(item => categories.prohibidas.includes(item));
+    const isCorrectPermitidas = categories.permitidas.every(item => correctAnswers.permitidas.includes(item)) && 
+                               correctAnswers.permitidas.every(item => categories.permitidas.includes(item));
 
-    const isAnswerCorrect = 
-      JSON.stringify(categories.prohibidas.sort()) === JSON.stringify(correctAnswers.prohibidas.sort()) &&
-      JSON.stringify(categories.permitidas.sort()) === JSON.stringify(correctAnswers.permitidas.sort());
-    
-    if (isAnswerCorrect) {
+    const allCorrect = isCorrectProhibidas && isCorrectPermitidas;
+
+    if (allCorrect) {
       try {
+        const numberLesson = {
+          numberLesson: "numberLesson11"
+        };
+        await changeStateLesson(numberLesson);
         await updateLessonProgress('lesson1', true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);
@@ -247,7 +250,11 @@ export default function Lesson1() {
             </View>
             
             <View style={styles.progressBarContainer}>
-              <ProgressBar progress={progress} />
+              <ProgressBar 
+                progress={progress} 
+                currentBlock={1} 
+                currentLesson={1} 
+              />
             </View>
 
             {showFeedback && (
@@ -294,7 +301,7 @@ export default function Lesson1() {
             <View style={styles.buttonContainer}>
               <TouchableOpacity 
                 style={[styles.button, isDark && styles.buttonDark]} 
-                onPress={handleConfirm}
+                onPress={handleVerify}
               >
                 <Text style={[styles.buttonText, isDark && styles.textDark]}>
                   {buttonText}

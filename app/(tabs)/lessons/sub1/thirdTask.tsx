@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, useColorScheme, StyleSheet, Animated as RNAnimated } from 'react-native';
+import { View, Text, TouchableOpacity, useColorScheme, StyleSheet, Animated as RNAnimated, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,12 +13,14 @@ import Animated, {
 } from 'react-native-reanimated';
 import { updateLessonProgress, calculateTotalProgress } from '@/utils/progress';
 import ProgressBar from '@/components/ProgressBar';
+import { changeStateLesson } from '@/backend/firebase/config';
 
 export default function Lesson3() {
   const isDark = useColorScheme() === 'dark';
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [buttonText, setButtonText] = useState('Verificar');
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const fadeAnim = useSharedValue(0);
   const [progress, setProgress] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(null);
@@ -61,11 +63,16 @@ export default function Lesson3() {
 
     if (selectedAnswer === false) {
       try {
+        const numberLesson = {
+          numberLesson: "numberLesson13"
+        };
+        await changeStateLesson(numberLesson);
         await updateLessonProgress('lesson3', true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);
         handleFeedback(true);
         setButtonText('Continuar');
+        setShowCompletionModal(true); 
       } catch (error) {
         console.error('Error updating progress:', error);
         handleFeedback(false);
@@ -98,7 +105,11 @@ export default function Lesson3() {
           </View>
 
           <View style={styles.progressBarContainer}>
-            <ProgressBar progress={progress} />
+            <ProgressBar 
+              progress={progress}
+              currentBlock={1}
+              currentLesson={3}
+            />
           </View>
 
           {showFeedback && (
@@ -172,6 +183,36 @@ export default function Lesson3() {
           </View>
 
         </View>
+        
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={showCompletionModal}
+          onRequestClose={() => {
+            setShowCompletionModal(false);
+            router.push('/lessons/sub1/Block');
+          }}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, isDark && styles.modalContentDark]}>
+              <Text style={[styles.modalTitle, isDark && styles.modalTitleDark]}>
+                SUBTEMA 1 COMPLETADO
+              </Text>
+              <Text style={[styles.modalText, isDark && styles.modalTextDark]}>
+                Has completado este subtema correctamente.
+              </Text>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {
+                  setShowCompletionModal(false);
+                  router.push('/lessons/sub1/Block');
+                }}
+              >
+                <Text style={styles.modalButtonText}>Continuar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -308,5 +349,48 @@ const styles = StyleSheet.create({
   },
   textDark: {
     color: '#FFFFFF',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 24,
+    width: '80%',
+  },
+  modalContentDark: {
+    backgroundColor: '#2D2D2D',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 16,
+  },
+  modalTitleDark: {
+    color: '#FFFFFF',
+  },
+  modalText: {
+    fontSize: 18,
+    color: '#000000',
+    marginBottom: 24,
+  },
+  modalTextDark: {
+    color: '#FFFFFF',
+  },
+  modalButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

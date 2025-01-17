@@ -15,7 +15,7 @@ import Animated, {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import ProgressBar from '@/components/ProgressBar';
-import { updateLessonProgress, calculateTotalProgress } from '@/utils/progress';
+import { updateLessonProgress, calculateTotalProgress, getProgress } from '@/utils/progress';
 import { changeStateLesson } from '@/backend/firebase/config';
 
 const allConcepts = ['Ráfagas', 'Vía urbana', 'Deslumbramiento', 'Vía interurbana', 'Inmovilizado', 'Travesía'];
@@ -205,8 +205,6 @@ export default function Lesson1() {
         };
         await changeStateLesson(stateLesson);
         setTaskCompleted(true);
-        const newProgress = await calculateTotalProgress(6);
-        setProgress(newProgress);
         handleFeedback(true);
         setButtonText('Continuar');
       } catch (error) {
@@ -233,9 +231,15 @@ export default function Lesson1() {
   useEffect(() => {
     const initializeLesson = async () => {
       resetGame();
-      // Calcular el progreso inicial
-      const currentProgress = await calculateTotalProgress(6); // 6 es el número total de lecciones
-      setProgress(currentProgress);
+      try {
+        const progress = await getProgress();
+        const isCompleted = progress.some(lesson => lesson.id === 'lesson1' && lesson.completed);
+        if (isCompleted) {
+          setTaskCompleted(true);
+        }
+      } catch (error) {
+        console.error('Error fetching progress:', error);
+      }
     };
     
     initializeLesson();

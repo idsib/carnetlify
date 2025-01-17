@@ -34,9 +34,18 @@ Para iniciar el desarrollo de Carnetlify, sigue estos pasos:
 2. Instala las dependencias:b
    ```bash
    npm install
+
+   cd backend
+   npm install
    ```
 
-3. Inicia la aplicación:
+3. Inicia el servidor:
+   ```bash
+   cd backend
+   node server.js
+   ```
+
+4. Inicia la aplicación:
    ```bash
    npx expo start
    ```

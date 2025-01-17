@@ -8,6 +8,8 @@
   Una aplicación móvil moderna para gestionar carnets digitales, desarrollada con React Native y Expo.
 </p>
 
+
+
 ## 🚀 Acerca del Proyecto
 
 Carnetlify es una innovadora aplicación que permite a los usuarios crear, almacenar y compartir carnets digitales de manera segura y eficiente. Utilizando la potencia de React Native y Expo, ofrecemos una experiencia fluida en dispositivos iOS y Android.

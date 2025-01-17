@@ -1,32 +1,42 @@
 // Importamos Express, la libreria mas famosa que tiene NodeJs para el manejo de base de datos 
 // con una gran compatibilidad para la nuestra en concreto, MongoDB.
 const express = require('express');
+
 // Importamos Firebase admin, un SDK que nos ofrece las herramientas para el manejo de usuarios
 // de nuestro Firebase.
 const admin = require('firebase-admin');
+
 // Importamos MongoClient para establecer la conexion con mi cluster en MongoDB.
 const { MongoClient } = require('mongodb');
+
 // Importamos cors, vital para la funcionalidad y escalabildad del proyecto en ciertos navegadores,
 // que muchos restringen el intercambio de recursos entre diferentes dominios.
 const cors = require('cors');
 const path = require('path');
+
 // Importamos dotenvm, que carga mi .env contenedor de información sensible del proyecto, 
 // si fuera un proyecto real, ocultaria url.env en un git ignore.
   require('dotenv').config({ path: './url.env' });
+
 // Inicializamos Firebase Admin con nuestra configuracion, que tambien deberia ser protegida en un proyecto serio.
 admin.initializeApp({
   credential: admin.credential.cert(require('./firebase/firebaseServiceAccountKey.json'))
 });
+
 // Inicializamos express para poder trabajar con sus funciones.
 const app = express();
+
 // Habilitamos CORS para todas las rutas del server.
 app.use(cors());
+
 // Aumentamos el límite de tamaño para las solicitudes con el middleware .json y .urlencoded para nuestras solicitudes POST,
 // lo necesitaremos para las imagenes de perfil.
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
 // Indicamos la configuración de mi cluster en MongoDB con el parametro almacenado en el .env.
 const client = new MongoClient(process.env.MONGO_URL);
+
 // Declaramos una variable vacia y conectamos el Mongo, especificamos las colecciones y las
 // almacenamos en variables que manipularemos en nuestras funciones.
 let usersCollection;
@@ -38,8 +48,10 @@ async function connectDB() {
   lessonsCollections = db.collection('lessons');
   console.log('Conectado a MongoDB');
 }
+
 // Cazamos possibles errores.
 connectDB().catch(console.error);
+
 // Función para verificar los tokens de Firebase, se ejecutara antes que cualquier función del servidor, 
 // es recibido en la cabecera de las solicitudes y es validado por Firebase Admin, en caso de error te echara.
 async function verifyToken(req, res, next) {
@@ -53,6 +65,7 @@ async function verifyToken(req, res, next) {
     res.status(403).send('Token no válido');
   }
 }
+
 // Ruta para registrar usuarios en MongoDB, despues de verificar el token.
 app.post('/register', verifyToken, async (req, res) => {
   // Sacamos el uid del usuario actual por el token que revisamos anteriormente.
@@ -72,6 +85,7 @@ app.post('/register', verifyToken, async (req, res) => {
     stateLesson23: "false",
     stateLesson24: "false",
   };
+
   // Si el usuario no existe, lo creamos.
   if (!existingUser) {
     // Insertamos el usuario en la base de datos con un operador de propagación,
@@ -85,6 +99,7 @@ app.post('/register', verifyToken, async (req, res) => {
   }
   res.status(201).send('Usuario registrado');
 });
+
 // Ruta para sacar el nombre de usuario en MongoDB
 app.post('/users/info', verifyToken, async (req, res) => {
   // Guardamos el valor de UserId proporcionado en el cuerpo de la solicitud.
@@ -105,6 +120,7 @@ app.post('/users/info', verifyToken, async (req, res) => {
     res.status(500).send({ error: 'Error interno del servidor.' });
   }
 });
+
 // Ruta para cambiar el estado de una lección en MongoDB
 app.post('/changeStateLesson', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -123,6 +139,7 @@ app.post('/changeStateLesson', verifyToken, async (req, res) => {
   }
   res.status(200).send('Estado de la lección actualizada');
 });
+
 // Ruta para desbloquear un usuario en MongoDB
 app.post('/users/block', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -136,6 +153,7 @@ app.post('/users/block', verifyToken, async (req, res) => {
   }
   res.status(201).send('Estado del usuario actualizado');
 });
+
 // Ruta para eliminar la cuenta del usuario
 app.post('/users/delete', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -158,6 +176,7 @@ app.post('/users/delete', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para sacar el progreso del usuario en MongoDB.
 app.post('/users/progress', verifyToken, async (req, res) => {
   // Guardamos el valor de UserId proporcionado en el cuerpo de la solicitud.
@@ -178,6 +197,7 @@ app.post('/users/progress', verifyToken, async (req, res) => {
     res.status(500).send({ error: 'Error interno del servidor.' });
   }
 });
+
 // Ruta para actualizar nombre usuarios en MongoDB.
 app.post('/updateNameUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -199,6 +219,7 @@ app.post('/updateNameUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar el email de un usuario en MongoDB
 app.post('/updateEmailUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -219,6 +240,7 @@ app.post('/updateEmailUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar el url de la imagen de perfil de un usuario en MongoDB
 app.post('/updatePhotoURLUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -239,6 +261,7 @@ app.post('/updatePhotoURLUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar el dni de un usuario en MongoDB
 app.post('/updateDniUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -259,6 +282,7 @@ app.post('/updateDniUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar la edad de un usuario en MongoDB
 app.post('/updateAgeUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -280,6 +304,7 @@ app.post('/updateAgeUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar la pais de un usuario en MongoDB
 app.post('/updateCountryUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -300,6 +325,7 @@ app.post('/updateCountryUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar la provincia de un usuario en MongoDB
 app.post('/updateProvinceUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -320,6 +346,7 @@ app.post('/updateProvinceUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar la ciudad de un usuario en MongoDB
 app.post('/updateCityUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -341,6 +368,7 @@ app.post('/updateCityUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar la codigo postal de un usuario en MongoDB
 app.post('/updatePostalCodeUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -361,6 +389,7 @@ app.post('/updatePostalCodeUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar la casa de un usuario en MongoDB
 app.post('/updateHomeUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -381,6 +410,7 @@ app.post('/updateHomeUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar el telefono de un usuario en MongoDB
 app.post('/updatePhoneUser', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -401,6 +431,7 @@ app.post('/updatePhoneUser', verifyToken, async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 });
+
 // Ruta para actualizar la imagen de perfil
 app.post('/updateProfileImage', verifyToken, async (req, res) => {
   const userId = req.user.uid;

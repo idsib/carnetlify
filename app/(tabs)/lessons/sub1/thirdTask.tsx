@@ -56,11 +56,6 @@ export default function Lesson3() {
   });
 
   const handleConfirm = async () => {
-    if (isCorrect) {
-      router.push('/lessons/sub1/Block');
-      return;
-    }
-
     if (selectedAnswer === false) {
       try {
         const numberLesson = {
@@ -72,13 +67,21 @@ export default function Lesson3() {
         setProgress(newProgress);
         handleFeedback(true);
         setButtonText('Continuar');
-        setShowCompletionModal(true); 
+        setShowCompletionModal(true); // Mostramos el modal de completado
       } catch (error) {
         console.error('Error updating progress:', error);
         handleFeedback(false);
       }
     } else {
       handleFeedback(false);
+    }
+  };
+
+  const handleButtonPress = () => {
+    if (buttonText === 'Continuar') {
+      router.push('/lessons/sub1/Block');
+    } else {
+      handleConfirm();
     }
   };
 
@@ -173,7 +176,7 @@ export default function Lesson3() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity 
               style={[styles.button, isDark && styles.buttonDark]} 
-              onPress={handleConfirm}
+              onPress={handleButtonPress}
               disabled={selectedAnswer === null}
             >
               <Text style={[styles.buttonText, isDark && styles.textDark]}>

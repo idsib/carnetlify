@@ -210,6 +210,14 @@ export default function Lesson1() {
     }
   };
 
+  const handleButtonPress = () => {
+    if (buttonText === 'Continuar') {
+      router.push('/lessons/sub1/secondTask');
+    } else {
+      handleVerify();
+    }
+  };
+
   const feedbackStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
     transform: [{ scale: withSpring(fadeAnim.value ? 1 : 0.8) }],
@@ -301,7 +309,7 @@ export default function Lesson1() {
             <View style={styles.buttonContainer}>
               <TouchableOpacity 
                 style={[styles.button, isDark && styles.buttonDark]} 
-                onPress={handleVerify}
+                onPress={handleButtonPress}
               >
                 <Text style={[styles.buttonText, isDark && styles.textDark]}>
                   {buttonText}

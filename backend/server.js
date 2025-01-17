@@ -180,7 +180,7 @@ app.post('/users/delete', verifyToken, async (req, res) => {
 // Ruta para sacar el progreso del usuario en MongoDB.
 app.post('/users/progress', verifyToken, async (req, res) => {
   // Guardamos el valor de UserId proporcionado en el cuerpo de la solicitud.
-  const { userId } = req.body;
+  const userId = req.user.uid;
   // Comprovación previa.
   if (!userId) {
     return res.status(400).send({ error: 'El userId es requerido.' });

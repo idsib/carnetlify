@@ -123,6 +123,13 @@ export default function Lesson1() {
     permitidas: [] as string[],
     unassigned: [...allConcepts]
   });
+  const [taskCompleted, setTaskCompleted] = useState(false);
+
+  useEffect(() => {
+    if (taskCompleted) {
+      updateLessonProgress('lesson1', true);
+    }
+  }, [taskCompleted]);
 
   useEffect(() => {
     const cleanup = () => {
@@ -197,7 +204,7 @@ export default function Lesson1() {
           numberLesson: "numberLesson11"
         };
         await changeStateLesson(numberLesson);
-        await updateLessonProgress('lesson1', true);
+        setTaskCompleted(true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);
         handleFeedback(true);
@@ -207,6 +214,14 @@ export default function Lesson1() {
       }
     } else {
       handleFeedback(false);
+    }
+  };
+
+  const handleButtonPress = () => {
+    if (buttonText === 'Continuar') {
+      router.push('/lessons/sub1/secondTask');
+    } else {
+      handleVerify();
     }
   };
 
@@ -229,7 +244,7 @@ export default function Lesson1() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaView style={[styles.safeArea, isDark && styles.containerDark]} edges={['top', 'left', 'right']}>
+        <SafeAreaView style={[styles.safeArea, isDark && styles.safeAreaDark]}>
           <View style={[styles.container, isDark && styles.containerDark]}>
             <View style={styles.header}>
               <TouchableOpacity
@@ -246,33 +261,17 @@ export default function Lesson1() {
                 <Text style={[styles.title, isDark && styles.titleDark]}>
                   Clasifica dónde está permitido y prohibido el uso de las luces largas
                 </Text>
+                <ProgressBar
+                  progress={progress}
+                  currentBlock={1}
+                  currentLesson={1}
+                  totalTasks={3}
+                  height={8}
+                  color="#2B9FDC"
+                />
               </View>
             </View>
             
-            <View style={styles.progressBarContainer}>
-              <ProgressBar 
-                progress={progress} 
-                currentBlock={1} 
-                currentLesson={1} 
-              />
-            </View>
-
-            {showFeedback && (
-              <Animated.View style={[
-                styles.feedbackContainer,
-                feedbackStyle,
-              ]}>
-                <View style={[
-                  styles.feedbackContent,
-                  isCorrect ? styles.successFeedback : styles.errorFeedback
-                ]}>
-                  <Text style={styles.feedbackText}>
-                    {isCorrect ? '¡Correcto!' : 'Inténtalo de nuevo'}
-                  </Text>
-                </View>
-              </Animated.View>
-            )}
-
             <View style={styles.dropZonesContainer}>
               <View style={[styles.dropZone, isDark && styles.dropZoneDark]}>
                 <Text style={[styles.dropZoneTitle, isDark && styles.textDark]}>Prohibidas ({categories.prohibidas.length}/4)</Text>
@@ -301,7 +300,7 @@ export default function Lesson1() {
             <View style={styles.buttonContainer}>
               <TouchableOpacity 
                 style={[styles.button, isDark && styles.buttonDark]} 
-                onPress={handleVerify}
+                onPress={handleButtonPress}
               >
                 <Text style={[styles.buttonText, isDark && styles.textDark]}>
                   {buttonText}
@@ -319,6 +318,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  safeAreaDark: {
+    backgroundColor: '#1a1a1a',
   },
   container: {
     flex: 1,
@@ -344,8 +346,9 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 1,
-    alignItems: 'center',
+    marginLeft: 16,
     justifyContent: 'center',
+    gap: 8,
   },
   title: {
     fontSize: 20,
@@ -356,11 +359,6 @@ const styles = StyleSheet.create({
   },
   titleDark: {
     color: '#FFFFFF',
-  },
-  progressBarContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 20,
-    width: '100%',
   },
   dropZonesContainer: {
     flexDirection: 'row',

@@ -14,6 +14,7 @@ interface ProgressBarProps {
   height?: number;
   currentBlock: number;
   currentLesson: number;
+  totalTasks?: number;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -22,58 +23,59 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   height = 8,
   currentBlock,
   currentLesson,
+  totalTasks = 3,
 }) => {
   const isDark = useColorScheme() === 'dark';
   const progressWidth = useSharedValue(0);
   const [userProgress, setUserProgress] = useState(null);
+  const [completedTasks, setCompletedTasks] = useState(0);
 
   useEffect(() => {
-    // Obtener el progreso del usuario cuando el componente se monta
     const fetchProgress = async () => {
       try {
         const progress = await showProgressMongo();
         setUserProgress(progress);
+        if (progress?.lessons) {
+          const lessonProgress = progress.lessons[`lesson${currentLesson}`];
+          setCompletedTasks(lessonProgress ? 1 : 0);
+        }
       } catch (error) {
         console.error('Error fetching progress:', error);
       }
     };
     fetchProgress();
-  }, []);
+  }, [currentLesson]);
 
   useEffect(() => {
-    progressWidth.value = withSpring(progress, {
+    const normalizedProgress = (completedTasks / totalTasks) * 100;
+    progressWidth.value = withSpring(normalizedProgress, {
       damping: 15,
       stiffness: 100,
     });
-  }, [progress]);
+  }, [completedTasks, totalTasks]);
 
   const handleLessonComplete = async () => {
     try {
-      const numberLesson = {
-        numberLesson: `numberLesson${currentBlock}${currentLesson}`
-      };
-      await changeStateLesson(numberLesson);
-      // Actualizar el progreso después de cambiar el estado de la lección
-      const updatedProgress = await showProgressMongo();
-      setUserProgress(updatedProgress);
+      await changeStateLesson(currentLesson);
+      setCompletedTasks(prev => Math.min(prev + 1, totalTasks));
     } catch (error) {
       console.error('Error updating lesson state:', error);
     }
   };
 
-  const progressStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value * 100}%`,
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: `${progressWidth.value}%`,
+    height,
     backgroundColor: color,
+    borderRadius: height / 2,
   }));
 
   return (
     <View style={[
       styles.container,
-      { height },
-      isDark && styles.containerDark,
-      Platform.OS === 'web' && styles.webShadow
+      { height, borderRadius: height / 2, backgroundColor: isDark ? '#333' : '#E0E0E0' }
     ]}>
-      <Animated.View style={[styles.progress, progressStyle]} />
+      <Animated.View style={animatedStyle} />
     </View>
   );
 };
@@ -82,22 +84,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     backgroundColor: '#E0E0E0',
-    borderRadius: 4,
     overflow: 'hidden',
-  },
-  containerDark: {
-    backgroundColor: '#333333',
-  },
-  progress: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  webShadow: {
-    ...Platform.select({
-      web: {
-        boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
-      },
-    }),
   },
 });
 

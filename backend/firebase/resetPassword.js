@@ -5,11 +5,13 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from '@/backend/firebase/config';
 
 export async function resetPassword(email) {
-    sendPasswordResetEmail(auth, email)
+    return sendPasswordResetEmail(auth, email)
         .then(() => {
             console.log("Email de restablecimiento enviado");
+            return { message: "Email de restablecimiento enviado" };
         })
         .catch((error) => {
             console.error("Error al enviar email de restablecimiento:", error);
+            throw error;
         });
 }

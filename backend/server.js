@@ -74,6 +74,8 @@ app.post('/register', verifyToken, async (req, res) => {
   };
   // Si el usuario no existe, lo creamos.
   if (!existingUser) {
+    // Insertamos el usuario en la base de datos con un operador de propagación,
+    // asi se enviara el objeto completo al Mongo.
     await usersCollection.insertOne({ userId, ...userData });
     // Le asignamos un registro en la colección lessons.
     await lessonsCollections.insertOne({ userId, ...lessonsUser });

@@ -12,8 +12,6 @@
 
 Carnetlify es una innovadora aplicación que permite a los usuarios crear, almacenar y compartir carnets digitales de manera segura y eficiente. Utilizando la potencia de React Native y Expo, ofrecemos una experiencia fluida en dispositivos iOS y Android.
 
-
-
 ## 🛠️ Tecnologías Utilizadas
 
 - [React Native](https://reactnative.dev/)
@@ -56,6 +54,9 @@ Para iniciar el desarrollo de Carnetlify, sigue estos pasos:
 - Almacenamiento seguro de información
 - Compartir carnets fácilmente
 - Interfaz de usuario intuitiva y moderna
+
+## 💬 Prueba Nuestro Chat en Pruebas
+Puedes probar nuestro chat en pruebas visitando el siguiente repositorio de GitHub: [Carnetlify Chat](https://github.com/jarasw/Carnetlify-Chat)
 
 ## 🤝 Contribuir
 

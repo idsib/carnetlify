@@ -47,18 +47,19 @@ const { width: WINDOW_WIDTH } = Dimensions.get('window');
 const SIDEBAR_WIDTH = 280;
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
-  const isDark = useColorScheme() === 'dark';
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
   const router = useRouter();
   const pathname = usePathname();
 
   return (
     <View style={styles.overlay}>
-      <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+      <SafeAreaView style={[styles.container, isDarkMode ? styles.containerDark : styles.containerLight]}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.header}>
             <Image
-              source={require('../assets/images/carnetlify.png')}
-              style={styles.logo}
+              source={require('../assets/images/logo-text-carnetlify.png')}
+              style={[styles.logo, { tintColor: isDarkMode ? "#3478F6" : "#007AFF" }]}
               resizeMode="contain"
             />
           </View>
@@ -69,7 +70,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               return (
                 <TouchableOpacity
                   key={item.path}
-                  style={[styles.menuItem, isDark ? styles.menuItemDark : styles.menuItemLight]}
+                  style={[styles.menuItem, isDarkMode ? styles.menuItemDark : styles.menuItemLight]}
                   onPress={() => {
                     router.push(item.path as any);
                     onClose?.();
@@ -79,15 +80,15 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                     name={isActive ? item.activeIcon : item.icon} 
                     size={26} 
                     color={isActive 
-                      ? (isDark ? "#3478F6" : "#007AFF")
-                      : (isDark ? "#FFFFFF" : "#000000")
+                      ? (isDarkMode ? "#3478F6" : "#007AFF")
+                      : (isDarkMode ? "#FFFFFF" : "#000000")
                     } 
                   />
                   <Text 
                     style={[
                       styles.menuText, 
-                      isDark ? styles.textDark : styles.textLight,
-                      isActive && (isDark ? styles.activeTextDark : styles.activeTextLight)
+                      isDarkMode ? styles.textDark : styles.textLight,
+                      isActive && (isDarkMode ? styles.activeTextDark : styles.activeTextLight)
                     ]}
                   >
                     {item.label}
@@ -114,11 +115,11 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
   },
   containerLight: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
     borderRightColor: '#E0E0E0',
   },
   containerDark: {
-    backgroundColor: '#000000',
+    backgroundColor: '#1A1A1A',
     borderRightColor: '#2F2F2F',
   },
   scrollView: {
@@ -128,15 +129,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    padding: 16,
-    paddingLeft: 24,
+    padding: 0,
+    paddingTop: 0,
+    marginBottom: 0,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 250,
+    height: 150,
   },
   menuContainer: {
-    paddingTop: 8,
+    paddingTop: -80,
   },
   menuItem: {
     flexDirection: 'row',

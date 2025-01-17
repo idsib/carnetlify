@@ -25,7 +25,7 @@ export default function BookingScreen() {
             color={isDark ? '#FFFFFF' : '#000000'} 
           />
         </TouchableOpacity>
-        <Text style={[styles.title, isDark && styles.darkText]}>Booking</Text>
+        <Text style={[styles.title, isDark && styles.darkText]}>Reservas</Text>
       </View>
       <View style={styles.content}>
         <Text style={[

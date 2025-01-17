@@ -88,7 +88,6 @@ app.post('/register', verifyToken, async (req, res) => {
 // Ruta para sacar el nombre de usuario en MongoDB
 app.post('/users/info', verifyToken, async (req, res) => {
   // Guardamos el valor de UserId proporcionado en el cuerpo de la solicitud.
-  // Diferencia hay entre const { userId } = req.body; y const userId = req.body;?
   const { userId } = req.body;
   // Comprovación previa.
   if (!userId) {

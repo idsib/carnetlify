@@ -111,11 +111,15 @@ app.post('/changeStateLesson', verifyToken, async (req, res) => {
   const { numberLesson } = req.body;
   const existingRegister = await lessonsCollections.findOne({ userId });
   if (existingRegister) {
-    // Si el registro existe, actualizamos el estado de la lección superada.
-    await lessonsCollections.updateOne({ userId }, { $set: { [`${numberLesson}`]: "true" } }, { $unset: { [`${numberLesson}`]: "false" } });
-    console.log("Si se ha encontrado el usuario");
+    // Comprovación de que numberLesson sea false, para evitar duplicar lecciones.
+    const check = await lessonsCollections.findOne({ userId, [`${numberLesson}`]: "false" });
+    if (check) {
+      // Si el registro existe y el valor de numberLesson es false, actualizamos el estado de la lección superada.
+      await lessonsCollections.updateOne({ userId }, { $set: { [`${numberLesson}`]: "true" } }, { $unset: { [`${numberLesson}`]: "false" } });
+      console.log("Si se ha encontrado el registro y sea actualizado"); 
+    }
   } else {
-    console.log("No se ha encontrado el usuario");
+    console.log("No se ha encontrado el registro");
   }
   res.status(200).send('Estado de la lección actualizada');
 });

@@ -123,6 +123,13 @@ export default function Lesson1() {
     permitidas: [] as string[],
     unassigned: [...allConcepts]
   });
+  const [taskCompleted, setTaskCompleted] = useState(false);
+
+  useEffect(() => {
+    if (taskCompleted) {
+      updateLessonProgress('lesson1', true);
+    }
+  }, [taskCompleted]);
 
   useEffect(() => {
     const cleanup = () => {
@@ -197,7 +204,7 @@ export default function Lesson1() {
           numberLesson: "numberLesson11"
         };
         await changeStateLesson(numberLesson);
-        await updateLessonProgress('lesson1', true);
+        setTaskCompleted(true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);
         handleFeedback(true);
@@ -237,7 +244,7 @@ export default function Lesson1() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaView style={[styles.safeArea, isDark && styles.containerDark]} edges={['top', 'left', 'right']}>
+        <SafeAreaView style={[styles.safeArea, isDark && styles.safeAreaDark]}>
           <View style={[styles.container, isDark && styles.containerDark]}>
             <View style={styles.header}>
               <TouchableOpacity
@@ -254,6 +261,14 @@ export default function Lesson1() {
                 <Text style={[styles.title, isDark && styles.titleDark]}>
                   Clasifica dónde está permitido y prohibido el uso de las luces largas
                 </Text>
+                <ProgressBar
+                  progress={progress}
+                  currentBlock={1}
+                  currentLesson={1}
+                  totalTasks={3}
+                  height={8}
+                  color="#2B9FDC"
+                />
               </View>
             </View>
             
@@ -262,6 +277,7 @@ export default function Lesson1() {
                 progress={progress} 
                 currentBlock={1} 
                 currentLesson={1} 
+                totalTasks={3}
               />
             </View>
 
@@ -328,6 +344,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  safeAreaDark: {
+    backgroundColor: '#1a1a1a',
+  },
   container: {
     flex: 1,
     padding: 16,
@@ -352,8 +371,9 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 1,
-    alignItems: 'center',
+    marginLeft: 16,
     justifyContent: 'center',
+    gap: 8,
   },
   title: {
     fontSize: 20,

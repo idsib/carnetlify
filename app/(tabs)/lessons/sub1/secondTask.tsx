@@ -109,10 +109,17 @@ export default function Lesson2() {
   const [buttonText, setButtonText] = useState('Verificar');
   const fadeAnim = useSharedValue(0);
   const [progress, setProgress] = useState(0);
+  const [taskCompleted, setTaskCompleted] = useState(false);
   const [categories, setCategories] = useState({
     roles: [] as string[],
     unassigned: [...allRoles]
   });
+
+  useEffect(() => {
+    if (taskCompleted) {
+      updateLessonProgress('lesson2', true);
+    }
+  }, [taskCompleted]);
 
   useEffect(() => {
     const cleanup = () => {
@@ -177,7 +184,7 @@ export default function Lesson2() {
           numberLesson: "numberLesson12"
         };
         await changeStateLesson(numberLesson);
-        await updateLessonProgress('lesson2', true);
+        setTaskCompleted(true);
         const newProgress = await calculateTotalProgress(6);
         setProgress(newProgress);
         handleFeedback(true);
@@ -205,7 +212,7 @@ export default function Lesson2() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={[styles.safeArea, isDark && styles.containerDark]} edges={['top', 'left', 'right']}>
+      <SafeAreaView style={[styles.safeArea, isDark && styles.safeAreaDark]}>
         <View style={[styles.container, isDark && styles.containerDark]}>
           <View style={styles.header}>
             <TouchableOpacity
@@ -230,6 +237,7 @@ export default function Lesson2() {
               progress={progress}
               currentBlock={1}  
               currentLesson={2}
+              totalTasks={3}
             />
           </View>
 
@@ -288,6 +296,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  safeAreaDark: {
+    backgroundColor: '#1A1A1A',
   },
   container: {
     flex: 1,

@@ -23,7 +23,14 @@ export default function Lesson3() {
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const fadeAnim = useSharedValue(0);
   const [progress, setProgress] = useState(0);
+  const [taskCompleted, setTaskCompleted] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (taskCompleted) {
+      updateLessonProgress('lesson3', true);
+    }
+  }, [taskCompleted]);
 
   useEffect(() => {
     const cleanup = () => {
@@ -68,6 +75,7 @@ export default function Lesson3() {
         handleFeedback(true);
         setButtonText('Continuar');
         setShowCompletionModal(true); // Mostramos el modal de completado
+        setTaskCompleted(true);
       } catch (error) {
         console.error('Error updating progress:', error);
         handleFeedback(false);
@@ -87,7 +95,7 @@ export default function Lesson3() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={[styles.safeArea, isDark && styles.containerDark]} edges={['top', 'left', 'right']}>
+      <SafeAreaView style={[styles.safeArea, isDark && styles.safeAreaDark]}>
         <View style={[styles.container, isDark && styles.containerDark]}>
           <View style={styles.header}>
             <TouchableOpacity
@@ -112,6 +120,7 @@ export default function Lesson3() {
               progress={progress}
               currentBlock={1}
               currentLesson={3}
+              totalTasks={3}
             />
           </View>
 
@@ -225,6 +234,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  safeAreaDark: {
+    backgroundColor: '#1A1A1A',
   },
   container: {
     flex: 1,
